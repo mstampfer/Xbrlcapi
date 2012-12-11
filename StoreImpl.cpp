@@ -20,8 +20,9 @@
 #include "XML.h"
 #include "Constants.h"
 #include "dbxml/XmlQueryContext.hpp"
-#include "XMLDomBuilder.h"
-
+//#include "XMLDomBuilder.h"
+#include <xercesc/dom/DOMLSParser.hpp>
+#include "FragmentFactory.h"
 
 namespace xbrlcapi
 { 
@@ -521,13 +522,15 @@ namespace xbrlcapi
 
 				DbXml::XmlValue xmlValue; 
 				xmlResults.next(xmlValue);
-				std::vector<Fact> fragments;
-				XMLDomBuilder builder;
-				while (xmlValue != NULL) {
+				std::vector<Stub*> fragments;
+				while (xmlValue) 
+				{
 					DbXml::XmlDocument doc = xmlValue.asDocument();
-					Document document = builder.newDocument(doc.getContentAsInputStream());
-					Element root = document.getDocumentElement();
-					fragments.add((F) FragmentFactory.newFragment(this, root));
+					xercesc::DOMLSParser* builder = domimplementation->createLSParser(
+													xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, NULL);
+					xercesc::DOMDocument* document = builder->parse(doc.getContentAsXmlInputStream());
+					xercesc::DOMElement* root = document->getDocumentElement();
+					fragments.push_back(FragmentFactory::newFragment(this, root));
 					xmlResults.next(xmlValue);
 				}
 
