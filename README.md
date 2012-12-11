@@ -1,0 +1,4 @@
+Xbrlcapi
+========
+
+XBRL C++ API
