@@ -631,8 +631,8 @@ namespace xbrlcapi
 	*/
 	std::vector<Stub> BaseStoreImpl::getStubs() 
 	{
-		//std::vector<Stub> stubs = getXMLResources("Stub");
-		//return stubs;
+		std::vector<Stub> stubs = getXMLResources("Stub");
+		return stubs;
 	return std::vector<Stub>();
 	}
 	//    
@@ -728,11 +728,11 @@ namespace xbrlcapi
 	*/
 	std::vector<Stub> BaseStoreImpl::getXMLResources(const std::string& interfaceName) 
 	{
-		//std::string query = "for $root in #roots# where $root/@type='org.xbrlapi.impl." + interfaceName + "Impl' return $root";
-		//if (interfaceName.find(".") > -1) {
-		//	query = "for $root in #roots# where $root/@type='" + interfaceName + "' return $root";
-		//}
-		//return queryForXMLResources(query);
+		std::string query = "for $root in #roots# where $root/@type='org.xbrlapi.impl." + interfaceName + "Impl' return $root";
+		if (interfaceName.find(".") > -1) {
+			query = "for $root in #roots# where $root/@type='" + interfaceName + "' return $root";
+		}
+		return queryForXMLResources(query);
 	return std::vector<Stub>();
 	}
 	//    

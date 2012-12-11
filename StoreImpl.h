@@ -69,7 +69,7 @@ namespace xbrlcapi
 		void closeManager();
 		DbXml::XmlResults runQuery(std::string& myQuery, 
 											  const DbXml::XmlQueryContext::EvaluationType& evaluationType
-											  =DbXml::XmlQueryContext::Lazy);
+											  );
 
 		/**
 		* Performs a lazy query evaluation
@@ -209,8 +209,8 @@ namespace xbrlcapi
 		* @see org.xbrlapi.data.Store#queryForXMLResources(String)
 		*/
 		//synchronized 
-		template <typename F>
-		std::vector<F> queryForXMLResources(const std::string& query);
+//		template <typename F>
+		std::vector<Stub> queryForXMLResources(std::string& query);
 
 		/**
 		* @see org.xbrlapi.data.Store#queryForIndices(String)

@@ -20,6 +20,7 @@
 #include "XML.h"
 #include "Constants.h"
 #include "dbxml/XmlQueryContext.hpp"
+#include "XMLDomBuilder.h"
 
 
 namespace xbrlcapi
@@ -506,40 +507,41 @@ namespace xbrlcapi
 	* @see org.xbrlapi.data.Store#queryForXMLResources(String)
 	*/
 	//synchronized 
-	template <typename F>
-	std::vector<F> StoreImpl::queryForXMLResources(const std::string& query) 
+//	template <typename F>
+	std::vector<Stub> StoreImpl::queryForXMLResources(std::string& query) 
 	{
-		//
-		//        XmlResults xmlResults = null;
-		//        try {
-		//    
-		//            try {
-		//    			xmlResults = runQuery(query);
-		//
-		//    			double startTime = System.currentTimeMillis();
-		//
-		//    			XmlValue xmlValue = xmlResults.next();
-		//    			List<F> fragments = new Vector<F>();
-		//    			XMLDOMBuilder builder = new XMLDOMBuilder();
-		//    		    while (xmlValue != null) {
-		//                    XmlDocument doc = xmlValue.asDocument();
-		//    		        Document document = builder.newDocument(doc.getContentAsInputStream());
-		//    		        Element root = document.getDocumentElement();
-		//    				fragments.add((F) FragmentFactory.newFragment(this, root));
-		//    		        xmlValue = xmlResults.next();
-		//    		    }
-		//    	    	
-		//    	        Double time = new Double((System.currentTimeMillis()-startTime));
-		//    	        logger.debug(time + " milliseconds to create fragment list from" + query);
-		//    			return fragments;
-		//    
-		//    		} catch (XmlException e) {
-		//    			throw new XBRLException("Failed query: " + query,e);
-		//    		}
-		//    		
-		//        } finally {
-		//            if (xmlResults != null) xmlResults.delete();
-		//        }
+
+		DbXml::XmlResults xmlResults;
+		//try {
+
+			//try {
+				xmlResults = runQuery(query);
+
+			//	double startTime = System.currentTimeMillis();
+
+				DbXml::XmlValue xmlValue; 
+				xmlResults.next(xmlValue);
+				std::vector<Fact> fragments;
+				XMLDomBuilder builder;
+				while (xmlValue != NULL) {
+					DbXml::XmlDocument doc = xmlValue.asDocument();
+					Document document = builder.newDocument(doc.getContentAsInputStream());
+					Element root = document.getDocumentElement();
+					fragments.add((F) FragmentFactory.newFragment(this, root));
+					xmlResults.next(xmlValue);
+				}
+
+			//	Double time = new Double((System.currentTimeMillis()-startTime));
+				//       logger.debug(time + " milliseconds to create fragment list from" + query);
+				return fragments;
+
+			//} catch (XmlException e) {
+			//	throw new XBRLException("Failed query: " + query,e);
+			//}
+
+		//} finally {
+			if (xmlResults != nullptr) delete xmlResults;
+		//}
 	}
 
 	/**
@@ -665,7 +667,7 @@ namespace xbrlcapi
 	*/
 
 	DbXml::XmlResults StoreImpl::runQuery(std::string& myQuery, 
-		const DbXml::XmlQueryContext::EvaluationType& evaluationType)
+		const DbXml::XmlQueryContext::EvaluationType& evaluationType=DbXml::XmlQueryContext::Lazy)
 	{
 		DbXml::XmlQueryExpression xmlQueryExpression;
 		//try {
@@ -736,7 +738,7 @@ namespace xbrlcapi
 		xmlQueryContext = dataManager->createQueryContext();
 		xmlQueryContext.setReturnType(xmlQueryContext.LiveValues);
 		xmlQueryContext.setNamespace(XMLConstants::XLinkPrefix, XMLConstants::XLinkNamespace);
-	//	xmlQueryContext.setNamespace(XMLConstants::XMLSchemaPrefix, XMLConstants::XMLSchemaNamespace); TODO
+		//	xmlQueryContext.setNamespace(XMLConstants::XMLSchemaPrefix, XMLConstants::XMLSchemaNamespace); TODO
 		xmlQueryContext.setNamespace(XMLConstants::XBRL21Prefix, XMLConstants::XBRL21Namespace);
 		xmlQueryContext.setNamespace(XMLConstants::XBRL21LinkPrefix, XMLConstants::XBRL21LinkNamespace);
 		xmlQueryContext.setNamespace(XMLConstants::XBRLAPIPrefix, XMLConstants::XBRLAPINamespace);
@@ -745,7 +747,7 @@ namespace xbrlcapi
 		std::transform(namespaceBindings.begin(), namespaceBindings.end(), std::back_inserter(keys),
 			[](const std::unordered_map<std::string,std::string>::value_type &pair)
 		{
-				return pair.first;
+			return pair.first;
 		});
 		for ( std::string prefix : keys) 
 			xmlQueryContext.setNamespace(prefix,namespaceBindings[prefix]);
