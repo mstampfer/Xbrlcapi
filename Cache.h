@@ -37,11 +37,21 @@ namespace xbrlcapi
 		void swap(Cache& rhs)
 		{
 			if (pimpl)
-				pimpl.reset(rhs.pimpl.release());
+				pimpl = std::move(rhs.pimpl);
 			else
 				pimpl.swap(rhs.pimpl);
 		}
 
+		bool operator==(const Cache& rhs)
+		{
+			return pimpl->operator==(*rhs.pimpl);
+
+		}
+
+		operator bool()
+		{
+			return pimpl->operator bool();
+		}
 		///**
 		// * Tests if a URI is a URI of a resource in the local cache.
 		// * @param uri The URI to be tested to see if it identifies a 

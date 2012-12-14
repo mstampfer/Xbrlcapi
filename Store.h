@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 
-#include "Poco/URI.h"
+#include <Poco/URI.h>
 #include <xercesc/dom/DOMDocument.hpp>
 
 #include "StoreImpl.h"
@@ -65,7 +65,7 @@ namespace xbrlcapi
 		void swap(Store& rhs)
 		{
 			if (pimpl)
-				pimpl.reset(rhs.pimpl.release());
+				pimpl = std::move(rhs.pimpl);
 			else
 				pimpl.swap(rhs.pimpl);
 		}

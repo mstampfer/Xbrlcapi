@@ -71,6 +71,25 @@ std::vector<std::string> split(std::string& input, const char* regex)
 		uriMap = map;
 	}	
 
+	bool CacheImpl::operator==(const CacheImpl& rhs)
+	{
+		if( 
+			cacheFile == rhs.cacheFile &&
+			uriMap == rhs.uriMap 
+		)
+		return true;
+		return false;
+	}
+
+	CacheImpl::operator bool()
+	{
+		if( 
+			cacheFile == NULL &&
+			uriMap.empty()
+		)
+		return false;
+		return true;
+	}
 	/**
 	* @see org.xbrlapi.cache.Cache#isCacheURI(java.net.URI)
 	*/

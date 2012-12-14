@@ -43,14 +43,14 @@ namespace xbrlcapi
 		{
 			if (pimpl != rhs.pimpl)
 			{
-				pimpl.reset(rhs.pimpl.release());
+				pimpl = std::move(rhs.pimpl);
 			}
 			return *this;
 		}
 		CustomLinkRecogniser(CustomLinkRecogniser&& rhs)
 		{
 			if (pimpl != rhs.pimpl)
-				pimpl.reset(rhs.pimpl.release());
+				pimpl = std::move(rhs.pimpl);
 		}
 
 		/**

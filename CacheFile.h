@@ -28,7 +28,7 @@ namespace xbrlcapi
 
 		CacheFile(CacheFile&& rhs)
 		{
-			os.reset(rhs.os.release());
+			os = std::move(rhs.os);
 			path = std::move(rhs.path);
 		}
 
@@ -36,7 +36,7 @@ namespace xbrlcapi
 		{
 			if (os != rhs.os)
 			{
-				os.reset(rhs.os.release());
+				os = std::move(rhs.os);
 				path = std::move(rhs.path);
 			}
 			return *this;

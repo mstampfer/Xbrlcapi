@@ -35,14 +35,14 @@ namespace xbrlcapi
 		{
 			if (pimpl != rhs.pimpl)
 			{
-				pimpl.reset(rhs.pimpl.release());	
+				pimpl = std::move(rhs.pimpl);
 			}
 			return *this;
 		}
 
 		XLinkProcessor(XLinkProcessor&& rhs)
 		{
-			pimpl.reset(rhs.pimpl.release());	
+				pimpl = std::move(rhs.pimpl);
 		}
 
 		//public final static Integer SIMPLE_LINK = new Integer(1);

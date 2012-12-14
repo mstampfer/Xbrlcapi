@@ -45,7 +45,7 @@ namespace xbrlcapi
 		* The map of local URIs to use in place of
 		* original URIs.  The original URI points to the 
 		* local URI in the map that is used.
-		*/Poco::URI xx;
+		*/
 		std::unordered_map<Poco::URI,Poco::URI> uriMap;
 
 		/**
@@ -97,6 +97,11 @@ namespace xbrlcapi
 		* @see org.xbrlapi.cache.Cache#getCacheURI(java.net.URI)
 		*/
 		Poco::URI getCacheURI(const Poco::URI& uri);
+
+		bool operator==(const CacheImpl& rhs);
+
+		explicit operator bool();
+
 
 		/**
 		* @see org.xbrlapi.cache.Cache#getOriginalURI(java.net.URI)

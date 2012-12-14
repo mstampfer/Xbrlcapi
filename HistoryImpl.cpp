@@ -17,7 +17,7 @@ namespace xbrlcapi
 		*/
 		std::string HistoryImpl::getIdentifier(const Poco::URI& uri) 
 		{
-			return NULL;
+			return "";
 		}    
 
 		std::unordered_set<Poco::URI> HistoryImpl::getURIs() 

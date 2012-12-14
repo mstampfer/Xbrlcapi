@@ -20,6 +20,7 @@
 #include <xercesc/util/XMLUni.hpp>
 #include <xercesc/dom/DOMNode.hpp>
 #include <xercesc/sax/ErrorHandler.hpp>
+#include <xercesc/framework/URLInputSource.hpp>
 
 namespace xbrlcapi
 {
@@ -154,7 +155,7 @@ namespace xbrlcapi
 	void LoaderImpl::setCache(Cache& rhs)
 	{
 			//if (cache != nullptr)
-			//	cache.reset(rhs.release());
+			//	cache = std::move(rhs);
 			//else
 				cache.swap(rhs);
 	}
@@ -1043,7 +1044,7 @@ namespace xbrlcapi
 	            parser->setFeature(L"http://xml.org/sax/features/validation", true);
 	            parser->setFeature(L"http://apache.org/xml/features/validation/schema", true);
 	            parser->setFeature(L"http://apache.org/xml/features/validation/schema-full-checking", true);
-	            parser->setFeature(L"http://apache.org/xml/features/honour-all-schemaLocations", false);
+	           // parser->setFeature(L"http://apache.org/xml/features/honour-all-schemaLocations", false); //TODO uncomment
 	        //} catch (Exception e) {
 	        //    throw new XBRLException("The parser features could not be set.",e);
 	        //}

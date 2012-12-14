@@ -1,7 +1,7 @@
 #include "Stdafx.h"
 #pragma once
 
-#include "Poco/URI.h"
+#include <Poco/URI.h>
 #include <string>
 
 /**

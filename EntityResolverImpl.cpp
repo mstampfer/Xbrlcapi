@@ -1,8 +1,7 @@
 
 #include "Stdafx.h"
 #include "EntityResolverImpl.h"
-#include "Poco/URI.h"
-#include <xercesc/framework/URLInputSource.hpp>
+#include <Poco/URI.h>
 #include <xercesc/util/XMLString.hpp>
 #include <memory>
 
@@ -29,7 +28,7 @@ namespace xbrlcapi
 		: cache(Cache(cacheFile, uriMap))
 	{}
 
-	std::shared_ptr<xercesc::InputSource> EntityResolverImpl::resolveEntity(const std::wstring& publicId, const std::wstring& systemId) 
+	xercesc::InputSource* EntityResolverImpl::resolveEntity(const std::wstring& publicId, const std::wstring& systemId) 
 	{
 		//logger.debug("SAX: Resolving the entity for " + systemId);
 	//	try {
@@ -40,7 +39,7 @@ namespace xbrlcapi
 				uri = cache.getCacheURI(uri);
 			}
 			auto wc_uri = xercesc::XMLString::transcode(uri.toString().c_str());
-			return std::shared_ptr<xercesc::InputSource>(new xercesc::URLInputSource(wc_uri));
+			return new xercesc::URLInputSource(wc_uri);
 		//} catch (XBRLException e) {
 		//	logger.warn("Cache handling for " + systemId + "failed.");
 		//	return new InputSource(systemId);
@@ -52,11 +51,10 @@ namespace xbrlcapi
 
 	bool EntityResolverImpl::hasCache() 
 	{
-		//return (cache != null);
-		return false;
+		return (cache);
 	}
 
-	std::shared_ptr<xercesc::InputSource> EntityResolverImpl::resolveEntity(const xercesc::XMLResourceIdentifier& resource)
+	xercesc::InputSource* EntityResolverImpl::resolveEntity(const xercesc::XMLResourceIdentifier& resource)
 	{
 		//try {
 		//	logger.debug("SCHEMA: Resolving the entity for " + resource.getExpandedSystemId());
@@ -69,7 +67,7 @@ namespace xbrlcapi
 		}
 		//			logger.debug("... so resolving the entity for URI " + uri);
 		auto w_uri = xercesc::XMLString::transcode(uri.toString().c_str());
-		return std::shared_ptr<xercesc::InputSource>(new xercesc::URLInputSource(w_uri));
+		return new xercesc::URLInputSource(w_uri);
 		//} catch (XBRLException e) {
 		//	logger.warn("Cache handling for " + resource.getExpandedSystemId() + "failed.");
 		//	return new xercesc::XMLInputSource(resource.getPublicId(),resource.getExpandedSystemId(), resource.getBaseSystemId());

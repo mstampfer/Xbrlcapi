@@ -9,25 +9,75 @@
 // * a DBConnection implementation.
 // * @author Geoffrey Shuetrim (geoff@galexy.net)
 // */
-#include <string>
-#include <memory>
-
-#include "BaseStoreImpl.h"
-
-#include "dbxml/XmlManager.hpp"
-#include "dbxml/XmlResults.hpp"
-#include "dbxml/XmlQueryContext.hpp"
+#include "DefaultMatcherImpl.h"
+#include "Fragment.h"
+#include "HashFunctions.h"
+#include <Poco/URI.h>
+#include "Stub.h"
 #include "db_cxx.h"
 #include "dbxml/DbXml.hpp"
-#include "Poco/URI.h"
+#include "dbxml/XmlManager.hpp"
+#include "dbxml/XmlQueryContext.hpp"
+#include "dbxml/XmlResults.hpp"
+#include <map>
+#include <memory>
+#include <string>
+#include <xercesc/dom/DOMImplementationLS.hpp>
+#include <xercesc/dom/DOMImplementationRegistry.hpp>
 
 namespace xbrlcapi
 {
 	struct XML;
 	class Loader;
-
-	class StoreImpl : public BaseStoreImpl
+	class LoaderImpl;
+	class StoreImpl 
 	{
+
+	private:
+		     static const long long serialversionuid = -3709078033252193797l;
+//		     xercesc::DOMImplementationRegistry domimplementationregistry;
+//			 static const logger logger = logger.getlogger(basestoreimpl.class);
+			int loadingStatus;
+//			std::map<Poco::URI,Loader> loadingRights;
+
+			std::unordered_set<Poco::URI> uris;
+		    protected:
+			std::shared_ptr<xercesc::DOMDocument> storedom;
+		    std::shared_ptr<xercesc::DOMImplementationLS> domimplementation;
+	//    /**
+	//     * This property is used to co-ordinate the document
+	//     * loading activities of loaders that are operating in
+	//     * parallel on the one data store.  It is used to 
+	//     * prevent the same document from being simultaneously
+	//     * loaded by several of the loaders.
+	//     */
+	//    transient private 
+			std::unordered_map<Poco::URI,std::shared_ptr<LoaderImpl>> loadingRights;		    	    
+		    /**
+		     * resource matcher
+		     */
+		protected:
+		DefaultMatcherImpl matcher;
+			    /**
+	     * Namespace bindings map from prefix to namespace.
+	     */
+	    std::unordered_map<std::string,std::string> namespaceBindings;   
+		//
+	public:
+
+		DefaultMatcherImpl getMatcher();  		
+		bool hasDocument(const Poco::URI& uri);
+		void startLoading();		
+		void stopLoading();
+		std::vector<Poco::URI> getDocumentsToDiscover();
+		std::vector<Stub> getXMLResources(const std::string& interfaceName);
+		std::string getId(const std::string& input);
+		bool requestLoadingRightsFor(LoaderImpl& loader, const Poco::URI& document);
+		void recindLoadingRightsFor(LoaderImpl& loader, const Poco::URI& document);
+		std::unordered_set<Poco::URI> getFilteringURIs();
+		bool isFilteringByURIs();
+		std::string getURIFilteringPredicate();
+		std::vector<Stub> getStubs();
 	private:
 		// The indexing specification of a container
 		//DbXml::XmlIndexSpecification xis;
@@ -58,6 +108,8 @@ namespace xbrlcapi
 		std::string getComputerName(); 
 		void initialize(const std::string& location, const std::string& container);
 		void initManager();
+		std::string StoreImpl::random();
+
 
 		/**
 		* Initialises the database container.
@@ -67,9 +119,9 @@ namespace xbrlcapi
 		void createContainer();
 		void closeContainer();
 		void closeManager();
-		DbXml::XmlResults runQuery(std::string& myQuery, 
-											  const DbXml::XmlQueryContext::EvaluationType& evaluationType
-											  );
+
+	DbXml::XmlResults StoreImpl::runQuery(std::string& myQuery, 
+		const DbXml::XmlQueryContext::EvaluationType& evaluationType=DbXml::XmlQueryContext::Lazy);
 
 		/**
 		* Performs a lazy query evaluation
@@ -120,8 +172,7 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 	StoreImpl(const std::string& location, const std::string& container) 
-			: BaseStoreImpl(), 
-			locationName(location), 
+			: locationName(location), 
 			containerName(container),
 			cacheSize(1024 * 1024 * 1024),
 			queryEvaluationType(DbXml::XmlQueryContext::Eager)
@@ -137,8 +188,7 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		StoreImpl(const std::string& location, const std::string& container, int cacheSize) 
-			: BaseStoreImpl(), 
-			locationName(location), 
+			: locationName(location), 
 			containerName(container),
 			cacheSize(cacheSize * 1024*1024),
 			queryEvaluationType(DbXml::XmlQueryContext::Eager)
@@ -217,8 +267,6 @@ namespace xbrlcapi
 		*/
 		//synchronized 
 		std::unordered_set<std::string> queryForIndices(const std::string& query) ;
-
-		bool StoreImpl::hasDocument(const Poco::URI& uri);
 		
 		/**
 		* @see org.xbrlapi.data.Store#queryForStrings(String)

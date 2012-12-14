@@ -8,6 +8,9 @@
 #include <fstream>
 #include <xercesc/sax/InputSource.hpp>
 #include <xercesc/util/XMLResourceIdentifier.hpp>
+#include <xercesc/framework/URLInputSource.hpp>
+
+
 /**
 * Entity resolver that dynamically adds to the local document
 * cache if it is set up and that gives preference to the local 
@@ -81,7 +84,7 @@ namespace xbrlcapi
 		* @param systemId The system identifier that gets resolved.
 		*/
 
-		std::shared_ptr<xercesc::InputSource> resolveEntity(const std::wstring& publicId, const std::wstring& systemId);
+		xercesc::InputSource* resolveEntity(const std::wstring& publicId, const std::wstring& systemId);
 
 
 		/**
@@ -93,13 +96,13 @@ namespace xbrlcapi
 		* @see org.apache.xerces.xni.parser.XMLEntityResolver#resolveEntity(org.apache.xerces.xni.XMLResourceIdentifier)
 		*/
 
-		std::shared_ptr<xercesc::InputSource> resolveEntity(const xercesc::XMLResourceIdentifier& resource);
+		xercesc::InputSource* resolveEntity(const xercesc::XMLResourceIdentifier& resource);
 
 		/**
 		* @param originalURI the URI to be resolved.
 		* @return the XMLInputSource for the given URI.
 		*/
-		std::shared_ptr<xercesc::InputSource> resolveSchemaURI(const Poco::URI& uri); 
+		xercesc::InputSource* resolveSchemaURI(const Poco::URI& uri); 
 
 		/**
 		* @see java.lang.Object#hashCode()

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #pragma once
 #include <string>
-#include "Poco/URI.h"
+#include <Poco/URI.h>
 
 namespace xbrlcapi
 {

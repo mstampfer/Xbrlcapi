@@ -4,7 +4,7 @@
 #include <deque>
 #include <stack>
 
-#include "Poco/URI.h"
+#include <Poco/URI.h>
 #include "Store.h"
 #include "HistoryImpl.h"
 #include "Cache.h"

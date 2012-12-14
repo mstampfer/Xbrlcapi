@@ -9,7 +9,7 @@
 #include <utility>
 
 #include <xercesc/dom/DOMDocument.hpp>
-#include "Poco/URI.h"
+#include <Poco/URI.h>
 
 #include "Fragment.h"
 #include "LoaderImpl.h"
