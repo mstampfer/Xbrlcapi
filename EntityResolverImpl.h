@@ -24,7 +24,6 @@ namespace xbrlcapi
 	class EntityResolverImpl 
 	{
 	private:
-		static const long long serialVersionUID = -4898895229134572933L;
 
 		//		static const Logger logger = Logger.getLogger(EntityResolverImpl.class);		
 

@@ -32,7 +32,6 @@ namespace xbrlcapi
 		* modified.
 		*/
 	private:
-		static const long long serialVersionUID = -4518163581910550322L;
 
 		//		private static const Logger logger = Logger.getLogger(CacheImpl.class);
 

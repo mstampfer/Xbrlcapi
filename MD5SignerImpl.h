@@ -8,7 +8,6 @@ namespace xbrlcapi
 	{
 
 	private:
-		static const long long serialVersionUID = -4391859287548042192L;
 
 		//private static const Logger logger = Logger.getLogger(MD5SignerImpl.class);    
 

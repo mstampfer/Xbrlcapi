@@ -10,7 +10,6 @@ namespace xbrlcapi
 	* @author Geoffrey Shuetrim (geoff@galexy.net)
 	*/
 
-	static const long long serialVersionUID = -3402075120037095009L;
 	//		static const Logger logger = Logger.getLogger(BaseMatcherImpl.class);    
 
 	Cache BaseMatcherImpl::getCache() 

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #pragma once
-#include "xercesc/sax2/DefaultHandler.hpp"
+#include <xercesc/sax/ErrorHandler.hpp>
 
 /**
  * SAX content handler used in construction of an XBRL 
@@ -17,7 +17,7 @@
  */
 namespace xbrlcapi
 {
-class BaseContentHandlerImpl :  public xercesc::DefaultHandler
+class BaseContentHandlerImpl 
 {
 //
 //	protected static Logger logger = Logger.getLogger(BaseContentHandlerImpl.class);	

@@ -10,7 +10,7 @@
 #include "Cache.h"
 #include "XLinkProcessor.h"
 #include "EntityResolver.h"
-#include <xercesc/sax2/ContentHandler.hpp>
+#include <xercesc/sax/ErrorHandler.hpp>
 
 
 namespace xbrlcapi
@@ -25,7 +25,6 @@ namespace xbrlcapi
 	{
 		friend class Loader;
 	private:
-		static const long long serialVersionUID = -1706025148098445175L;
 
 		//static const Logger logger = Logger.getLogger(LoaderImpl.class);
 
@@ -238,7 +237,7 @@ namespace xbrlcapi
 		* @param contentHandler The content handler to use for SAX parsing.
 		* @throws XBRLException SAXException IOException
 		*/
-		void parse(const Poco::URI& uri, const xercesc::InputSource& inputSource, xercesc::ContentHandler& contentHandler);
+		void parse(const Poco::URI& uri, /*const*/ xercesc::InputSource& inputSource, xercesc::ErrorHandler& contentHandler);
 
 		void setDiscovering(bool value);
 

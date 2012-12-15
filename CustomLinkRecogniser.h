@@ -30,7 +30,6 @@ namespace xbrlcapi
 		* modified.
 		*/
 	private:
-		static const long long serialVersionUID = 5541842174210812036L;
 		std::unique_ptr<XBRLCustomLinkRecogniserImpl> pimpl;
 		CustomLinkRecogniser& operator=(const CustomLinkRecogniser&);
 		CustomLinkRecogniser(const CustomLinkRecogniser&);

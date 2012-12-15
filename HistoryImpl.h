@@ -11,7 +11,6 @@ namespace xbrlcapi
 	{
 
 	private:
-		static const long long serialVersionUID = -4599201126216530103L;
 
 		//private static const Logger logger = Logger.getLogger(HistoryImpl.class);
 

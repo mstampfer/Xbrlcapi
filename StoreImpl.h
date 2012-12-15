@@ -34,7 +34,6 @@ namespace xbrlcapi
 	{
 
 	private:
-		     static const long long serialversionuid = -3709078033252193797l;
 //		     xercesc::DOMImplementationRegistry domimplementationregistry;
 //			 static const logger logger = logger.getlogger(basestoreimpl.class);
 			int loadingStatus;
@@ -82,7 +81,6 @@ namespace xbrlcapi
 		// The indexing specification of a container
 		//DbXml::XmlIndexSpecification xis;
 
-		static const long long serialVersionUID = 668818404270811849L;
 		//    private static const Logger logger = Logger.getLogger(StoreImpl.class); 
 		std::string computerIdentity;
 

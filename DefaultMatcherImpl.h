@@ -17,7 +17,6 @@ namespace xbrlcapi
 		* modified.
 		*/
 	private:
-		static const long long serialVersionUID = -2009126809674227559L;
 
 	public:
 		DefaultMatcherImpl();

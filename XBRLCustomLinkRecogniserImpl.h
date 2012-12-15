@@ -16,7 +16,6 @@ namespace xbrlcapi
 	class XBRLCustomLinkRecogniserImpl
 	{
 	private:
-		static const long long serialVersionUID = 5149996620311673778L;
 		//		private static const Logger logger = Logger.getLogger(XBRLCustomLinkRecogniserImpl.class);
 
 		/**

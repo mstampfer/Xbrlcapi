@@ -659,7 +659,7 @@ namespace xbrlcapi
 		{
 			xercesc::InputSource* inputSource =  entityResolver.resolveEntity(L"", getWC(uri.toString()).c_str());
 	        ContentHandler contentHandler(*this, uri);
-	        parse(uri, *inputSource, contentHandler);
+			parse(uri, *inputSource, contentHandler);
 	    }
 	
 	    /**
@@ -1030,8 +1030,8 @@ namespace xbrlcapi
 	     * @throws XBRLException SAXException IOException
 	     */
 	    void LoaderImpl::parse(const Poco::URI& uri, 
-							  const xercesc::InputSource& inputSource,  
-							  xercesc::ContentHandler& contentHandler)
+							  /*const*/ xercesc::InputSource& inputSource,  
+							  xercesc::ErrorHandler& contentHandler)
 		{
 			xercesc::MemoryManager *memMgr = new xercesc::MemoryManagerImpl();
 			xercesc::XMLGrammarPool* grammarPool = new xercesc::XMLGrammarPoolImpl(memMgr);
@@ -1050,8 +1050,10 @@ namespace xbrlcapi
 	        //}
 	        
 	        parser->setEntityResolver(getEntityResolver());
-			parser->setErrorHandler(static_cast<xercesc::DefaultHandler*>(&contentHandler));        
-	        parser->setContentHandler(&contentHandler);        
+			parser->setErrorHandler(&contentHandler);        
+			parser->setContentHandler(dynamic_cast<xercesc::ContentHandler*>(&contentHandler));     
+	//		inputSource.setSystemId(L"file:/C:/Users/marcel/cache2/http/www.xbrl.org/-1/2003/xbrl-instance-2003-12-31.xsd");
+			auto xx = parser->getErrorHandler();
 	        parser->parse(inputSource);
 	        
 	    }

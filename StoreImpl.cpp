@@ -46,7 +46,6 @@ namespace xbrlcapi
 		matcher = rhs.matcher;
 		//		rhs.pimpl;
 		queryEvaluationType = rhs.queryEvaluationType;
-		//		rhs.serialversionuid;
 		storedom = rhs.storedom;
 		cacheSize = rhs.cacheSize;
 	}
@@ -71,7 +70,6 @@ namespace xbrlcapi
 			matcher = rhs.matcher;
 			//		rhs.pimpl;
 			queryEvaluationType = rhs.queryEvaluationType;
-			//		rhs.serialversionuid;
 			storedom = rhs.storedom;
 			cacheSize = rhs.cacheSize;
 		}

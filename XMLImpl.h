@@ -13,7 +13,6 @@ namespace xbrlcapi
 		* 
 		*/
 	private:
-		static const long long serialVersionUID = 8783657613634421905L;
 
 		// protected final static Logger logger = Logger.getLogger(XMLImpl.class);  
 

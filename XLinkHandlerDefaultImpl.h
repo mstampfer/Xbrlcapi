@@ -17,7 +17,6 @@ namespace xbrlcapi
 		///**
 		//* 
 		//*/
-		//private static const long long serialVersionUID = -6060131708671079013L;
 
 		/**
 		* Default XLink handler constructor

@@ -19,7 +19,6 @@ namespace xbrlcapi
 		* 
 		*/
 	private:
-		static const long long serialVersionUID = 5486099839583917186L;
 
 		/**
 		* @see SchemaContentDeclaration#isGlobal()

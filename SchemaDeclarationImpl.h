@@ -16,7 +16,6 @@ class SchemaDeclarationImpl : public  SchemaContentImpl, public SchemaDeclaratio
      * 
      */
 public:
-	static const long long serialVersionUID = 3358079880954000640L;
 
     /**
      * Get the name of structure being declared.

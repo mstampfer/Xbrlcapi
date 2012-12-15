@@ -7,7 +7,7 @@
 
 namespace xbrlcapi
 {
-	class ContentHandler : public xercesc::ContentHandler 
+	class ContentHandler : public xercesc::ErrorHandler, public xercesc::ContentHandler 
 	{
 
 	private:
@@ -23,7 +23,6 @@ namespace xbrlcapi
 		/**
 		* @return the loader using this content handler.
 		*/
-
 		//Loader getLoader()
 		//{
 		//	return pimpl->getLoader();
@@ -124,6 +123,21 @@ namespace xbrlcapi
 		void skippedEntity(const XMLCh *const )
 		{
 		}
-
+		void error(const xercesc::SAXParseException &exc)
+		{
+			pimpl->error(exc);
+		}
+		void fatalError(const xercesc::SAXParseException &exc)
+		{
+			pimpl->fatalError(exc);
+		}
+		void resetErrors()
+		{
+			pimpl->resetErrors();
+		}
+		void warning(const xercesc::SAXParseException &exc)
+		{
+			pimpl->warning(exc);
+		}
 	};
 }

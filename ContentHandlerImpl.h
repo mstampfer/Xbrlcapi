@@ -22,6 +22,10 @@ namespace xbrlcapi
 	{
 	public:
 		ContentHandlerImpl() : BaseContentHandlerImpl() {}
+		void error(const xercesc::SAXParseException &exc);
+		void fatalError(const xercesc::SAXParseException &exc);
+		void resetErrors();
+		void warning(const xercesc::SAXParseException &exc);
 
 		///**
 		// * On starting to parse a document the Base URI resolver is

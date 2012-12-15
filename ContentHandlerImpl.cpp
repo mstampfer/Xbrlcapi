@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ContentHandlerImpl.h"
-
+#include <iostream>
 /**
 * SAX content handler used to parse a document into an XBRL API data store.
 * 
@@ -17,6 +17,22 @@
 */
 namespace xbrlcapi
 {
+			void ContentHandlerImpl::error(const xercesc::SAXParseException &exc)
+		{
+			std::cout << "error(const xercesc::SAXParseException &exc)" << std::endl;
+		}
+		void ContentHandlerImpl::fatalError(const xercesc::SAXParseException &exc)
+		{
+			std::cout << "fatalError(const xercesc::SAXParseException &exc)" << std::endl;
+		}
+		void ContentHandlerImpl::resetErrors()
+		{
+			std::cout << "resetErrors()" << std::endl;
+		}
+		void ContentHandlerImpl::warning(const xercesc::SAXParseException &exc)
+		{
+			std::cout << "warning(const xercesc::SAXParseException &exc)" << std::endl;
+		}
 
 	//   /**
 	//    * On starting to parse a document the Base URI resolver is 

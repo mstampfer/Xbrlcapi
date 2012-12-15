@@ -10,6 +10,8 @@
 #include "Loader.h"
 #include "CacheFile.h"
 #include "XBRLXLinkHandlerImpl.h"
+#include <log4cpp/Category.hh>
+#include <log4cpp/PropertyConfigurator.hh>
 
 using Poco::URI;
 namespace xbrlcapi
@@ -87,7 +89,8 @@ namespace xbrlcapi
 	*/
 	Store Load::createStore(const std::string& database, const std::string& container, const std::string& cacheSize) 
 	{
-		if (cacheSize == "") {
+		if (cacheSize.empty()) 
+		{
 			std::cout << "Using the default cache size." << std::endl;
 			return Store(database,container);
 		}
@@ -181,7 +184,6 @@ namespace xbrlcapi
 
 int main(int argv, char * args[]) 
 { 
-
 
 	setlocale( LC_ALL, "" );
 	try 
@@ -283,5 +285,6 @@ int main(int argv, char * args[])
 	{
 		xbrlcapi::Load::badUsage(e.what());
 	}
+
 }
 

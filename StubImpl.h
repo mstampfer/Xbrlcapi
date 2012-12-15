@@ -7,7 +7,6 @@ namespace xbrlcapi
 	class StubImpl : public Stub 
 	{
 	private:
-		static const long long serialVersionUID = 4672320267418877015L;
 
 		/**
 		* No argument constructor.

@@ -21,7 +21,6 @@ namespace xbrlcapi
 		///**
 		//* 
 		//*/
-		//private static const long long serialVersionUID = 5455130402128320301L;
 
 		//private static const Logger logger = Logger.getLogger(XLinkProcessorImpl.class);
 

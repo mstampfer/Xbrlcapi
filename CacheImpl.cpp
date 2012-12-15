@@ -3,6 +3,7 @@
 #include "Poco/Path.h"
 #include "CacheFile.h"
 #include <regex>
+#include <boost/algorithm/string/replace.hpp>
 
 /**
 * Translates 
@@ -163,7 +164,17 @@ std::vector<std::string> split(std::string& input, const char* regex)
 		{
 			//copyToCache(originalURI,cacheFile); TODO
 		}
-		return Poco::URI(cacheFile.getPath().string());
+
+		//TODO generalize using following
+		//Poco::URI r(cacheFile.getPath().string());
+		//r.normalize();
+		//return r;
+
+		
+		std::string path(cacheFile.getPath().string());
+		boost::replace_all(path,"\\","/");
+		boost::replace_all(path,"c:","file:/c:");
+		return Poco::URI(path);
 		//} catch (XBRLException e) 
 		//{
 		//	logger.debug(e.getMessage());
@@ -367,16 +378,17 @@ boost::filesystem::path CacheImpl::getCacheFile(const Poco::URI& uri)
 		absolutePath /= boost::filesystem::path(port);
 		absolutePath /= boost::filesystem::path(query);
 		absolutePath /= boost::filesystem::path(fragment);
-        //StringTokenizer tokenizer = new StringTokenizer(path, "/");
-        //while (tokenizer.hasMoreTokens()) {
-        //    std:.string token = tokenizer.nextToken();
-        //    if (File.separator.equals("\\")) // If on windows a : is not allowed in a directory name so use _drive instead
-        //        if (token.matches("\\w\\Q:\\E"))
-        //            token = token.substring(0,1) + "_drive";
-        //    if (token != null)
-        //        if (! token.equals(""))
-        //            relativeLocation = relativeLocation.concat(s+token);
-        //}
+
+		std::vector<std::string> parts = split(path, "/");
+		std::regex pattern("\w\Q:\E"); 
+		std::smatch results;
+
+		for (auto & part : parts)
+		{
+			if ( std::regex_search(part, results, pattern))
+				part += part.substr(0,1) + "_drive"; 
+			absolutePath /=  boost::filesystem::path(part);
+		}
 
         //try {
         //    logger.debug("Got cacheFile" + cacheFile);
