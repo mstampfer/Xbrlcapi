@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "BaseMatcherImpl.h"
+#include "XBRLException.h"
 
 //#include "Signer.h"
 
@@ -10,7 +11,6 @@ namespace xbrlcapi
 	* @author Geoffrey Shuetrim (geoff@galexy.net)
 	*/
 
-	//		static const Logger logger = Logger.getLogger(BaseMatcherImpl.class);    
 
 	Cache BaseMatcherImpl::getCache() 
 	{
@@ -29,8 +29,8 @@ namespace xbrlcapi
 
 	std::vector<std::string> BaseMatcherImpl::getResourceContent(std::ifstream& file)
 	{
-		//			try 
-		//			{
+					try 
+					{
 		//				BufferedReader reader = new BufferedReader(new FileReader(file));
 		std::vector<std::string> lines;
 		std::string line;
@@ -40,16 +40,17 @@ namespace xbrlcapi
 		}*/
 		//reader.close();
 		return lines;
-		//} catch (IOException e) 
-		//{
-		//	throw new XBRLException("There was a problem reading " + file + " from the cache.",e);
-		//}
+		} 
+		catch (std::ifstream::failure e) 
+		{
+			throw XBRLException("There was a problem reading from the cache.",e.what());
+		}
 	}
 
 	std::vector<std::string> BaseMatcherImpl::getResourceContent(const Poco::URI& uri)
 	{
-		//try 
-		//{
+		try 
+		{
 		//InputStream stream = uri.toURL().openStream();
 		//BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 		std::vector<std::string> lines;
@@ -60,10 +61,11 @@ namespace xbrlcapi
 		//}
 		//reader.close();
 		return lines;
-		//} catch (IOException e) 
-		//{
-		//	throw new XBRLException("There was a problem reading lines in from " + uri,e);
-		//}
+		}
+		catch (std::ifstream::failure e) 
+		{
+			throw XBRLException("There was a problem reading from the cache.",e.what());
+		}
 	}    
 
 

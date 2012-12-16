@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 #include "SchemaDeclaration.h"
 #include "SchemaContentImpl.h"
 #include <string>
@@ -49,6 +50,8 @@ public:
      * @see org.xbrlapi.SchemaDeclaration#getReferencedSchemaDeclaration()
      */  
 	 template <typename F> F getReferencedSchemaDeclaration();
-    };
+    private:
+Logger logger;
+};
     
 }

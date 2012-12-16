@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include "HashFunctions.h"
 #include "CacheFile.h"
@@ -33,7 +34,6 @@ namespace xbrlcapi
 		*/
 	private:
 
-		//		private static const Logger logger = Logger.getLogger(CacheImpl.class);
 
 		/**
 		* Root of the local document cache.
@@ -151,5 +151,7 @@ namespace xbrlcapi
 		* @see java.lang.Object#equals(java.lang.Object)
 		*/
 		//bool equals(Object obj);
-	};
+	private:
+Logger logger;
+};
 }

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 #include "Cache.h"
 #include "Signer.h"
 #include "Matcher.h"
@@ -24,8 +25,7 @@ namespace xbrlcapi
 		* modified.
 		*/
 	private:
-//		static const Logger logger = Logger.getLogger(BaseMatcherImpl.class);    
-
+//		static const 		Logger logger;
 		/**
 		* The cache implementation to be used by the matcher when accessing
 		* resources.  If this is null, then no cache is used.
@@ -64,5 +64,7 @@ namespace xbrlcapi
 		* @see org.xbrlapi.data.resource.Matcher#getSignature(URI)
 		*/
 		//std::string getSignature(const Poco::URI& uri);
-	};
+	private:
+Logger logger;
+};
 }

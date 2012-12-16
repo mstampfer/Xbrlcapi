@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 
 #include <string>
@@ -30,6 +31,8 @@ namespace xbrlcapi
      */
     std::string getContextId();	
 
+private:
+Logger logger;
 };
 }
 

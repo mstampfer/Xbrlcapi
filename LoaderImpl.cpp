@@ -6,6 +6,10 @@
 #include "StorerImpl.h"
 #include "Util.h"
 #include "ContentHandler.h"
+#include "XBRLException.h"
+#include "XercesStrings.h"
+#include <exception>
+#include <chrono>
 #include <iostream>
 #include <algorithm>
 #include <xercesc/validators/common/Grammar.hpp>
@@ -21,6 +25,7 @@
 #include <xercesc/dom/DOMNode.hpp>
 #include <xercesc/sax/ErrorHandler.hpp>
 #include <xercesc/framework/URLInputSource.hpp>
+#include <Poco/Exception.h>
 
 namespace xbrlcapi
 {
@@ -97,7 +102,7 @@ namespace xbrlcapi
 	*/
 	LoaderImpl::LoaderImpl(Store& store, XLinkProcessor& xlinkProcessor, EntityResolver& entityResolver,		
 		const std::vector<Poco::URI> uris) : 
-		xlinkProcessor(std::move(xlinkProcessor)), 
+	xlinkProcessor(std::move(xlinkProcessor)), 
 		entityResolver(std::move(entityResolver))	
 	{
 		setStore(store);
@@ -140,24 +145,24 @@ namespace xbrlcapi
 	{
 		return interrupt;
 	}
-	
-	    /**
-	     * @see org.xbrlapi.loader.Loader#cancelInterrupt()
-	     */
-	    void LoaderImpl::cancelInterrupt() 
-		{
-	        interrupt = false;
-	    }
-	   
+
+	/**
+	* @see org.xbrlapi.loader.Loader#cancelInterrupt()
+	*/
+	void LoaderImpl::cancelInterrupt() 
+	{
+		interrupt = false;
+	}
+
 	/**
 	* @see org.xbrlapi.loader.Loader#setCache(Cache)
 	*/
 	void LoaderImpl::setCache(Cache& rhs)
 	{
-			//if (cache != nullptr)
-			//	cache = std::move(rhs);
-			//else
-				cache.swap(rhs);
+		//if (cache != nullptr)
+		//	cache = std::move(rhs);
+		//else
+		cache.swap(rhs);
 	}
 
 	void LoaderImpl::setCache(Cache&& cache)
@@ -171,7 +176,7 @@ namespace xbrlcapi
 	//     */
 	//    public Cache getCache() {
 	//        if (this.cache == null)
-	//            throw new XBRLException(
+	//            throw XBRLException(
 	//                    "The loader cache is null and so cannot be used.");
 	//        return this.cache;
 	//    }
@@ -193,15 +198,15 @@ namespace xbrlcapi
 		//else logger.debug(Thread.currentThread().getName() + " stopping discovery.");
 		discovering = value;
 	}
-	    
-	    /**
-	     * @see Loader#isDiscovering()
-	     */
-	    bool LoaderImpl::isDiscovering() 
-		{
-	        return discovering;
-	    }
-	
+
+	/**
+	* @see Loader#isDiscovering()
+	*/
+	bool LoaderImpl::isDiscovering() 
+	{
+		return discovering;
+	}
+
 	/**
 	* Set the data store to be used by the loader.
 	* @throws XBRLException if the given store is null.
@@ -304,7 +309,7 @@ namespace xbrlcapi
 	//     * @see org.xbrlapi.loader.Loader#replaceCurrentFragment(Fragment)
 	//     */
 	//    public void LoaderImpl::replaceCurrentFragment(const Fragment& replacement) {
-	//        if (fragments.isEmpty()) throw new XBRLException("There is no current fragment to replace.");
+	//        if (fragments.isEmpty()) throw XBRLException("There is no current fragment to replace.");
 	//        fragments.pop();
 	//        fragments.push(replacement);
 	//    }    
@@ -332,7 +337,7 @@ namespace xbrlcapi
 	//        Fragment parent = getFragment();
 	//        if (parent != null) {
 	//            std::string parentIndex = parent.getIndex();
-	//            if (parentIndex == null) throw new XBRLException("The parent index is null.");
+	//            if (parentIndex == null) throw XBRLException("The parent index is null.");
 	//            fragment.setParentIndex(parentIndex);
 	//            fragment.setSequenceToParentElement(parent);
 	//        } else {
@@ -365,7 +370,7 @@ namespace xbrlcapi
 	//            store.persist(f);
 	//            return f;
 	//        } catch (EmptyStackException e) {
-	//            throw new XBRLException(this.getDocumentURI() + " There are no fragments being built.  The stack of fragments is empty.",e);
+	//            throw XBRLException(this.getDocumentURI() + " There are no fragments being built.  The stack of fragments is empty.",e);
 	//        }
 	//    }
 	//
@@ -426,7 +431,7 @@ namespace xbrlcapi
 
 		if (isDiscovering()) 
 		{
-			//							logger.warn("The loader is already doing discovery so starting discovery achieves nothing.");
+			logger.root.warn("The loader is already doing discovery so starting discovery achieves nothing.");
 			std::cout<< "The loader is already doing discovery so starting discovery achieves nothing." << std::endl;
 			return;
 		}
@@ -434,7 +439,7 @@ namespace xbrlcapi
 
 		for (const Poco::URI& uri : store.getDocumentsToDiscover()) 
 		{
-			//	logger.info(uri + " stashed for discovery.");
+			logger.root.info(uri.toString() + " stashed for discovery.");
 			stashURI(uri);
 		}
 
@@ -449,31 +454,43 @@ namespace xbrlcapi
 				continue;
 			}
 
-			//	long start = System.currentTimeMillis(); //TODO use <chrono> here
-
+			std::chrono::time_point<std::chrono::system_clock> start, end;
+			start = std::chrono::system_clock::now();
 			if (!store.hasDocument(uri)) 
 			{
 				setDocumentURI(uri);
 				setNextFragmentId("1");
-				//	try {
-				parse(uri);
-				//			long duration = (System.currentTimeMillis() - start) / 1000; //TODO use <chrono> here
-				//	logger.info("#" + discoveryCount + " took " + duration + " seconds. " + (fragmentId-1) + " fragments in " + uri);
-				discoveryCount++;
-				markDocumentAsExplored(uri);
-				newDocuments.insert(uri);
-				store.sync();
-				//} catch (XBRLException e) {
-				//	this.cleanupFailedLoad(uri,"XBRL-API related problems occurred: " + e.getMessage(),e);
-				//} catch (SAXException e) {
-				//	this.cleanupFailedLoad(uri,"The document could not be parsed.",e);
-				//} catch (IOException e) {
-				//	this.cleanupFailedLoad(uri,"The document could not be accessed.",e);
-				//}
+				try {
+					parse(uri);
+					end = std::chrono::system_clock::now();
+					int duration = std::chrono::duration_cast<std::chrono::seconds>(end-start).count();
+					logger.root.info("#" + std::to_string(discoveryCount) + " took " 
+						+ std::to_string(duration) + " seconds. " 
+						+ std::to_string(fragmentId-1) + " fragments in " + uri.toString());
+					discoveryCount++;
+					markDocumentAsExplored(uri);
+					newDocuments.insert(uri);
+					store.sync();
+				} 
+				catch (const XBRLException& e) 
+				{
+					logger.root.error(e.what());
+					//					this.cleanupFailedLoad(uri,"XBRL-API related problems occurred: " + e.getMessage(),e);
+				} 
+				catch (const xercesc::SAXException& e) 
+				{	
+					logger.root.error(xerces_util::toNative(e.getMessage()));
+					//					this.cleanupFailedLoad(uri,"The document could not be parsed.",e);
+				} 
+				catch (...) 
+				{
+					logger.root.error("Unknown exception occured");
+					//					this.cleanupFailedLoad(uri,"The document could not be accessed.",e);
+				}
 			} 
 			else 
 			{
-				//		logger.debug(uri + " is already in the data store.");
+				logger.root.debug(uri.toString() + " is already in the data store.");
 				markDocumentAsExplored(uri);
 			}
 
@@ -504,7 +521,7 @@ namespace xbrlcapi
 		//	}
 		//}
 
-//		store.stopLoading(*this); //TODO
+		//		store.stopLoading(*this); //TODO
 
 		//	try {
 		//if (store.isPersistingRelationships() && (newDocuments.size() > 0)) 
@@ -605,9 +622,9 @@ namespace xbrlcapi
 	//
 	//        logger.debug("Discovering a resource supplied as a string and with URI: " + uri);
 	//
-	//        if (!uri.isAbsolute()) throw new XBRLException("The Poco::URI " + uri + " must be absolute.");
+	//        if (!uri.isAbsolute()) throw XBRLException("The Poco::URI " + uri + " must be absolute.");
 	//
-	//        if (uri.isOpaque()) throw new XBRLException("The Poco::URI " + uri + " must NOT be opaque.");
+	//        if (uri.isOpaque()) throw XBRLException("The Poco::URI " + uri + " must NOT be opaque.");
 	//
 	//        // Copy the XML to the local cache even if it is there already (possibly over-writing existing documents)
 	//        this.getCache().copyToCache(uri, xml);
@@ -615,7 +632,7 @@ namespace xbrlcapi
 	//        try {
 	//            this.stashURI(new URI("http://www.xbrlapi.org/xbrl/xbrl-2.1-roles.xsd"));
 	//        } catch (XMLUriSyntaxException e) {
-	//            throw new XBRLException("The standard roles Poco::URI could not be formed for discovery.",e);
+	//            throw XBRLException("The standard roles Poco::URI could not be formed for discovery.",e);
 	//        }
 	//        
 	//        discover(uri);
@@ -646,34 +663,34 @@ namespace xbrlcapi
 	{
 		documentQueue.pop_front();
 		successes.push_back(uri);
-//		store.recindLoadingRightsFor(*this,uri); //TODO
+		//		store.recindLoadingRightsFor(*this,uri); //TODO
 	}
-	
-	    /**
-	     * Parse an XML Document supplied as a URI.
-	     * @param uri The Poco::URI of the document to parse.
-	     * @throws XBRLException IOException ParserConfigurationException SAXException
-	     * @throws ParserConfigurationException 
-	     */
-		void LoaderImpl::parse(const Poco::URI& uri)
-		{
-			xercesc::InputSource* inputSource =  entityResolver.resolveEntity(L"", getWC(uri.toString()).c_str());
-	        ContentHandler contentHandler(*this, uri);
-			parse(uri, *inputSource, contentHandler);
-	    }
-	
-	    /**
-	     * Parse an XML Document supplied as a string the next part of the DTS.
-	     * @param uri The Poco::URI to associate with the supplied XML.
-	     * @param xml The XML document as a string.
-	     * @throws XBRLException IOException SAXException ParserConfigurationException
-	     */
-	 //   void LoaderImpl::parse(const Poco::URI& uri, const std::string& xml)
-		//{
-	 //       xercesc::InputSource* inputSource = new InputSource(new StringReader(xml));
-	 //       ContentHandler contentHandler = new ContentHandlerImpl(this, uri, xml);
-	 //       parse(uri, inputSource, contentHandler);
-	 //   }
+
+	/**
+	* Parse an XML Document supplied as a URI.
+	* @param uri The Poco::URI of the document to parse.
+	* @throws XBRLException IOException ParserConfigurationException SAXException
+	* @throws ParserConfigurationException 
+	*/
+	void LoaderImpl::parse(const Poco::URI& uri)
+	{
+		xercesc::InputSource* inputSource =  entityResolver.resolveEntity(L"", getWC(uri.toString()).c_str());
+		ContentHandler contentHandler(*this, uri);
+		parse(uri, *inputSource, contentHandler);
+	}
+
+	/**
+	* Parse an XML Document supplied as a string the next part of the DTS.
+	* @param uri The Poco::URI to associate with the supplied XML.
+	* @param xml The XML document as a string.
+	* @throws XBRLException IOException SAXException ParserConfigurationException
+	*/
+	//   void LoaderImpl::parse(const Poco::URI& uri, const std::string& xml)
+	//{
+	//       xercesc::InputSource* inputSource = new InputSource(new StringReader(xml));
+	//       ContentHandler contentHandler = new ContentHandlerImpl(this, uri, xml);
+	//       parse(uri, inputSource, contentHandler);
+	//   }
 
 
 
@@ -684,8 +701,8 @@ namespace xbrlcapi
 	*/
 	void LoaderImpl::setStartingURIs(const std::vector<Poco::URI>& uris) 
 	{
-		//if (uris == null)
-		//    throw new XBRLException("Null list of URIs is not permitted.");
+		if (uris.empty())
+			throw XBRLException("Null list of URIs is not permitted.");
 
 		for (const auto e : uris ) 
 		{
@@ -703,28 +720,30 @@ namespace xbrlcapi
 		// Validate the URI
 		if (uri.isRelative()) 
 		{
-			//throw new XBRLException("The URI: " + uri + " must be absolute.");
+			//throw XBRLException("The URI: " + uri + " must be absolute.");
 			std::cout << "The URI: " <<  uri.toString() << " must be absolute." << std::endl;
 		}
 
 		if (uri.getScheme()[0] == '/') 
 		{
-			//				throw new XBRLException("The URI: " + uri + " must not be opaque.");                
+			//				throw XBRLException("The URI: " + uri + " must not be opaque.");                
 			std::cout << "The URI: " <<  uri.toString() << " must not be opaque." << std::endl;
 		}
 
-		//try {
+		try {
 
-		Poco::URI dereferencedXMLUri(uri.getScheme(),uri.getAuthority(), uri.getPath());
-		//} catch (XMLUriSyntaxException e) {
-		//	throw new XBRLException("Malformed Poco::URI found in DTS discovery process: " + uri, e);
-		//}
+			Poco::URI dereferencedXMLUri(uri.getScheme(),uri.getAuthority(), uri.getPath());
 
-		// Stash the Poco::URI if it has not already been stashed
-		if (std::find(successes.begin(), successes.end(), dereferencedXMLUri) == successes.end()) 
+			// Stash the Poco::URI if it has not already been stashed
+			if (std::find(successes.begin(), successes.end(), dereferencedXMLUri) == successes.end()) 
+			{
+				// Queue up the original Poco::URI - ignoring issues of whether it matches another document.
+				documentQueue.push_back(dereferencedXMLUri);
+			}
+		} 
+		catch (Poco::SyntaxException e) 
 		{
-			// Queue up the original Poco::URI - ignoring issues of whether it matches another document.
-			documentQueue.push_back(dereferencedXMLUri);
+			throw XBRLException("Malformed Poco::URI found in DTS discovery process: " + uri.toString(), e.name());
 		}
 
 	}
@@ -748,7 +767,7 @@ namespace xbrlcapi
 	*/
 	void LoaderImpl::setEntityResolver(EntityResolver& resolver) 
 	{
-		//	if (&resolver == nullptr) entityResolver = new EntityResolverImpl();
+//		if (!resolver) == NULL) entityResolver = new EntityResolverImpl(); TODO
 		entityResolver = std::move(resolver);
 	}
 
@@ -776,7 +795,7 @@ namespace xbrlcapi
 	*/
 	void LoaderImpl::setNextFragmentId(const std::string& id) 
 	{
-	    fragmentId = std::stoi(id);
+		fragmentId = std::stoi(id);
 	}
 
 	/**
@@ -983,16 +1002,17 @@ namespace xbrlcapi
 		schemas.push_back(Poco::URI("http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd"));
 		schemas.push_back(Poco::URI("http://www.xbrl.org/2003/xl-2003-12-31.xsd"));
 		schemas.push_back(Poco::URI("http://www.xbrl.org/2003/xlink-2003-12-31.xsd"));
-		//try {
-			for (const Poco::URI& schema : schemas) 
-			{
-				// This loads the schemas into the grammar pool TODO
-				//parser->loadGrammar(schema.getScheme().c_str(), xercesc::Grammar::SchemaGrammarType, false);
-			}
-		//} catch (Exception e) {
-		//	e.printStackTrace();
-		//	throw new XBRLException("The XBRL and related schemas could not be preloaded.");
-		//}
+		try {
+		for (const Poco::URI& schema : schemas) 
+		{
+			// This loads the schemas into the grammar pool TODO
+			//parser->loadGrammar(schema.getScheme().c_str(), xercesc::Grammar::SchemaGrammarType, false);
+		}
+		} 
+		catch (const std::exception& e) 
+		{
+			throw XBRLException("The XBRL and related schemas could not be preloaded.", e.what());
+		}
 		grammarPool->lockPool();
 	}
 	//
@@ -1022,40 +1042,44 @@ namespace xbrlcapi
 	//    
 	//    
 	//    
-	    /**
-	     * Parse the supplied input source.
-	     * @param uri The Poco::URI to be associated with the supplied input source.
-	     * @param inputSource The input source to parse.
-	     * @param contentHandler The content handler to use for SAX parsing.
-	     * @throws XBRLException SAXException IOException
-	     */
-	    void LoaderImpl::parse(const Poco::URI& uri, 
-							  /*const*/ xercesc::InputSource& inputSource,  
-							  xercesc::ErrorHandler& contentHandler)
+	/**
+	* Parse the supplied input source.
+	* @param uri The Poco::URI to be associated with the supplied input source.
+	* @param inputSource The input source to parse.
+	* @param contentHandler The content handler to use for SAX parsing.
+	* @throws XBRLException SAXException IOException
+	*/
+	void LoaderImpl::parse(const Poco::URI& uri, 
+		/*const*/ xercesc::InputSource& inputSource,  
+		xercesc::ErrorHandler& contentHandler)
+	{
+		xercesc::MemoryManager *memMgr = new xercesc::MemoryManagerImpl();
+		xercesc::XMLGrammarPool* grammarPool = new xercesc::XMLGrammarPoolImpl(memMgr);
+		xercesc::SAX2XMLReader* parser = xercesc::XMLReaderFactory::createXMLReader(memMgr, grammarPool);
+
+		// now must reset features for actual parsing:
+		try
 		{
-			xercesc::MemoryManager *memMgr = new xercesc::MemoryManagerImpl();
-			xercesc::XMLGrammarPool* grammarPool = new xercesc::XMLGrammarPoolImpl(memMgr);
-			xercesc::SAX2XMLReader* parser = xercesc::XMLReaderFactory::createXMLReader(memMgr, grammarPool);
-	
-	        // now must reset features for actual parsing:
-	        //try{
-	            parser->setFeature(L"http://xml.org/sax/features/namespace-prefixes", true);
-	            parser->setFeature(L"http://xml.org/sax/features/namespaces", true);
-	            parser->setFeature(L"http://xml.org/sax/features/validation", true);
-	            parser->setFeature(L"http://apache.org/xml/features/validation/schema", true);
-	            parser->setFeature(L"http://apache.org/xml/features/validation/schema-full-checking", true);
-	           // parser->setFeature(L"http://apache.org/xml/features/honour-all-schemaLocations", false); //TODO uncomment
-	        //} catch (Exception e) {
-	        //    throw new XBRLException("The parser features could not be set.",e);
-	        //}
-	        
-	        parser->setEntityResolver(getEntityResolver());
-			parser->setErrorHandler(&contentHandler);        
-			parser->setContentHandler(dynamic_cast<xercesc::ContentHandler*>(&contentHandler));     
-	//		inputSource.setSystemId(L"file:/C:/Users/marcel/cache2/http/www.xbrl.org/-1/2003/xbrl-instance-2003-12-31.xsd");
-			auto xx = parser->getErrorHandler();
-	        parser->parse(inputSource);
-	        
-	    }
-	
+		parser->setFeature(L"http://xml.org/sax/features/namespace-prefixes", true);
+		parser->setFeature(L"http://xml.org/sax/features/namespaces", true);
+		parser->setFeature(L"http://xml.org/sax/features/validation", true);
+		parser->setFeature(L"http://apache.org/xml/features/validation/schema", true);
+		parser->setFeature(L"http://apache.org/xml/features/validation/schema-full-checking", true);
+		// parser->setFeature(L"http://apache.org/xml/features/honour-all-schemaLocations", false); //TODO uncomment
+		} 
+		catch 
+		(const std::exception& e) 
+		{
+		    throw XBRLException("The parser features could not be set.", e.what());
+		}
+
+		parser->setEntityResolver(getEntityResolver());
+		parser->setErrorHandler(&contentHandler);        
+		parser->setContentHandler(dynamic_cast<xercesc::ContentHandler*>(&contentHandler));     
+		//		inputSource.setSystemId(L"file:/C:/Users/marcel/cache2/http/www.xbrl.org/-1/2003/xbrl-instance-2003-12-31.xsd");
+		auto xx = parser->getErrorHandler();
+		parser->parse(inputSource);
+
+	}
+
 }

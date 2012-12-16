@@ -9,7 +9,6 @@ namespace xbrlcapi
 
 	private:
 
-		//private static const Logger logger = Logger.getLogger(MD5SignerImpl.class);    
 
 	public:
 		std::string MD5(const std::string& content);
@@ -30,5 +29,7 @@ namespace xbrlcapi
 		*/
 
 		//		bool equals(Object obj);
-	};
+	private:
+Logger logger;
+};
 }

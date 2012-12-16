@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include "Fragment.h"
 //#include "LabelResource.h"
@@ -322,5 +323,7 @@ namespace xbrlcapi
 	*/
 	std::string getIDXPointerExpression();
 
+private:
+Logger logger;
 };
 }

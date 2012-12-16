@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 #include <xercesc/sax/ErrorHandler.hpp>
 
 /**
@@ -20,7 +21,6 @@ namespace xbrlcapi
 class BaseContentHandlerImpl 
 {
 //
-//	protected static Logger logger = Logger.getLogger(BaseContentHandlerImpl.class);	
 //
 //	/**
 //     * The DTS loader that uses this content handler 
@@ -39,7 +39,7 @@ class BaseContentHandlerImpl
 //     * @see org.xbrlapi.sax.ContentHandler#setLoader(Loader)
 //     */
 //    public void setLoader(Loader loader) throws XBRLException {
-//        if (loader == null) throw new XBRLException("The loader cannot be null.");
+//        if (loader == null) throw XBRLException("The loader cannot be null.");
 //        this.loader = loader;
 //    }
 //
@@ -60,7 +60,7 @@ class BaseContentHandlerImpl
 //     * @see org.xbrlapi.sax.ContentHandler#setURI(URI)
 //     */
 //    public void setURI(URI uri) throws XBRLException {
-//        if (uri == null) throw new XBRLException("The URI must not be null.");
+//        if (uri == null) throw XBRLException("The URI must not be null.");
 //        this.uri = uri;
 //    }
 //    
@@ -135,5 +135,7 @@ class BaseContentHandlerImpl
 //		logger.warn(exception + "  Carrying on with parsing without doing validation.");
 //	}
 //   
+private:
+Logger logger;
 };
 }

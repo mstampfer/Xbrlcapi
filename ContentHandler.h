@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 #include "Loader.h"
 #include "xercesc/sax2/ContentHandler.hpp"
 #include "ContentHandlerImpl.h"
@@ -139,5 +140,7 @@ namespace xbrlcapi
 		{
 			pimpl->warning(exc);
 		}
-	};
+	private:
+Logger logger;
+};
 }

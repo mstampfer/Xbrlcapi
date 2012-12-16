@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 /**
 * Commandline example showing:
@@ -19,7 +20,7 @@
 //#include "LoaderImpl.h"
 #include "Store.h"
 #include "HashFunctions.h"
-
+//#include "Logger.h"
 
 using Poco::URI;
 namespace xbrlcapi
@@ -103,5 +104,7 @@ namespace xbrlcapi
 
 
 
-	};
+	private:
+Logger logger;
+};
 }

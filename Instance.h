@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 
 #include "Fragment.h"
@@ -211,5 +212,7 @@ namespace xbrlcapi
 		*/
 		virtual std::vector<Fact&> getFacts(const Concept& concept);
 
-	};
+	private:
+Logger logger;
+};
 }

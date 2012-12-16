@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include <memory>
 #include <stack>
@@ -423,5 +424,7 @@ namespace xbrlcapi
 			pimpl->hasHistory();
 		}
 
-	};
+	private:
+Logger logger;
+};
 }

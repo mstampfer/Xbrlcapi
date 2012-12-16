@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include <string>
 #include <vector>
@@ -73,5 +74,7 @@ namespace xbrlcapi
 		* @see Concept#isNumeric()
 		*/
 		bool isNumeric();
-	};
+	private:
+Logger logger;
+};
 }

@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 
 #include <string>
@@ -202,5 +203,7 @@ namespace xbrlcapi
 		*/
 		virtual void updateInStore();
 
-	};
+	private:
+Logger logger;
+};
 }

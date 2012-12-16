@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include "SchemaContent.h"
 #include <string>
@@ -65,5 +66,7 @@ namespace xbrlcapi
 		*/
 		// virtual <F extends SchemaDeclaration> F getReferencedSchemaDeclaration();
 
-	};
+	private:
+Logger logger;
+};
 }

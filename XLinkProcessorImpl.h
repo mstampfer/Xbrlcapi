@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 
 /**
@@ -22,7 +23,6 @@ namespace xbrlcapi
 		//* 
 		//*/
 
-		//private static const Logger logger = Logger.getLogger(XLinkProcessorImpl.class);
 
 		///**
 		//* The XLink handler to use for responding to XLink events
@@ -609,5 +609,7 @@ namespace xbrlcapi
 		//		return true;
 		//}
 
-	};
+	private:
+Logger logger;
+};
 }

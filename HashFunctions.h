@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include <Poco/URI.h>
 #include <string>
@@ -16,7 +17,7 @@ namespace std
 		typedef Poco::URI argument_type;
 
 		size_t operator()(const Poco::URI& uri) const;
-	};
+};
 
 	template <> struct equal_to<Poco::URI>
 	{
@@ -24,7 +25,7 @@ namespace std
 		typedef Poco::URI argument_type;
 
 		bool operator()( const Poco::URI& lhs, const Poco::URI& rhs ) const;
-	};
+};
 
 	template <> struct less<Poco::URI>
 	{
@@ -32,5 +33,5 @@ namespace std
 		typedef Poco::URI argument_type;
 
 		bool operator()(const Poco::URI& lhs, const Poco::URI& rhs ) const;
-	};
+};
 }

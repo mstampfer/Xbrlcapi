@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 
 #include <string>
@@ -155,5 +156,7 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual bool substitutesFor(ElementDeclaration candidate);     
-	};
+	private:
+Logger logger;
+};
 }

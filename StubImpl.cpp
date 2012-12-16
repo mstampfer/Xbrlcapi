@@ -12,11 +12,11 @@ namespace xbrlcapi
 	{
 		//this();
 		//setBuilder(new BuilderImpl());
-		//if (id == null) throw new XBRLException("The stub index must not be null.");
+		//if (id == null) throw XBRLException("The stub index must not be null.");
 		//this.setIndex(id);
-		//if (uri == null) throw new XBRLException("The stub URI must not be null.");
+		//if (uri == null) throw XBRLException("The stub URI must not be null.");
 		//this.setResourceURI(uri);
-		//if (reason == null) throw new XBRLException("The reason must not be null.");		
+		//if (reason == null) throw XBRLException("The reason must not be null.");		
 		//this.setReason(reason);
 
 		//// Up to here all of the properties have been stored in an XML DOM being
@@ -46,7 +46,7 @@ namespace xbrlcapi
 		//	return new Poco::URI(uri);
 		//} catch (URISyntaxException e) 
 		//{
-		//	throw new XBRLException(" URI: " + uri + " has incorrect syntax .", e);
+		//	throw XBRLException(" URI: " + uri + " has incorrect syntax .", e);
 		//}
 		return Poco::URI();
 	}
@@ -56,7 +56,7 @@ namespace xbrlcapi
 	*/
 	void StubImpl::setResourceURI(Poco::URI uri) 
 	{
-		//if (uri == null) throw new XBRLException("The stub URI must not be null.");
+		//if (uri == null) throw XBRLException("The stub URI must not be null.");
 		//this.setMetaAttribute("resourceURI",uri.toString());
 	}
 
@@ -65,7 +65,7 @@ namespace xbrlcapi
 	*/
 	void StubImpl::setReason(const std::string& reason) 
 	{
-		//if (reason == null) throw new XBRLException("The reason must not be null.");
+		//if (reason == null) throw XBRLException("The reason must not be null.");
 		//this.setMetaAttribute("reason",reason);
 	}    
 }

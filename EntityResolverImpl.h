@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include "Cache.h"
 #include "HashFunctions.h"
@@ -25,7 +26,6 @@ namespace xbrlcapi
 	{
 	private:
 
-		//		static const Logger logger = Logger.getLogger(EntityResolverImpl.class);		
 
 		/**
 		* The local document cache.
@@ -113,5 +113,7 @@ namespace xbrlcapi
 		*/
 		//			   bool equals(Object obj); 
 
-	};
+	private:
+Logger logger;
+};
 }

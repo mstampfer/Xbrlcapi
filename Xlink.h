@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 
 #include "Fragment.h"
@@ -67,5 +68,7 @@ namespace xbrlcapi
 		*/
 		virtual std::string getAttribute(const std::string& name);
 
-	};
+	private:
+Logger logger;
+};
 }

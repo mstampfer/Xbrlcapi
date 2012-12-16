@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include <string>
 #include "Resource.h"
@@ -29,6 +30,8 @@ namespace xbrlcapi
 		*/
 		virtual std::string getContentAsXHTMLString();
 
-	};
+	private:
+Logger logger;
+};
 }
 

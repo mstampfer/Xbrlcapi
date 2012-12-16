@@ -1,5 +1,6 @@
 #include <string>
 #pragma once
+#include "Logger.h"
 
 namespace xbrlcapi
 {

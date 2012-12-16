@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 /**
 * @author Geoffrey Shuetrim (geoff@galexy.net)
@@ -70,6 +71,8 @@ namespace xbrlcapi
 		*/
 		virtual std::string getSchemaId();
 
-	};
+	private:
+Logger logger;
+};
 }
 

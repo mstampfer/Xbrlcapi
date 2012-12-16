@@ -2,8 +2,12 @@
 #include "CacheImpl.h"
 #include "Poco/Path.h"
 #include "CacheFile.h"
+#include "XBRLException.h"
 #include <regex>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/filesystem.hpp>
+#include <Poco/Exception.h>
+
 
 /**
 * Translates 
@@ -21,16 +25,16 @@
 namespace xbrlcapi
 {
 
-std::vector<std::string> split(std::string& input, const char* regex) 
-{
-    // passing -1 as the submatch index parameter performs splitting
-	const char* cinput = input.c_str();
-	std::regex ws_re(regex);
-	std::sregex_token_iterator first(input.begin(), input.end(), ws_re, -1);
-    std::sregex_token_iterator last;
-	std::vector<std::string> v(first, last);
-    return v;
-}
+	std::vector<std::string> split(std::string& input, const char* regex) 
+	{
+		// passing -1 as the submatch index parameter performs splitting
+		const char* cinput = input.c_str();
+		std::regex ws_re(regex);
+		std::sregex_token_iterator first(input.begin(), input.end(), ws_re, -1);
+		std::sregex_token_iterator last;
+		std::vector<std::string> v(first, last);
+		return v;
+	}
 
 	CacheImpl::CacheImpl(const CacheImpl& ) {}
 	/**
@@ -53,10 +57,7 @@ std::vector<std::string> split(std::string& input, const char* regex)
 	*/
 	CacheImpl::CacheImpl(CacheFile& rhs) 
 	{
-		//if (cacheFile == null) throw new XBRLException("The cache root is null.");
-		//if (! cacheFile.exists()) throw new XBRLException("The cache " + cacheFile + " does not exist.");
-		//if (! cacheFile.canWrite()) throw new XBRLException("The cache " + cacheFile + " cannot be written to.");
-		//if (! cacheFile.canRead()) throw new XBRLException("The cache " + cacheFile + " cannot be read.");
+		if (! cacheFile) throw XBRLException("The cache " + cacheFile.getFilename() + " does not exist.");
 		//cacheFile = rhs;
 	}
 
@@ -77,8 +78,8 @@ std::vector<std::string> split(std::string& input, const char* regex)
 		if( 
 			cacheFile == rhs.cacheFile &&
 			uriMap == rhs.uriMap 
-		)
-		return true;
+			)
+			return true;
 		return false;
 	}
 
@@ -87,8 +88,8 @@ std::vector<std::string> split(std::string& input, const char* regex)
 		if( 
 			cacheFile == NULL &&
 			uriMap.empty()
-		)
-		return false;
+			)
+			return false;
 		return true;
 	}
 	/**
@@ -103,33 +104,35 @@ std::vector<std::string> split(std::string& input, const char* regex)
 			//				logger.debug("Protocol is wrong so not in cache.");
 			return false;
 		}
-		//try 
-		//{
-		//logger.debug("The canonical path to the cache root is: " + cacheFile.getCanonicalPath());
-		//logger.debug("The path component of the URI being tested is: " + uri.getPath());
-
-		std::string uriPath("");
-		//try 
-		//{
-		uriPath = uri.getPath(); //TODO is cannonical path?
-		//				logger.debug("Canonicalised URI path is: " + uriPath);
-		//} catch (Exception couldNotCanonicaliseURIPath) 
-		//{
-		//	logger.debug("Could not canonicalise URI Path " + uri.getPath() + " so we do not have a cache URI.");
-		//	return false;
-		//}
-		auto frag = boost::filesystem::canonical(cacheFile.getPath()).string();
-		if (uriPath.find(frag) == 0) 
+		try 
 		{
-			//logger.debug("Path is right so is in cache.");
-			return true;
-		}
+			//	logger.root.debug("The canonical path to the cache root is: " + cacheFile.getCanonicalPath()); TODO
+			logger.root.debug("The path component of the URI being tested is: " + uri.getPath());
 
-		//} catch (Exception e) 
-		//{
-		//	throw new XBRLException("The canonical cache root path cannot be determined.",e);
-		//}
-		//logger.debug("Path is wrong so not in cache.");    	
+			std::string uriPath("");
+			try 
+			{
+				uriPath = uri.getPath(); //TODO is cannonical path?
+				logger.root.debug("Canonicalised URI path is: " + uriPath);
+			} 
+			catch (const std::exception& couldNotCanonicaliseURIPath) 
+			{
+				logger.root.debug("Could not canonicalise URI Path " + uri.getPath() + " so we do not have a cache URI.");
+				return false;
+			}
+			auto frag = boost::filesystem::canonical(cacheFile.getPath()).string();
+			if (uriPath.find(frag) == 0) 
+			{
+				logger.root.debug("Path is right so is in cache.");
+				return true;
+			}
+
+		} 
+		catch (const std::exception& e) 
+		{
+			throw XBRLException("The canonical cache root path cannot be determined.",e.what());
+		}
+		logger.root.debug("Path is wrong so not in cache.");    	
 		return false;
 	}
 
@@ -139,7 +142,7 @@ std::vector<std::string> split(std::string& input, const char* regex)
 	Poco::URI CacheImpl::getCacheURI(const Poco::URI& uri) 
 	{
 
-		// logger.debug("About to get the cache URI for " + uri);
+		logger.root.debug("About to get the cache URI for " + uri.toString());
 
 		// First determine the original URI
 		Poco::URI originalURI = uri;
@@ -157,29 +160,30 @@ std::vector<std::string> split(std::string& input, const char* regex)
 
 		// Second determine the cache file from the original URI
 		// so that we can try to cache it if that is necessary.
-		//try 
-		//{
-		boost::filesystem::path& cacheFilePath = getCacheFile(originalURI);
-		if (!cacheFile)
+		try 
 		{
-			//copyToCache(originalURI,cacheFile); TODO
+			boost::filesystem::path& cacheFilePath = getCacheFile(originalURI);
+			if (!cacheFile)
+			{
+				//copyToCache(originalURI,cacheFile); TODO
+			}
+
+			//TODO generalize using following
+			//Poco::URI r(cacheFile.getPath().string());
+			//r.normalize();
+			//return r;
+
+
+			std::string path(cacheFile.getPath().string());
+			boost::replace_all(path,"\\","/");
+			boost::replace_all(path,"c:","file:/c:");
+			return Poco::URI(path);
+		} 
+		catch (const XBRLException& e) 
+		{
+			logger.root.debug(e.getMessage());
+			return originalURI;
 		}
-
-		//TODO generalize using following
-		//Poco::URI r(cacheFile.getPath().string());
-		//r.normalize();
-		//return r;
-
-		
-		std::string path(cacheFile.getPath().string());
-		boost::replace_all(path,"\\","/");
-		boost::replace_all(path,"c:","file:/c:");
-		return Poco::URI(path);
-		//} catch (XBRLException e) 
-		//{
-		//	logger.debug(e.getMessage());
-		//	return originalURI;
-		//}
 
 	}
 	/**
@@ -188,35 +192,36 @@ std::vector<std::string> split(std::string& input, const char* regex)
 	Poco::URI CacheImpl::getOriginalURI(const Poco::URI& uri) 
 	{
 
-		//			logger.debug("Getting original URI for " + uri);
+		logger.root.debug("Getting original URI for " + uri.toString());
 
 		// Just return the URI if it is not a cache URI
 		if (! isCacheURI(uri)) 
 		{
-			//logger.debug("Returning the URI as it is already original.");
+			//logger.root.debug("Returning the URI as it is already original.");
 			return uri;
 		}
 
 		std::string data = uri.getPath();
+		boost::filesystem::path path;
+		try 
+		{
+			path = boost::filesystem::path(data); 
+			data = boost::filesystem::canonical(path).string();
+		} catch (const boost::filesystem::filesystem_error&  e) 
+		{
+			throw XBRLException("Canonical path could not be obtained from the URI.",e.what());
+		}
 
-		//try 
-		//{
-		Poco::Path path(data); 
-		data = path.absolute(path).toString();
-		//} catch (IOException e) 
-		//{
-		//	throw new XBRLException("Canonical path could not be obtained from the URI.",e);
-		//}
-
-		// Eliminate the cacheFile part of the path
-		//try 
-		//{
-		auto part = boost::filesystem::canonical(cacheFile.getPath()).string().substr(1);
-		data = data.replace(data.find(part),part.length(),"").substr(2);
-		//} catch (IOException e) 
-		//{
-		//	throw new XBRLException("The original URI could not be determined for " + uri);
-		//}
+		//Eliminate the cacheFile part of the path
+		try 
+		{
+			auto part = boost::filesystem::canonical(cacheFile.getPath()).string().substr(1);
+			data = data.replace(data.find(part),part.length(),"").substr(2);
+		} 
+catch (const boost::filesystem::filesystem_error& e) 
+		{
+			throw XBRLException("The original URI could not be determined for " + uri.toString());
+		}
 
 		std::vector<std::string> parts = split(data, "\\");
 
@@ -242,20 +247,21 @@ std::vector<std::string> split(std::string& input, const char* regex)
 		//	path += "/" + parts.[i];
 		//}
 
-		//try 
-		//{
-		std::string authority;
-		if (user != "")
-			authority = user + "@" + host + ":" + std::to_string(port);
-		else
-			authority = host + ":" + std::to_string(port);
-		Poco::URI originalURI(scheme, authority, path.toString(), query, fragment);
-		//logger.debug("Got the original URI " + originalURI);
-		return originalURI;
-		//} catch (URISyntaxException e) 
-		//{
-		//	throw new XBRLException("Malformed original URI.",e);
-		//}
+		try 
+		{
+			std::string authority;
+			if (user != "")
+				authority = user + "@" + host + ":" + std::to_string(port);
+			else
+				authority = host + ":" + std::to_string(port);
+			Poco::URI originalURI(scheme, authority, path.string(), query, fragment);
+			logger.root.debug("Got the original URI " + originalURI.toString());
+			return originalURI;
+		} 
+		catch (const Poco::SyntaxException& e) 
+		{
+			throw XBRLException("Malformed original URI.",e);
+		}
 	}
 
 	///**
@@ -282,7 +288,7 @@ std::vector<std::string> split(std::string& input, const char* regex)
 	//public URI CacheImpl::getOriginalURI(File file) 
 	//{
 
-	//	logger.debug("Getting original URI for " + file);
+	//	logger.root.debug("Getting original URI for " + file);
 
 	//	// Just return the URI version of the file if it is not a cache file
 	//	if (! isCacheFile(file)) 
@@ -296,7 +302,7 @@ std::vector<std::string> split(std::string& input, const char* regex)
 	//		data = file.getCanonicalPath();
 	//	} catch (IOException e) 
 	//{
-	//		throw new XBRLException("Canonical path could not be obtained from the URI.",e);
+	//		throw XBRLException("Canonical path could not be obtained from the URI.",e);
 	//	}
 
 	//	// Eliminate the cacheFile part of the path
@@ -305,11 +311,11 @@ std::vector<std::string> split(std::string& input, const char* regex)
 	//		data = data.replace(cacheFile.getCanonicalPath().toString().substring(1),"").substring(2);
 	//	} catch (IOException e) 
 	//{
-	//		throw new XBRLException("The original URI could not be determined for " + file);
+	//		throw XBRLException("The original URI could not be determined for " + file);
 	//	}
 
 	//	List<String> parts = new Vector<String>();
-	//	logger.debug(data);
+	//	logger.root.debug(data);
 	//	StringTokenizer tokenizer = new StringTokenizer(data, File.separator);
 	//	while (tokenizer.hasMoreTokens()) 
 	//{
@@ -317,7 +323,7 @@ std::vector<std::string> split(std::string& input, const char* regex)
 	//		if (token != null)
 	//			if (! token.equals("")) 
 	//{
-	//				logger.debug(token);
+	//				logger.root.debug(token);
 	//				parts.add(token);
 	//			}
 	//	}
@@ -347,11 +353,11 @@ std::vector<std::string> split(std::string& input, const char* regex)
 	//	try 
 	//{
 	//		URI originalURI = new URI(scheme, user,host, port, path,query,fragment);
-	//		logger.debug("Got the original URI " + originalURI);
+	//		logger.root.debug("Got the original URI " + originalURI);
 	//		return originalURI;
 	//	} catch (URISyntaxException e) 
 	//{
-	//		throw new XBRLException("Malformed original URI.",e);
+	//		throw XBRLException("Malformed original URI.",e);
 	//	}
 
 	//}    
@@ -360,16 +366,16 @@ std::vector<std::string> split(std::string& input, const char* regex)
 	* @see org.xbrlapi.cache.Cache#getCacheFile(java.net.URI)
 	*/
 
-//	logger.debug("Getting the cache file for " + uri);
-boost::filesystem::path CacheImpl::getCacheFile(const Poco::URI& uri)
-{
+	//	logger.root.debug("Getting the cache file for " + uri);
+	boost::filesystem::path CacheImpl::getCacheFile(const Poco::URI& uri)
+	{
 		std::string scheme = uri.getScheme();
-        std::string user = uri.getUserInfo();
-        std::string host = uri.getHost();
-        std::string port = std::to_string(uri.getPort());
-        std::string path = uri.getPath();
-        std::string query = uri.getQuery();
-        std::string fragment = uri.getFragment();
+		std::string user = uri.getUserInfo();
+		std::string host = uri.getHost();
+		std::string port = std::to_string(uri.getPort());
+		std::string path = uri.getPath();
+		std::string query = uri.getQuery();
+		std::string fragment = uri.getFragment();
 
 		boost::filesystem::path absolutePath = cacheFile.getPath();
 		absolutePath /= boost::filesystem::path(user);
@@ -390,14 +396,17 @@ boost::filesystem::path CacheImpl::getCacheFile(const Poco::URI& uri)
 			absolutePath /=  boost::filesystem::path(part);
 		}
 
-        //try {
-        //    logger.debug("Got cacheFile" + cacheFile);
-            return absolutePath;
-        //} catch (Exception e) {
-        //    throw new XBRLException(uri + " cannot be translated into a location in the cache");
-        //}
-    	
-    }
+		try 
+		{
+			logger.root.debug("Got cacheFile" + cacheFile);
+			return absolutePath;
+		} 
+		catch (std::exception& e) 
+		{
+			throw XBRLException(uri.toString() + " cannot be translated into a location in the cache");
+		}
+
+	}
 
 	///**
 	//* @see org.xbrlapi.cache.Cache#copyToCache(java.net.URI, java.io.File)
@@ -446,13 +455,13 @@ boost::filesystem::path CacheImpl::getCacheFile(const Poco::URI& uri)
 
 	//	} catch (java.net.NoRouteToHostException e) 
 	//{
-	//		logger.debug(e.getMessage());
+	//		logger.root.debug(e.getMessage());
 	//	} catch (FileNotFoundException e) 
 	//{
-	//		logger.debug(e.getMessage());
+	//		logger.root.debug(e.getMessage());
 	//	} catch (IOException e) 
 	//{
-	//		logger.debug(e.getMessage());
+	//		logger.root.debug(e.getMessage());
 	//	}
 	//}
 
@@ -462,11 +471,11 @@ boost::filesystem::path CacheImpl::getCacheFile(const Poco::URI& uri)
 	//public void CacheImpl::copyToCache(URI originalURI,  std::string xml) 
 	//{
 
-	//	logger.debug("Attempting to cache a string XML document using : " + originalURI);
+	//	logger.root.debug("Attempting to cache a string XML document using : " + originalURI);
 
 	//	File cacheFile = this.getCacheFile(originalURI);
 
-	//	logger.debug("The cache file is : " + cacheFile.toString());
+	//	logger.root.debug("The cache file is : " + cacheFile.toString());
 
 	//	// If necessary, create the directory to contain the cached resource
 	//	File parent = cacheFile.getParentFile();
@@ -480,7 +489,7 @@ boost::filesystem::path CacheImpl::getCacheFile(const Poco::URI& uri)
 	//		out.close();		
 	//	} catch (IOException e) 
 	//{
-	//		throw new XBRLException("The  std::string resource could not be cached.",e);
+	//		throw XBRLException("The  std::string resource could not be cached.",e);
 	//	}
 	//}    
 
@@ -491,7 +500,7 @@ boost::filesystem::path CacheImpl::getCacheFile(const Poco::URI& uri)
 	//{
 	//	File file = this.getCacheFile(uri);
 	//	file.delete();
-	//	logger.debug("Purged " + file);
+	//	logger.root.debug("Purged " + file);
 	//}
 
 	///**

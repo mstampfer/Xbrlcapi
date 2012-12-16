@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 #include <string>
 #include <unordered_set>
 #include <Poco/URI.h>
@@ -22,5 +23,7 @@ namespace xbrlcapi
 
 		virtual std::unordered_set<Poco::URI> getURIs() = 0;
 
-	};
+	private:
+Logger logger;
+};
 }

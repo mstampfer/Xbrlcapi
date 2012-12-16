@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 #include <xercesc/sax2/Attributes.hpp>
 #include "XBRLCustomLinkRecogniserImpl.h"
 
@@ -200,5 +201,7 @@ namespace xbrlcapi
 		//       return true;
 		//   }
 		//
-	};
+	private:
+Logger logger;
+};
 }

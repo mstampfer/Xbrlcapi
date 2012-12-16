@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include "Xlink.h"
 
@@ -21,6 +22,8 @@ namespace xbrlcapi
 		*/
 		virtual std::string getLinkRole();
 
-	};
+	private:
+Logger logger;
+};
 }
 

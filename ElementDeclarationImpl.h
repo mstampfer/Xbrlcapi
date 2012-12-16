@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 //#include "ComplexTypeDeclaration.h"
 #include "ElementDeclaration.h"
@@ -124,5 +125,7 @@ namespace xbrlcapi
 		*/
 		std::string getMinOccurs();
 
-	};
+	private:
+Logger logger;
+};
 }

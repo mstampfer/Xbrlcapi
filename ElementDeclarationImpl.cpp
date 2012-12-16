@@ -55,7 +55,7 @@ namespace xbrlcapi
 	//				}
 	//			}
 	//		}
-	//		throw new XBRLException("The substitution group is invalid.");
+	//		throw XBRLException("The substitution group is invalid.");
 	//	}
 	//
 	//	/**
@@ -93,7 +93,7 @@ namespace xbrlcapi
 	//	std::string ElementDeclarationImpl::getSubstitutionGroupNamespace()
 	//	{
 	//		std::string qname = getSubstitutionGroupQName();
-	//		if (qname.equals("") || (qname == null)) throw new XBRLException("The element declaration does not declare its XML Schema substitution group via a substitutionGroup attribute.");   	
+	//		if (qname.equals("") || (qname == null)) throw XBRLException("The element declaration does not declare its XML Schema substitution group via a substitutionGroup attribute.");   	
 	//		return getNamespaceFromQName(qname, getDataRootElement());
 	//	}
 	//
@@ -104,7 +104,7 @@ namespace xbrlcapi
 	//	{
 	//		std::string sg = getSubstitutionGroupQName();
 	//		if (sg.equals("") || (sg == null))
-	//			throw new XBRLException("The element declaration does not declare its substitution group via a substitutionGroup attribute.");    	
+	//			throw XBRLException("The element declaration does not declare its substitution group via a substitutionGroup attribute.");    	
 	//		return getPrefixFromQName(sg);
 	//	}
 	//
@@ -128,9 +128,9 @@ namespace xbrlcapi
 	//		if (this.hasSubstitutionGroup()) {
 	//			try {
 	//				result = (ElementDeclaration) getStore().getSchemaContent(this.getSubstitutionGroupNamespace(),this.getSubstitutionGroupLocalname());
-	//				if (result == null) throw new XBRLException("The substitution group element declaration is not declared in a schema contained in the data store.");
+	//				if (result == null) throw XBRLException("The substitution group element declaration is not declared in a schema contained in the data store.");
 	//			} catch (ClassCastException cce) {
-	//				throw new XBRLException("The Substitution Group XML Schema element declaration is  of the wrong fragment type.",cce);
+	//				throw XBRLException("The Substitution Group XML Schema element declaration is  of the wrong fragment type.",cce);
 	//			}
 	//		}
 	//		return result;
@@ -144,7 +144,7 @@ namespace xbrlcapi
 	//		std::string sg = getSubstitutionGroupQName();
 	//		if (sg == null) return null;
 	//		if (sg.equals(""))
-	//			throw new XBRLException("The element declaration must not have an empty substitution group attribute.");    	
+	//			throw XBRLException("The element declaration must not have an empty substitution group attribute.");    	
 	//		return getLocalnameFromQName(sg);
 	//	}
 	//
@@ -162,8 +162,8 @@ namespace xbrlcapi
 	//	ComplexTypeDeclaration getLocalComplexType()
 	//	{
 	//		List<ComplexTypeDeclaration> ctds = this.getChildren("ComplexTypeDeclaration");
-	//		if (ctds.size() > 1) throw new XBRLException("The element has too many local complex types.");
-	//		if (ctds.size() == 0) throw new XBRLException("The element does not have a local complex type.");
+	//		if (ctds.size() > 1) throw XBRLException("The element has too many local complex types.");
+	//		if (ctds.size() == 0) throw XBRLException("The element does not have a local complex type.");
 	//		return ctds.get(0);
 	//	}
 	//
@@ -224,7 +224,7 @@ namespace xbrlcapi
 	//	*/
 	//	std::string ElementDeclarationImpl::getMaxOccurs()
 	//	{
-	//		if (this.isGlobal()) throw new XBRLException("The element is global.");
+	//		if (this.isGlobal()) throw XBRLException("The element is global.");
 	//		if (getDataRootElement().hasAttribute("maxOccurs")) return getDataRootElement().getAttribute("maxOccurs");
 	//		return "1";
 	//	}
@@ -234,7 +234,7 @@ namespace xbrlcapi
 	//	*/
 	//	std::string ElementDeclarationImpl::getMinOccurs()
 	//	{
-	//		if (this.isGlobal()) throw new XBRLException("The element is global.");
+	//		if (this.isGlobal()) throw XBRLException("The element is global.");
 	//		if (getDataRootElement().hasAttribute("minOccurs")) return getDataRootElement().getAttribute("minOccurs");
 	//		return "1";
 	//	}

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 #include <Poco/URI.h>
 #include <vector>
 
@@ -67,5 +68,7 @@ namespace xbrlcapi
 		*/
 		virtual Poco::URI del(const Poco::URI&  uri) = 0;
 
-	};
+	private:
+Logger logger;
+};
 }

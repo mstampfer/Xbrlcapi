@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include "HashFunctions.h"
 #include "CacheImpl.h"
@@ -139,5 +140,7 @@ namespace xbrlcapi
 		//public abstract std::vector<URI> getAllUris(URI uri);
 
 
-	};
+	private:
+Logger logger;
+};
 }

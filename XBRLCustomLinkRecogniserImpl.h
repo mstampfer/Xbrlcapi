@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 #include <string>
 #include <xercesc/sax2/Attributes.hpp>
 #include "Constants.h"
@@ -16,7 +17,6 @@ namespace xbrlcapi
 	class XBRLCustomLinkRecogniserImpl
 	{
 	private:
-		//		private static const Logger logger = Logger.getLogger(XBRLCustomLinkRecogniserImpl.class);
 
 		/**
 		* Constructor for the XBRL custom link recogniser
@@ -50,6 +50,8 @@ namespace xbrlcapi
 		//	return attrs.getValue(schemaLocation);
 		//}
 
-	};
+	private:
+Logger logger;
+};
 }
 

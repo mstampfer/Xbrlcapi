@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include <string>
 #include <vector>
@@ -142,5 +143,7 @@ namespace xbrlcapi
 		virtual std::unordered_map<std::string,std::string> getLocatorTargetIndices();
 
 
-	};
+	private:
+Logger logger;
+};
 }

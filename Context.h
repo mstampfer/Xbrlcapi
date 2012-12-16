@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 
 
@@ -48,6 +49,8 @@ namespace xbrlcapi
 		*/
 		virtual bool equals(Context context);    
 
-	};
+	private:
+Logger logger;
+};
 }
 

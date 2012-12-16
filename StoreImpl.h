@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 ///**
 // * Implementation of the data store using the Oracle 
@@ -35,7 +36,6 @@ namespace xbrlcapi
 
 	private:
 //		     xercesc::DOMImplementationRegistry domimplementationregistry;
-//			 static const logger logger = logger.getlogger(basestoreimpl.class);
 			int loadingStatus;
 //			std::map<Poco::URI,Loader> loadingRights;
 
@@ -55,7 +55,6 @@ namespace xbrlcapi
 		    /**
 		     * resource matcher
 		     */
-		protected:
 		DefaultMatcherImpl matcher;
 			    /**
 	     * Namespace bindings map from prefix to namespace.
@@ -81,7 +80,6 @@ namespace xbrlcapi
 		// The indexing specification of a container
 		//DbXml::XmlIndexSpecification xis;
 
-		//    private static const Logger logger = Logger.getLogger(StoreImpl.class); 
 		std::string computerIdentity;
 
 		std::string locationName;
@@ -315,6 +313,8 @@ namespace xbrlcapi
 		std::string toString();
 
 		//bool requestLoadingRightsFor(LoaderImpl& loader, const Poco::URI& document);
-	};
+	private:
+Logger logger;
+};
 }
 

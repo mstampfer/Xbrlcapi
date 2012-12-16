@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include <string>
 #include "ArcEnd.h"
@@ -21,5 +22,7 @@ namespace xbrlcapi
 	virtual std::string getResourceRole();
     
     
+private:
+Logger logger;
 };
 }

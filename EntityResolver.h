@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 
 #include <xercesc/sax/EntityResolver.hpp>
@@ -72,5 +73,7 @@ namespace xbrlcapi
 		}
 
 
-	};
+	private:
+Logger logger;
+};
 }

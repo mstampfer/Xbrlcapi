@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include <memory>
 
@@ -337,7 +338,7 @@ namespace xbrlcapi
 		// * @throws XBRLException if the XLink handler has no loader to work with.
 		// */
 		//private Loader getLoader() {
-		//	if (loader == null) throw new XBRLException("The XLink Handler has no XBRL DTS loader to work with.");
+		//	if (loader == null) throw XBRLException("The XLink Handler has no XBRL DTS loader to work with.");
 		//	return loader;
 		//}
 
@@ -389,8 +390,8 @@ namespace xbrlcapi
 		//       Loader loader = this.getLoader();
 		//       fragment.setBuilder(new BuilderImpl(loader.getBuilderDOM()));
 		//        std::string index = getLoader().getNextFragmentId();
-		//       if (index == null) throw new XBRLException(getLoader().getDocumentURI() + ": The fragment index MUST not be null.");
-		//       if (index.equals("")) throw new XBRLException(getLoader().getDocumentURI() + ": The fragment index MUST not be the empty string.");
+		//       if (index == null) throw XBRLException(getLoader().getDocumentURI() + ": The fragment index MUST not be null.");
+		//       if (index.equals("")) throw XBRLException(getLoader().getDocumentURI() + ": The fragment index MUST not be the empty string.");
 		//       fragment.setIndex(index);
 		//       if (attrs.getValue("id") != null) {
 		//           fragment.appendID(attrs.getValue("id"));
@@ -430,5 +431,4 @@ namespace xbrlcapi
 		//       return true;
 		//   }
 		//   
-	};
-
+}

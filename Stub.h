@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 #include <string>
 #include <Poco/URI.h>
 
@@ -30,5 +31,7 @@ namespace xbrlcapi
 		* @throws XBRLException if the reason is null
 		*/
 		virtual void setReason(std::string reason)= 0;        
-	};
+	private:
+Logger logger;
+};
 }

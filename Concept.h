@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 /**
 * @author Geoffrey Shuetrim (geoff@galexy.net)
@@ -74,5 +75,7 @@ namespace xbrlcapi
 		virtual std::vector<std::string> getPresentationNetworkLinkroles();
 
 
-	};  
+	private:
+Logger logger;
+};  
 }

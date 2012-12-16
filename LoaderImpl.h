@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include <deque>
 #include <stack>
@@ -26,7 +27,6 @@ namespace xbrlcapi
 		friend class Loader;
 	private:
 
-		//static const Logger logger = Logger.getLogger(LoaderImpl.class);
 
 		bool _useSchemaLocationAttributes;
 
@@ -467,5 +467,7 @@ namespace xbrlcapi
 		// potentially man parsers.  Start one as close to 2K (20
 		// times larger than normal) and see what happens...
 		static const int BIG_PRIME = 2039;
-	};
+	private:
+Logger logger;
+};
 }

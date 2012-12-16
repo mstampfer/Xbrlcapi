@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 #include <string>
 #include <unordered_set>
 #include <Poco/URI.h>
@@ -12,7 +13,6 @@ namespace xbrlcapi
 
 	private:
 
-		//private static const Logger logger = Logger.getLogger(HistoryImpl.class);
 
 		/**
 		* @see History#addRecord(URI, String)
@@ -32,5 +32,7 @@ namespace xbrlcapi
 		*/
 		//bool equals(Object obj);
 
-	};
+	private:
+Logger logger;
+};
 }

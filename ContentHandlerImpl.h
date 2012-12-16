@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 #include "BaseContentHandlerImpl.h"
 
 /**
@@ -397,9 +398,9 @@ namespace xbrlcapi
 		// * fragment identifiers used by the content handler.
 		// */
 		//protected void removeIdentifier(int index) throws XBRLException {
-		//    if (index > identifiers.size()-1) throw new XBRLException("The identifier index was too large.");
-		//    if (index < 0) throw new XBRLException("The identifier index was too low.");
-		//    if (identifiers.size() == 0) throw new XBRLException("There are no identifiers to remove.");
+		//    if (index > identifiers.size()-1) throw XBRLException("The identifier index was too large.");
+		//    if (index < 0) throw XBRLException("The identifier index was too low.");
+		//    if (identifiers.size() == 0) throw XBRLException("There are no identifiers to remove.");
 		//    identifiers.remove(index);
 		//}
 
@@ -408,9 +409,11 @@ namespace xbrlcapi
 		// * @throws XBRLException if the XML string is null.
 		// */
 		//private void setXML(String xml) throws XBRLException {
-		//    if (xml == null) throw new XBRLException("The string of XML to be parsed must not be null.");
+		//    if (xml == null) throw XBRLException("The string of XML to be parsed must not be null.");
 		//    this.xml = xml;
 		//}
 
-	};
+	private:
+Logger logger;
+};
 }

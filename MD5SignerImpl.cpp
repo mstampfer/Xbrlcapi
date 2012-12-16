@@ -85,4 +85,4 @@ namespace xbrlcapi
 	return false;
 	return true;
 	}  */  
-};
+}

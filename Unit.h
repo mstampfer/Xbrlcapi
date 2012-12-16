@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include "FactDimensionContainer.h"
 /**
@@ -60,5 +61,7 @@ namespace xbrlcapi
 		virtual std::vector<Measure> getResolvedDenominatorMeasures();
 
 
-	};
+	private:
+Logger logger;
+};
 }

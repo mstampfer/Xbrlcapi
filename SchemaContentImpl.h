@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 //#include "Schema.h"
 #include "SchemaContent.h"
@@ -58,5 +59,7 @@ namespace xbrlcapi
 		*/
 		std::string getSchemaId();
 
-	};
+	private:
+Logger logger;
+};
 }

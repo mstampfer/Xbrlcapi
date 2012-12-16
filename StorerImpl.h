@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 #include "Storer.h"
 #include <Poco/URI.h>
 #include <set>
@@ -16,9 +17,6 @@ namespace xbrlcapi
 	class Relationship;
 
 	class StorerImpl : public Storer {
-
-		/*protected:
-		static Logger logger = Logger.getLogger(StorerImpl.class);  */ 
 
 	private:
 		Store store;
@@ -144,5 +142,7 @@ namespace xbrlcapi
 		*/
 
 
-	};
+	private:
+Logger logger;
+};
 }

@@ -25,7 +25,7 @@ namespace xbrlcapi
 	//		Element root = getDataRootElement();
 	//		if (root.hasAttributeNS(Constants.XBRL21Namespace,"periodType"))
 	//			return root.getAttributeNS(Constants.XBRL21Namespace,"periodType");
-	//		if (! this->isTuple()) throw new XBRLException("The period attribute is mandatory on XBRL concepts in the item substitution group.");
+	//		if (! this->isTuple()) throw XBRLException("The period attribute is mandatory on XBRL concepts in the item substitution group.");
 	//		return nullptr;
 	//	}
 

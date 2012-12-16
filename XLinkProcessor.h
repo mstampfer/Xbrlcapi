@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 #include <memory>
 #include "XLinkProcessorImpl.h"
 #include "XBRLXLinkHandlerImpl.h"
@@ -117,5 +118,7 @@ namespace xbrlcapi
 		// */
 		//public XLinkHandler getXLinkHandler();
 
-	};
+	private:
+Logger logger;
+};
 }

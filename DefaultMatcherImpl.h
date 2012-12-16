@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 #include "Matcher.h"
 
 namespace xbrlcapi
@@ -23,7 +24,7 @@ namespace xbrlcapi
 
 		DefaultMatcherImpl(const DefaultMatcherImpl& rhs);
 
-		virtual ~DefaultMatcherImpl(){};
+		virtual ~DefaultMatcherImpl(){}
 		
 		/**
 		* @see Matcher#setSigner(Signer)
@@ -68,5 +69,7 @@ namespace xbrlcapi
 		* @see java.lang.Object#equals(java.lang.Object)  override;
 		*/
 
-	};
+	private:
+Logger logger;
+};
 }

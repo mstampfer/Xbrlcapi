@@ -10,8 +10,8 @@
 #include "Loader.h"
 #include "CacheFile.h"
 #include "XBRLXLinkHandlerImpl.h"
-#include <log4cpp/Category.hh>
-#include <log4cpp/PropertyConfigurator.hh>
+#include "Logger.h"
+#include "XBRLException.h"
 
 using Poco::URI;
 namespace xbrlcapi
@@ -108,6 +108,7 @@ namespace xbrlcapi
 	//*/
 	std::shared_ptr<Loader> Load::createLoader(Store& store, const std::string& cache) 
 	{
+		Logger logger;
 		XBRLXLinkHandlerImpl xlinkHandler;
 		CustomLinkRecogniser clr; 
 		XLinkProcessor xlinkProcessor(xlinkHandler,clr);
@@ -136,13 +137,23 @@ namespace xbrlcapi
 		} catch (...) {
 			throw std::exception("URI syntax exception");
 		}
+		try
+		{
 		EntityResolver entityResolver(cacheFile, map);      
 		std::shared_ptr<Loader> loader(new Loader(store, xlinkProcessor, entityResolver));
 		loader->setCache(Cache(cacheFile));
 		loader->setEntityResolver(entityResolver);
 		xlinkHandler.setLoader(loader);
 		return loader;
-
+	}
+		catch (const XBRLException& e)
+		{
+			logger.root.error("Error initializing Loader " + e.getMessage());
+		}
+		catch (...)
+		{
+			logger.root.error("Unknown error initializing Loader ");
+		}
 	}
 
 	/**
@@ -184,6 +195,8 @@ namespace xbrlcapi
 
 int main(int argv, char * args[]) 
 { 
+	xbrlcapi::Logger logger;
+	logger.root.warn("Storm is comming");
 
 	setlocale( LC_ALL, "" );
 	try 

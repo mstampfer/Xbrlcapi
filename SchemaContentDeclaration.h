@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 
 #include <string>
@@ -104,6 +105,8 @@ struct SchemaContentDeclaration : public SchemaDeclaration {
      */
     virtual TypeDeclaration getLocalType();
     
+private:
+Logger logger;
 };
 }
 

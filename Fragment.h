@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include <string>
 #include <vector>
@@ -484,5 +485,7 @@ namespace xbrlcapi
 		*/
 		virtual std::string getLanguageName(std::vector<std::string> languageNameEncodings);
 
-	};
+	private:
+Logger logger;
+};
 }

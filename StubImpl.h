@@ -41,5 +41,7 @@ namespace xbrlcapi
 		* @see org.xbrlapi.Stub#setReason(std::string)
 		*/
 		void setReason(const std::string& reason);
-	};
+	private:
+Logger logger;
+};
 }

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 #include <Poco/URI.h>
 #include <vector>
 //#include "Arc.h"
@@ -125,5 +126,7 @@ struct Fragment;
 		*/
 		void deleteInactiveRelationships();
 
-	};
+	private:
+Logger logger;
+};
 }

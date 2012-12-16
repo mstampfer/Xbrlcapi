@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 ///**
 // * Implementation of the data store using the Oracle 
@@ -43,7 +44,7 @@ namespace xbrlcapi
 		lastSync = rhs.lastSync;
 		//		rhs.loadingStatus;
 		locationName = rhs.locationName;
-		matcher = rhs.matcher;
+		//matcher = rhs.matcher;
 		//		rhs.pimpl;
 		queryEvaluationType = rhs.queryEvaluationType;
 		storedom = rhs.storedom;
@@ -67,7 +68,7 @@ namespace xbrlcapi
 			lastSync = rhs.lastSync;
 			//		rhs.loadingStatus;
 			locationName = rhs.locationName;
-			matcher = rhs.matcher;
+			//matcher = rhs.matcher;
 			//		rhs.pimpl;
 			queryEvaluationType = rhs.queryEvaluationType;
 			storedom = rhs.storedom;
@@ -107,7 +108,7 @@ namespace xbrlcapi
 			strcpy(aszIPAddresses[nCount], inet_ntoa(SocketAddress.sin_addr));
 		}
 		//        } catch (UnknownHostException e) {
-		//            throw new XBRLException("The computer identity could not be obtained.", e);
+		//            throw XBRLException("The computer identity could not be obtained.", e);
 		//        }
 		return std::string(szHostName) + "." + std::string(aszIPAddresses[0]);
 	}
@@ -119,16 +120,16 @@ namespace xbrlcapi
 		computerIdentity = getComputerName();
 
 		if (location != "") locationName = location;
-		//			else throw new XBRLException("The Berkeley DB XML database location must be specified.");
+		//			else throw XBRLException("The Berkeley DB XML database location must be specified.");
 
 		if (container != "")  containerName = container;
-		//			else throw new XBRLException("The Berkeley DB XML database container must be specified.");
+		//			else throw XBRLException("The Berkeley DB XML database container must be specified.");
 
 		//			try {
 		//			DbXml::XmlManager.setLogLevel(DbXml::XmlManager.LEVEL_ALL, false);
 		//			DbXml::XmlManager.setLogCategory(DbXml::XmlManager.CATEGORY_ALL, false);     
 		//			} catch (...) {
-		//			throw new XBRLException("The BDB XML log levels could not be initialised.", e);
+		//			throw XBRLException("The BDB XML log levels could not be initialised.", e);
 		//			}
 
 		initContainer();
@@ -168,7 +169,7 @@ namespace xbrlcapi
 		//        try {
 		//            return this.dataContainer.getNumDocuments();
 		//        } catch (XmlException e) {
-		//            throw new XBRLException("Failed to get the number of fragments in the data store.",e);
+		//            throw XBRLException("Failed to get the number of fragments in the data store.",e);
 		//        }
 		return 0;
 	}
@@ -197,9 +198,9 @@ namespace xbrlcapi
 
 		//    logger.debug("Initialised the environment.");
 		//} catch (FileNotFoundException e) {
-		//    throw new XBRLException("The physical location of the BDB XML database could not be found.", e);
+		//    throw XBRLException("The physical location of the BDB XML database could not be found.", e);
 		//} catch (DatabaseException e) {
-		//    throw new XBRLException("The BDB XML database environment could not be set up.", e);
+		//    throw XBRLException("The BDB XML database environment could not be set up.", e);
 		//}	    
 	}
 
@@ -217,7 +218,7 @@ namespace xbrlcapi
 		//			);
 		/*           logger.debug("Initialised the data manager.");
 		} catch (XmlException e) {
-		throw new XBRLException("The Berkeley XML database manager could not be set up.", e);
+		throw XBRLException("The Berkeley XML database manager could not be set up.", e);
 		}	    */
 	}
 
@@ -236,7 +237,7 @@ namespace xbrlcapi
 		}
 		//            logger.debug("Initialised the data container.");
 		//        } catch (XmlException e) {
-		//            throw new XBRLException("The database container, " + containerName + ", could not be opened.");
+		//            throw XBRLException("The database container, " + containerName + ", could not be opened.");
 		//        }
 	}
 
@@ -249,7 +250,7 @@ namespace xbrlcapi
 		dataContainer = dataManager->createContainer(containerName,config);
 
 		//} catch (XmlException e) {
-		//    throw new XBRLException("The data container could not be created.", e);
+		//    throw XBRLException("The data container could not be created.", e);
 		//} 
 
 		DbXml::XmlIndexSpecification xmlIndexSpecification;
@@ -351,7 +352,7 @@ namespace xbrlcapi
 		dataContainer.setIndexSpecification(xmlIndexSpecification,xmlUpdateContext);
 
 		//} catch (XmlException e) {
-		//    throw new XBRLException("The indexes could not be configured.", e);
+		//    throw XBRLException("The indexes could not be configured.", e);
 		//} finally {
 		//    if (xmlIndexSpecification != null) xmlIndexSpecification.delete();
 		//}
@@ -398,7 +399,7 @@ namespace xbrlcapi
 		//                dataManager.removeContainer(containerName);
 		//            }
 		//        } catch (XmlException e) {
-		//            throw new XBRLException("The BDB XML database container could not be deleted.");
+		//            throw XBRLException("The BDB XML database container could not be deleted.");
 		//        }
 	}	
 
@@ -437,7 +438,7 @@ namespace xbrlcapi
 		//	        }
 		//	        	        
 		//        } catch (XmlException e) {
-		//            throw new XBRLException("The fragment could not be added to the BDB XML data store.", e);
+		//            throw XBRLException("The fragment could not be added to the BDB XML data store.", e);
 		//	    } finally {
 		//            //if (xmlUpdateContext != null) xmlUpdateContext.delete();
 		//	    }
@@ -472,7 +473,7 @@ namespace xbrlcapi
 		//            Document document = (new XMLDOMBuilder()).newDocument(xmlDocument.getContentAsInputStream());
 		//            return FragmentFactory.<F>newFragment(this, document.getDocumentElement());
 		//        } catch (XmlException e) { // Thrown if the document is not found
-		//            throw new XBRLException("The fragment " + index + " could not be retrieved from the store.",e);
+		//            throw XBRLException("The fragment " + index + " could not be retrieved from the store.",e);
 		//        }
 		//
 	}
@@ -495,7 +496,7 @@ namespace xbrlcapi
 		//            xmlUpdateContext = dataManager.createUpdateContext();
 		//            dataContainer.deleteDocument(index,xmlUpdateContext);
 		//        } catch (XmlException e) {
-		//            throw new XBRLException("The fragment removal failed.", e);
+		//            throw XBRLException("The fragment removal failed.", e);
 		//        } finally {
 		//            //if (xmlUpdateContext != null) xmlUpdateContext.delete();
 		//        }
@@ -536,7 +537,7 @@ namespace xbrlcapi
 		return fragments;
 
 		//} catch (XmlException e) {
-		//	throw new XBRLException("Failed query: " + query,e);
+		//	throw XBRLException("Failed query: " + query,e);
 		//}
 
 		//} finally {
@@ -568,9 +569,9 @@ namespace xbrlcapi
 		//                return indices;
 		//    
 		//            } catch (XmlException e) {
-		//                throw new XBRLException("Failed query: " + query,e);
+		//                throw XBRLException("Failed query: " + query,e);
 		//            } catch (IllegalStateException e) {
-		//                throw new XBRLException("Failed query: " + query,e);
+		//                throw XBRLException("Failed query: " + query,e);
 		//            }
 		//            
 		//        } finally {
@@ -626,7 +627,7 @@ namespace xbrlcapi
 		return strings;
 
 		/*		            } catch (XmlException e) {
-		throw new XBRLException("Failed query: " + query,e);
+		throw XBRLException("Failed query: " + query,e);
 		}
 
 		} finally {
@@ -647,7 +648,7 @@ namespace xbrlcapi
 		//          return xmlResults.size();
 		//      } catch (XmlException e) {
 		//          logger.error("The query stuffed up. " + query);
-		//          throw new XBRLException("Failed query: " + query,e);
+		//          throw XBRLException("Failed query: " + query,e);
 		//      } finally {
 		//          if (xmlResults != null) xmlResults.delete();
 		//      }
@@ -684,7 +685,7 @@ namespace xbrlcapi
 		return xmlResults;
 
 		//} catch (XmlException e) {
-		//    throw new XBRLException("Failed query: " + myQuery,e);
+		//    throw XBRLException("Failed query: " + myQuery,e);
 		//} finally {
 		//    if (xmlQueryExpression != null) xmlQueryExpression.delete();
 		//}
@@ -714,7 +715,7 @@ namespace xbrlcapi
 		//            return xmlResults;
 		//
 		//        } catch (XmlException e) {
-		//            throw new XBRLException("Failed query: " + myQuery,e);
+		//            throw XBRLException("Failed query: " + myQuery,e);
 		//        } finally {
 		//            if (xmlQueryExpression != null) xmlQueryExpression.delete();
 		//        }
@@ -752,7 +753,7 @@ namespace xbrlcapi
 		// xmlQueryContext.setEvaluationType(XmlQueryContext.Lazy); 
 		return xmlQueryContext;
 		/*	        } catch (XmlException e) {
-		throw new XBRLException("Failed to create query context.",e);
+		throw XBRLException("Failed to create query context.",e);
 		}*/
 	}
 
@@ -765,12 +766,12 @@ namespace xbrlcapi
 	void StoreImpl::sync()
 	{
 		//    if ((System.currentTimeMillis() - lastSync) < 10000) return;
-		//if (!dataContainer) throw new XBRLException("The database container cannot be synced because it is null.");
+		//if (!dataContainer) throw XBRLException("The database container cannot be synced because it is null.");
 		//try {
 		dataContainer.sync();
 		//		            lastSync = System.currentTimeMillis();
 		//} catch (XmlException e) {
-		//    throw new XBRLException("The database updates could not be flushed to disk using the sync method.",e);
+		//    throw XBRLException("The database updates could not be flushed to disk using the sync method.",e);
 		//}
 	}
 	//
@@ -795,7 +796,7 @@ namespace xbrlcapi
 		//            xmlUpdateContext = dataManager.createUpdateContext();
 		//            dataContainer.setIndexSpecification(xmlIndexSpecification,xmlUpdateContext);
 		//        } catch (XmlException e) {
-		//            throw new XBRLException("The new index could not be configured.", e);
+		//            throw XBRLException("The new index could not be configured.", e);
 		//        } finally {
 		//            if (xmlIndexSpecification != null) xmlIndexSpecification.delete();
 		//        }        
@@ -884,7 +885,7 @@ namespace xbrlcapi
 	//     * @see org.xbrlapi.data.Store#setMatcher(Matcher)
 	//     */
 	//    public synchronized void setMatcher(Matcher matcher) {
-	//        if (matcher == null) throw new XBRLException("The matcher cannot be null");
+	//        if (matcher == null) throw XBRLException("The matcher cannot be null");
 	//        this.matcher = matcher;
 	//    }
 	//
@@ -987,7 +988,7 @@ namespace xbrlcapi
 	//                persistStub(uri,documents.get(uri));
 	//            }
 	//        } catch (XBRLException e) {
-	//            throw new XBRLException("The loader state could not be stored.",e);
+	//            throw XBRLException("The loader state could not be stored.",e);
 	//        }
 	//    }
 	//
@@ -1106,7 +1107,7 @@ namespace xbrlcapi
 	//		    writer.write(what,output);
 	//*/
 	//		} catch (Exception e) {
-	//			throw new XBRLException("The XML subtree could not be serialised.", e);
+	//			throw XBRLException("The XML subtree could not be serialised.", e);
 	//        }
 	//    }
 	//    
@@ -1212,7 +1213,7 @@ namespace xbrlcapi
 	//            try {
 	//                uris.add(new URI(string));
 	//            } catch (URISyntaxException e) {
-	//                throw new XBRLException(string + " is an invalid URI.",e);
+	//                throw XBRLException(string + " is an invalid URI.",e);
 	//            }
 	//        }
 	//
@@ -1253,7 +1254,7 @@ namespace xbrlcapi
 	//			FileOutputStream fileOutputStream = new FileOutputStream(destination.toString());
 	//			serialize(what, fileOutputStream);
 	//		} catch (FileNotFoundException e) {
-	//			throw new XBRLException("The file to be written to cannot be found.", e);
+	//			throw XBRLException("The file to be written to cannot be found.", e);
 	//		}
 	//		
 	//	}
@@ -1274,7 +1275,7 @@ namespace xbrlcapi
 	//                uris.add(new URI(uriString));
 	//            }
 	//        } catch (URISyntaxException e) {
-	//            throw new XBRLException("A document URI has invalid syntax.",e);
+	//            throw XBRLException("A document URI has invalid syntax.",e);
 	//        }
 	//        return uris;
 	//    }
@@ -1302,8 +1303,8 @@ namespace xbrlcapi
 	//    private Element getAnnotatedDocumentAsDOM(URI uri) {
 	//        URI matchURI = getMatcher().getMatch(uri);
 	//        std::vector<Fragment> fragments = queryForXMLResources("#roots#[@uri='" + matchURI + "' and @parentIndex='']");
-	//        if (fragments.size() > 1) throw new XBRLException("More than one document was found in the data store.");
-	//        if (fragments.size() == 0) throw new XBRLException("No documents were found in the data store.");
+	//        if (fragments.size() > 1) throw XBRLException("More than one document was found in the data store.");
+	//        if (fragments.size() == 0) throw XBRLException("No documents were found in the data store.");
 	//        Fragment fragment = fragments.get(0);
 	//        Element document = this.getAnnotatedSubtree(fragment);
 	//        document.setAttributeNS(Constants.CompNamespace.toString(),Constants.CompPrefix + ":index",fragment.getIndex());
@@ -1316,7 +1317,7 @@ namespace xbrlcapi
 	//	public Element getSubtree(const Fragment& f) {
 	//
 	//	    if (f == null) {
-	//	        throw new XBRLException("The fragment must not be null.");
+	//	        throw XBRLException("The fragment must not be null.");
 	//	    }
 	//	    
 	//		// Make sure that the DOM is initialised.
@@ -1330,7 +1331,7 @@ namespace xbrlcapi
 	//		    d = (Element) storeDOM.importNode(f.getDataRootElement(), true);
 	//		} catch (Exception e) {
 	//		    e.printStackTrace();
-	//		    throw new XBRLException("The data could not be plugged into the DOM for fragment " + f.getIndex(),e);
+	//		    throw XBRLException("The data could not be plugged into the DOM for fragment " + f.getIndex(),e);
 	//		}
 	//		    
 	//		// Get the child fragment IDs
@@ -1546,9 +1547,9 @@ namespace xbrlcapi
 	//	 */
 	//	public void saveDocuments(File destination,  std::string uriPrefix) {
 	//		
-	//		if (! destination.exists()) throw new XBRLException("The specified directory does not exist.");
+	//		if (! destination.exists()) throw XBRLException("The specified directory does not exist.");
 	//		
-	//		if (! destination.isDirectory()) throw new XBRLException("A directory rather than a file must be specified.");
+	//		if (! destination.isDirectory()) throw XBRLException("A directory rather than a file must be specified.");
 	//		
 	//		Set<URI> uris = getDocumentURIs();
 	//		Iterator<URI> iterator = uris.iterator();
@@ -1582,7 +1583,7 @@ namespace xbrlcapi
 	//            LSSerializer writer = domImplementation.createLSSerializer();
 	//            return writer.writeToString(element);
 	//        } catch (Exception e) {
-	//            throw new XBRLException("The XML DOM element could not be written to a string for persisting.",e);
+	//            throw XBRLException("The XML DOM element could not be written to a string for persisting.",e);
 	//        }
 	//    }
 
@@ -2094,7 +2095,7 @@ namespace xbrlcapi
 	//    public <F extends Fragment> F getRootFragmentForDocument(URI uri) {
 	//    	List<F> fragments = this.<F>queryForXMLResources("#roots#[@uri='" + uri + "' and @parentIndex='']");
 	//    	if (fragments.size() == 0) return null;
-	//    	if (fragments.size() > 1) throw new XBRLException("Two fragments identify themselves as roots of the one document.");
+	//    	if (fragments.size() > 1) throw XBRLException("Two fragments identify themselves as roots of the one document.");
 	//    	return fragments.get(0);
 	//    }
 	//
@@ -2121,8 +2122,8 @@ namespace xbrlcapi
 	//     * @see org.xbrlapi.data.Store#getLanguage(String, String)
 	//     */
 	//    public Language getLanguage( std::string encoding,  std::string code) {
-	//        if (encoding == null) throw new XBRLException("The language code must not be null.");
-	//        if (code == null) throw new XBRLException("The language name encoding must not be null.");
+	//        if (encoding == null) throw XBRLException("The language code must not be null.");
+	//        if (code == null) throw XBRLException("The language name encoding must not be null.");
 	//         std::string query = "#roots#[@type='org.xbrlapi.impl.LanguageImpl' and "+ Constants.XBRLAPIPrefix+ ":" + "data/lang:language/lang:encoding='" + encoding + "' and " + Constants.XBRLAPIPrefix + ":" + "data/lang:language/lang:code='" + code + "']";
 	//        std::vector<Language> languages = this.<Language>queryForXMLResources(query);
 	//        if (languages.size() == 0) return null;
@@ -2133,7 +2134,7 @@ namespace xbrlcapi
 	//     * @see org.xbrlapi.data.Store#getLanguages(String)
 	//     */
 	//    public std::vector<Language> getLanguages( std::string code) {
-	//        if (code == null) throw new XBRLException("The language code must not be null.");
+	//        if (code == null) throw XBRLException("The language code must not be null.");
 	//         std::string query = "#roots#[@type='org.xbrlapi.impl.LanguageImpl' and */lang:language/lang:code='" + code + "']";
 	//        return this.<Language>queryForXMLResources(query);
 	//    }
@@ -2156,9 +2157,9 @@ namespace xbrlcapi
 	//    public  std::string queryForString( std::string query) {
 	//        Set<String> strings = queryForStrings(query);
 	//        if (strings.size() == 0) return null;
-	//        if (strings.size() > 1) throw new XBRLException(query + " returned more than one string.");
+	//        if (strings.size() > 1) throw XBRLException(query + " returned more than one string.");
 	//        for ( std::string string: strings) return string;
-	//        throw new XBRLException("This exception cannot be thrown. There is a bug in the software.");
+	//        throw XBRLException("This exception cannot be thrown. There is a bug in the software.");
 	//    }
 	//
 	//    /**
@@ -2279,7 +2280,7 @@ namespace xbrlcapi
 	//        Schema schema = this.getSchema(namespace);
 	//        D declaration = schema.<D>getGlobalDeclaration(name);
 	//        if (declaration == null) {
-	//            throw new XBRLException("No matching global schema declarations were found for " + namespace + ":" + name + ".");
+	//            throw XBRLException("No matching global schema declarations were found for " + namespace + ":" + name + ".");
 	//        }
 	//        return declaration;
 	//    }    
@@ -2393,7 +2394,7 @@ namespace xbrlcapi
 	//            }
 	//            return networks;
 	//        } catch (Throwable t) {
-	//            throw new XBRLException("There was a problem getting minimal networks with arcrole " + arcrole,t);
+	//            throw XBRLException("There was a problem getting minimal networks with arcrole " + arcrole,t);
 	//        }
 	//    }
 	//    
@@ -2447,7 +2448,7 @@ namespace xbrlcapi
 	//            }
 	//            return network;
 	//        } catch (Throwable t) {
-	//            throw new XBRLException("There was a problem getting minimal networks with arcrole " + arcrole,t);
+	//            throw XBRLException("There was a problem getting minimal networks with arcrole " + arcrole,t);
 	//        }    
 	//    }
 	//
@@ -2520,7 +2521,7 @@ namespace xbrlcapi
 	//            try {
 	//                targets.add((F) relationship.getTarget());
 	//            } catch (ClassCastException e) {
-	//                throw new XBRLException("A target fragment is of the wrong type: " + relationship.getTarget().getType(),e);
+	//                throw XBRLException("A target fragment is of the wrong type: " + relationship.getTarget().getType(),e);
 	//            }
 	//        }
 	//        return new Vector<F>(targets);
@@ -2539,7 +2540,7 @@ namespace xbrlcapi
 	//            try {
 	//                sources.add((F) relationship.getSource());
 	//            } catch (ClassCastException e) {
-	//                throw new XBRLException("A source fragment is of the wrong type: " + relationship.getSource().getType(),e);
+	//                throw XBRLException("A source fragment is of the wrong type: " + relationship.getSource().getType(),e);
 	//            }
 	//        }
 	//        return new Vector<F>(sources);        
@@ -2848,7 +2849,7 @@ namespace xbrlcapi
 	//            try {
 	//                result.add(new URI(uri));
 	//            } catch (URISyntaxException e) {
-	//                throw new XBRLException(uri + " has invalid syntax.",e);
+	//                throw XBRLException(uri + " has invalid syntax.",e);
 	//            }
 	//        }
 	//        Set<URI> storedURIs = this.getDocumentURIs();
@@ -2876,7 +2877,7 @@ namespace xbrlcapi
 	//public synchronized 
 	bool StoreImpl::requestLoadingRightsFor(LoaderImpl& loader, const Poco::URI& document) 
 	{
-		// if (document == null) throw new XBRLException("Cannot start loading a document with a null URI");
+		// if (document == null) throw XBRLException("Cannot start loading a document with a null URI");
 		if (loadingRights.find(document) == loadingRights.end()) 
 		{
 			//   loadingRights.insert(std::make_pair(document,loader));
@@ -2995,7 +2996,7 @@ namespace xbrlcapi
 	//            // Get the uris of the containing schemas.
 	//             std::string query = "for $root in #roots#[@parentIndex=''] where $root/xbrlapi:data/xsd:schema/@targetNamespace='" + namespace + "' return string($root/@uri)";
 	//            Set<String> uris = this.queryForStrings(query);
-	//            if (uris.size() == 0) throw new XBRLException("The namespace does not match a schema in the data store.");
+	//            if (uris.size() == 0) throw XBRLException("The namespace does not match a schema in the data store.");
 	//             std::string uriCriteria = "";
 	//            for ( std::string uri: uris) {
 	//                uriCriteria += " or @uri='"+uri+"'";
@@ -3004,7 +3005,7 @@ namespace xbrlcapi
 	//            uriCriteria = "(" + uriCriteria + ")";
 	//            query = "for $root in #roots#["+uriCriteria+"] where $root/xbrlapi:data/*/@name='" + name + "' return $root";
 	//            std::vector<F> candidates = this.<F>queryForXMLResources(query);
-	//            if (candidates.size() == 0) throw new XBRLException("The local name does not match content in a schema with the given namespace.");
+	//            if (candidates.size() == 0) throw XBRLException("The local name does not match content in a schema with the given namespace.");
 	//            for (F candidate: candidates) {
 	//                Schema schema = candidate.getSchema();
 	//                if (namespace.equals(schema.getTargetNamespace()) && schema.isAncestorOf(candidate)) 
@@ -3020,7 +3021,7 @@ namespace xbrlcapi
 	//     * @see org.xbrlapi.data.Store#getSchema(String)
 	//     */
 	//    public Schema getSchema( std::string targetNamespace) {
-	//        if (targetNamespace == null) throw new XBRLException("The target namespace of the schema must not be null.");
+	//        if (targetNamespace == null) throw XBRLException("The target namespace of the schema must not be null.");
 	//         std::string query = "for $root in #roots#[@type='"+SchemaImpl.class.getName()+"'] where $root/*/xsd:schema/@targetNamespace='" + targetNamespace + "' return $root";
 	//        std::vector<Schema> candidates = this.<Schema>queryForXMLResources(query);
 	//        if (candidates.size() == 1) return candidates.get(0);
@@ -3029,7 +3030,7 @@ namespace xbrlcapi
 	//        for (Schema schema: candidates) {
 	//            message += ": " + schema.getURI();
 	//        }
-	//        throw new XBRLException("Schemas with URLs" + message + ", have the target namespace " + targetNamespace);
+	//        throw XBRLException("Schemas with URLs" + message + ", have the target namespace " + targetNamespace);
 	//    }
 	//
 	//    /**
@@ -3113,8 +3114,8 @@ namespace xbrlcapi
 	//     */
 	//    public list<Fact&> getFacts( std::string namespace,  std::string localname)
 	//            {
-	//        if (namespace == null) throw new XBRLException("The namespace must not be null.");
-	//        if (localname == null) throw new XBRLException("The local name must not be null.");
+	//        if (namespace == null) throw XBRLException("The namespace must not be null.");
+	//        if (localname == null) throw XBRLException("The local name must not be null.");
 	//        this.setNamespaceBinding(namespace,"xbrlapi_factNamespacePrefix");
 	//         std::string query = "for $root in #roots#[@fact and xbrlapi:data/xbrlapi_factNamespacePrefix:" + localname + "] return $root";
 	//		return this.queryForXMLResources(query); 
@@ -3125,7 +3126,7 @@ namespace xbrlcapi
 	//     */
 	//    public list<Fact&> getFacts(const Concept& concept)
 	//            {
-	//        if (concept == null) throw new XBRLException("The concept must not be null.");
+	//        if (concept == null) throw XBRLException("The concept must not be null.");
 	//        return this.getFacts(concept.getTargetNamespace(), concept.getName());
 	//    }    
 	//    

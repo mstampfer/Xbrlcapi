@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include "SchemaContentDeclaration.h"
 #include "SchemaDeclarationImpl.h"
@@ -91,5 +92,7 @@ namespace xbrlcapi
 		*/
 //		TypeDeclaration getLocalType();
 
-	};
+	private:
+Logger logger;
+};
 }

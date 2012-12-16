@@ -1,4 +1,5 @@
 #pragma once
+#include "Logger.h"
 
 // Including SDKDDKVer.h defines the highest available Windows platform.
 

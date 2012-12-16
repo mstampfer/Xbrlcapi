@@ -18,7 +18,6 @@ namespace xbrlcapi
 {
 
 //
-//	protected static Logger logger = Logger.getLogger(BaseContentHandlerImpl.class);	
 //
 //	/**
 //     * The DTS loader that uses this content handler 
@@ -37,7 +36,7 @@ namespace xbrlcapi
 //     * @see org.xbrlapi.sax.ContentHandler#setLoader(Loader)
 //     */
 //    public void setLoader(Loader loader) throws XBRLException {
-//        if (loader == null) throw new XBRLException("The loader cannot be null.");
+//        if (loader == null) throw XBRLException("The loader cannot be null.");
 //        this.loader = loader;
 //    }
 //
@@ -58,7 +57,7 @@ namespace xbrlcapi
 //     * @see org.xbrlapi.sax.ContentHandler#setURI(URI)
 //     */
 //    public void setURI(URI uri) throws XBRLException {
-//        if (uri == null) throw new XBRLException("The URI must not be null.");
+//        if (uri == null) throw XBRLException("The URI must not be null.");
 //        this.uri = uri;
 //    }
 //    

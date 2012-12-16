@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include <string>
 #include <vector>
@@ -14,6 +15,13 @@ namespace xbrlcapi
 		* @return the signature given the resource content.
 		*/
 		std::string getSignature(std::vector<std::string> lines);
+		Signer& operator=(const Signer& rhs) // = default;
+		{
+			return *this;
+		}
 
+
+	private:
+		Logger logger;
 	};
 }

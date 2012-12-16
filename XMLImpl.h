@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include <string>
 #include "XML.h"
@@ -14,7 +15,6 @@ namespace xbrlcapi
 		*/
 	private:
 
-		// protected final static Logger logger = Logger.getLogger(XMLImpl.class);  
 
 		XMLImpl();
 
@@ -200,5 +200,8 @@ namespace xbrlcapi
 	private:
 		//		void readObject(ObjectInputStream in);
 
-	};
+	private:
+
+Logger logger;
+};
 }

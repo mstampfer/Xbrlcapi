@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 #include "MixedContentResource.h"
 namespace xbrlcapi
@@ -12,5 +13,7 @@ namespace xbrlcapi
 
 struct FootnoteResource : public MixedContentResource {
 
+private:
+Logger logger;
 };
 }

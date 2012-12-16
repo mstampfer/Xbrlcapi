@@ -78,9 +78,9 @@ namespace xbrlcapi
 		//* @see SchemaContentDeclaration#getTypeQName()
 		//*/
 		//std::string getTypeQName() {
-		//	if (! hasTypeReference()) throw new XBRLException(this.getIndex() + ": The schema content declaration does not have a named data type.");
+		//	if (! hasTypeReference()) throw XBRLException(this.getIndex() + ": The schema content declaration does not have a named data type.");
 		//	std::string qname = getDataRootElement().getAttribute("type");
-		//	if (qname.equals("") || (qname == null)) throw new XBRLException("The element declaration does not declare its XML Schema data type via a type attribute.");
+		//	if (qname.equals("") || (qname == null)) throw XBRLException("The element declaration does not declare its XML Schema data type via a type attribute.");
 		//	return qname;
 		//}
 
@@ -100,9 +100,9 @@ namespace xbrlcapi
 		//	if (this.hasTypeReference()) {
 		//		try {
 		//			result = (TypeDeclaration) getStore().getSchemaContent(this.getTypeNamespace(),this.getTypeLocalname());
-		//			if (result == null) throw new XBRLException("The type " + this.getTypeQName() + " is not declared in a schema contained in the data store.");
+		//			if (result == null) throw XBRLException("The type " + this.getTypeQName() + " is not declared in a schema contained in the data store.");
 		//		} catch (ClassCastException cce) {
-		//			throw new XBRLException("The XML Schema type declaration is  of the wrong fragment type.",cce);
+		//			throw XBRLException("The XML Schema type declaration is  of the wrong fragment type.",cce);
 		//		}
 		//	}
 		//	return result;
@@ -120,7 +120,7 @@ namespace xbrlcapi
 		//*/
 		//bool hasLocalType() {
 		//	long localTypes = getStore().queryCount(localTypeQuery());
-		//	if (localTypes > 1) throw new XBRLException("The Schema content declaration has too many local types.");
+		//	if (localTypes > 1) throw XBRLException("The Schema content declaration has too many local types.");
 		//	return (localTypes == 1);
 		//}
 
@@ -131,7 +131,7 @@ namespace xbrlcapi
 
 		//	List<TypeDeclaration> types = getStore().<TypeDeclaration>queryForXMLResources(localTypeQuery());
 		//	if (types.size() == 1) return types.get(0);
-		//	if (types.size() > 1) throw new XBRLException("There are too many local type declarations for this content declaration.");
+		//	if (types.size() > 1) throw XBRLException("There are too many local type declarations for this content declaration.");
 		//	return null;
 		//}    
 

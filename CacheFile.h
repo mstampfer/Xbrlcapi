@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #pragma once
+#include "Logger.h"
 #include "boost/filesystem/fstream.hpp"
 #include <string>
 #include <memory>
@@ -59,5 +60,7 @@ namespace xbrlcapi
 		{
 			return path;
 		}
-	};
+	private:
+Logger logger;
+};
 }

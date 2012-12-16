@@ -14,7 +14,7 @@ namespace xbrlcapi
 		//{
 		//	if (getType().equals(type)) return this;
 		//	Fragment parent = this.getParent();
-		//	if (parent == null) throw new XBRLException("No ancestor (or self) fragments match the given type: " + type);
+		//	if (parent == null) throw XBRLException("No ancestor (or self) fragments match the given type: " + type);
 		//	return parent.getAncestorOrSelf(type);
 		//}
 
@@ -85,8 +85,8 @@ namespace xbrlcapi
 		//{
 		//	std::vector<Fragment> children = getChildren(type);
 		//	if (children == null) return null;
-		//	if (index >= children.size()) throw new XBRLException("The index is too high.");
-		//	if (index < 0) throw new XBRLException("The index is too low.");
+		//	if (index >= children.size()) throw XBRLException("The index is too high.");
+		//	if (index < 0) throw XBRLException("The index is too low.");
 		//	return children.get(index);   
 		//}
 
@@ -106,7 +106,7 @@ namespace xbrlcapi
 		//	NodeList children = dataContainer.getChildNodes();
 		//	for (int i=0; i< children.getLength(); i++) 
 		//		if (children.item(i).getNodeType() == Node.ELEMENT_NODE) return (Element) children.item(i);
-		//	throw new XBRLException("The data element of the fragment could not be found.");
+		//	throw XBRLException("The data element of the fragment could not be found.");
 		//}
 
 		///**
@@ -126,7 +126,7 @@ namespace xbrlcapi
 		//	try {
 		//		return new URI(this.getMetaAttribute("uri"));
 		//	} catch (URISyntaxException e) {
-		//		throw new XBRLException(this.getMetaAttribute("uri") + " has an invalid URI syntax.");
+		//		throw XBRLException(this.getMetaAttribute("uri") + " has an invalid URI syntax.");
 		//	}
 		//}
 
@@ -212,7 +212,7 @@ namespace xbrlcapi
 		//{
 
 		//	if (languages == null || labelRoles == null || linkRoles == null) {
-		//		throw new XBRLException("Null parameters are not allowed.");
+		//		throw XBRLException("Null parameters are not allowed.");
 		//	}
 
 		//	std::vector<LabelResource> result;
@@ -426,7 +426,7 @@ namespace xbrlcapi
 		//{
 
 		//	Builder parentBuilder = parent.getBuilder();
-		//	if (parentBuilder == null) throw new XBRLException("This method is not usable after the fragment has been built.");
+		//	if (parentBuilder == null) throw XBRLException("This method is not usable after the fragment has been built.");
 		//	Element current = parentBuilder.getInsertionPoint();
 		//	Element next = (Element) current.getParentNode();
 		//	Stack<Integer> values = new Stack<Integer>();
@@ -498,7 +498,7 @@ namespace xbrlcapi
 		//std::string FragmentImpl::getNamespace()
 		//{
 		//	if (getDataRootElement() == null) {
-		//		throw new XBRLException("The XML fragment root node is null.");
+		//		throw XBRLException("The XML fragment root node is null.");
 		//	}
 		//	return getDataRootElement().getNamespaceURI();
 		//}
@@ -548,7 +548,7 @@ namespace xbrlcapi
 		//	// If we have an attribute - go straight to working with the parent element.
 		//	if (node.getNodeType() == Node.ATTRIBUTE_NODE) {
 		//		Node parent = node.getParentNode();
-		//		if (parent == null) throw new XBRLException("The attribute has no parent element so the namespace for " + qname + " cannot be determined.");
+		//		if (parent == null) throw XBRLException("The attribute has no parent element so the namespace for " + qname + " cannot be determined.");
 		//		return getNamespaceFromQName(qname, parent);
 		//	}
 
@@ -560,9 +560,9 @@ namespace xbrlcapi
 		//		if (elementNamespace != null) {
 		//			if (elementNamespace.equals(Constants.XBRLAPINamespace.toString()))
 		//			{
-		//				if (this.isRoot()) throw new XBRLException("No namespace is defined for QName " + qname);
+		//				if (this.isRoot()) throw XBRLException("No namespace is defined for QName " + qname);
 		//				Fragment parent = getParent();
-		//				if (parent == null) throw new XBRLException("A parent fragment is missing from the data store preventing QName resolution for " + qname);
+		//				if (parent == null) throw XBRLException("A parent fragment is missing from the data store preventing QName resolution for " + qname);
 		//				Element parentElement = getParentElement(parent.getDataRootElement());
 		//				return parent.getNamespaceFromQName(qname, parentElement);
 		//			}
@@ -610,7 +610,7 @@ namespace xbrlcapi
 
 		//	}
 
-		//	throw new XBRLException("An element or attribute node is expected.");
+		//	throw XBRLException("An element or attribute node is expected.");
 
 		//}
 
@@ -649,7 +649,7 @@ namespace xbrlcapi
 		//			}
 		//			Fragment parent = getParent();
 		//			if (parent == null) {
-		//				throw new XBRLException("A parent fragment is missing from the data store preventing language code identification.");
+		//				throw XBRLException("A parent fragment is missing from the data store preventing language code identification.");
 		//			}
 		//			Element parentElement = getParentElement(parent.getDataRootElement());
 		//			return parent.getLanguage(parentElement);
@@ -745,7 +745,7 @@ namespace xbrlcapi
 		//			j++;
 		//		}
 		//		if ((j==children.getLength()) && (elementsFound < elementOrder)) {
-		//			throw new XBRLException("The sequence to the parent element is incorrect.");
+		//			throw XBRLException("The sequence to the parent element is incorrect.");
 		//		}
 		//	}
 		//	return current;
@@ -783,10 +783,10 @@ namespace xbrlcapi
 		//std::string getElementSchemeXPointerExpression()
 		//{
 		//	NodeList nodes = getMetadataRootElement().getElementsByTagNameNS(Constants.XBRLAPINamespace.toString(),"xptr");
-		//	if (nodes.getLength() == 0) throw new XBRLException("The fragment is missing its element scheme XPointer expression.");
+		//	if (nodes.getLength() == 0) throw XBRLException("The fragment is missing its element scheme XPointer expression.");
 		//	Element xptrElement = (Element) nodes.item(0);
 		//	if (xptrElement.hasAttribute("value")) return xptrElement.getAttribute("value");
-		//	throw new XBRLException("An element-scheme XPointer expression is corrupted for this fragment.");        
+		//	throw XBRLException("An element-scheme XPointer expression is corrupted for this fragment.");        
 		//}
 
 		///**
@@ -798,6 +798,6 @@ namespace xbrlcapi
 		//	if (nodes.getLength() == 0) return null;
 		//	Element idElement = (Element) nodes.item(0);
 		//	if (idElement.hasAttribute("id")) return idElement.getAttribute("id");
-		//	throw new XBRLException("The shorthand ID for this fragment is missing.");
+		//	throw XBRLException("The shorthand ID for this fragment is missing.");
 		//}
 }

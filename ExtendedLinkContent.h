@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 //#include "ExtendedLink.h"
 #include "Xlink.h"
@@ -20,5 +21,7 @@ namespace xbrlcapi
 		*/
 		virtual ExtendedLink getExtendedLink();
 
-	};
+	private:
+Logger logger;
+};
 }

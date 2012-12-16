@@ -1,6 +1,7 @@
 
 #include "Stdafx.h"
 #pragma once
+#include "Logger.h"
 
 
 //#include "Instance.h"
@@ -69,5 +70,7 @@ namespace xbrlcapi
 		*/
 		virtual bool isNil();
 
-	};
+	private:
+Logger logger;
+};
 }
