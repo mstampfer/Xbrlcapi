@@ -2,18 +2,18 @@
 #include "Stdafx.h"
 #pragma once
 #include "Logger.h"
-	/**
-	* Event handler for the XLink processor,
-	* responsible for performing the user required responses
-	* to the XLink structures being processed by the XLink processor.
-	* The XLink handler is very similar in nature to the SAX content
-	* handler.  The XLink processor receives events from the SAX 
-	* parser that is parsing in the XLinks and then passes those events
-	* through to the nominated XLinkHandler, augmented with a range of
-	* state information relating to where abouts in an XLink structure
-	* the XLink event has been triggered from.
-	* @author Geoffrey Shuetrim (geoff@galexy.net)
-	*/
+/**
+* Event handler for the XLink processor,
+* responsible for performing the user required responses
+* to the XLink structures being processed by the XLink processor.
+* The XLink handler is very similar in nature to the SAX content
+* handler.  The XLink processor receives events from the SAX 
+* parser that is parsing in the XLinks and then passes those events
+* through to the nominated XLinkHandler, augmented with a range of
+* state information relating to where abouts in an XLink structure
+* the XLink event has been triggered from.
+* @author Geoffrey Shuetrim (geoff@galexy.net)
+*/
 namespace xbrlcapi
 {
 	class XLinkHandler //: Serializable 
@@ -293,8 +293,9 @@ namespace xbrlcapi
 		//public void warning( std::string namespaceURI,  std::string lName,  std::string qName,
 		//	Attributes attrs, std::string message) throws XLinkException;
 
+
 	private:
-Logger logger;
-};
+		Logger logger;
+	};
 }
 

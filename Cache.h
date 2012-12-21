@@ -21,20 +21,20 @@ namespace xbrlcapi
 	public:
 		Cache() : pimpl(new CacheImpl()) {}
 		Cache(CacheFile& cacheFile, const std::unordered_map<Poco::URI , Poco::URI>& uriMap) 
-					: pimpl(new CacheImpl(cacheFile, uriMap)) {}
+			: pimpl(new CacheImpl(cacheFile, uriMap)) {}
 		Cache(CacheFile& cacheFile) : pimpl(new CacheImpl(cacheFile)) {}
-		
+
 		Cache& operator=(Cache&& rhs)
 		{
 			swap(rhs);
 			return *this;
 		}
-		
+
 		Cache(Cache&& rhs)
 		{
 			swap(rhs);
 		}
-		
+
 		void swap(Cache& rhs)
 		{
 			if (pimpl)
@@ -64,12 +64,12 @@ namespace xbrlcapi
 		//public abstract bool isCacheURI(URI uri);
 
 		/**
-		 * TODO Modify to use the java.net.URIEncoder and java.net.URIDecoder classes.
-		 * Adds the resource at the original URI to the cache if it is not already cached.
-		 * @param uri The URI to be translated into a cache URI (if necessary).
-		 * @return the cache URI corresponding to the provided URI.
-		 * @throws XBRLException if the resource cannot be cached.
-		 */
+		* TODO Modify to use the java.net.URIEncoder and java.net.URIDecoder classes.
+		* Adds the resource at the original URI to the cache if it is not already cached.
+		* @param uri The URI to be translated into a cache URI (if necessary).
+		* @return the cache URI corresponding to the provided URI.
+		* @throws XBRLException if the resource cannot be cached.
+		*/
 		Poco::URI getCacheURI(const Poco::URI& uri)
 		{
 			return pimpl->getCacheURI(uri);
@@ -140,7 +140,7 @@ namespace xbrlcapi
 		//public abstract std::vector<URI> getAllUris(URI uri);
 
 
-	private:
+		private:
 Logger logger;
 };
 }

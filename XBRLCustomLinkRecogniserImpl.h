@@ -49,9 +49,8 @@ namespace xbrlcapi
 		//	const XMLCh* const schemaLocation = L"schemaLocation";
 		//	return attrs.getValue(schemaLocation);
 		//}
-
 	private:
-Logger logger;
-};
+		Logger logger;
+	};
 }
 

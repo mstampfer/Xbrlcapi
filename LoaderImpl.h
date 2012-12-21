@@ -274,7 +274,7 @@ namespace xbrlcapi
 		* @throws XBRLException if the loader cannot be instantiated.
 		*/
 		LoaderImpl(Store& store, XLinkProcessor& xlinkProcessor, EntityResolver& entityResolver,		
-			const std::vector<Poco::URI> uris);
+			std::vector<Poco::URI>& uris);
 
 		/**
 		* @see org.xbrlapi.loader.LoaderImpl#setCache(Cache)
@@ -467,7 +467,8 @@ namespace xbrlcapi
 		// potentially man parsers.  Start one as close to 2K (20
 		// times larger than normal) and see what happens...
 		static const int BIG_PRIME = 2039;
-	private:
+	
+private:
 Logger logger;
 };
 }

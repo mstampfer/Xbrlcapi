@@ -66,7 +66,8 @@ namespace xbrlcapi
 		*/
 		// virtual <F extends SchemaDeclaration> F getReferencedSchemaDeclaration();
 
-	private:
+	
+private:
 Logger logger;
 };
 }

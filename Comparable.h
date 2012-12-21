@@ -115,7 +115,7 @@ namespace xbrlcapi
 		*         from being compared to this object.
 		*/
 		int compareTo(T o);
-	private:
+		private:
 Logger logger;
 };
 }

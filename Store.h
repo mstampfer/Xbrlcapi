@@ -36,7 +36,7 @@ namespace xbrlcapi
 	class Relationship;
 	class RoleType;
 	class Schema;
-	struct Stub;
+	class Stub;
 	struct XML;
 	struct Fact;
 	struct Item;
@@ -108,10 +108,10 @@ namespace xbrlcapi
 		* This method must be synchronized.
 		* Throws XBRLException if the data store cannot be closed. 
 		*/
-		//		void close()
-		//		{
-		//			pimpl->close();
-		//		}
+				void close()
+				{
+					pimpl->close();
+				}
 		//
 		//		/**
 		//		* Store a fragment.
@@ -1701,25 +1701,25 @@ namespace xbrlcapi
 				* Only start loading if this function returns true.
 				* @throws XBRLException
 				*/
-				bool  requestLoadingRightsFor(LoaderImpl& loader, const Poco::URI& document)
+				bool  requestLoadingRightsFor(const Poco::URI& document, LoaderImpl& loader)
 				{
-					return pimpl->requestLoadingRightsFor(loader, document);
+					return pimpl->requestLoadingRightsFor(document, loader);
 				}
 		
-		//		/**
-		//		* Loaders need to call this method to indicate that they are recinding 
-		//		* responsibility for loading the document.
-		//		* This can be used to prevent the same document from being loaded by several
-		//		* loaders operating in parallel.
-		//		* @param loader The loader recinding loading rights.
-		//		* @param document The URI of the document whose loading rights are being recinded.
-		//		* @link Store#loadingAboutToStart(URI)
-		//		*/
-		//		void recindLoadingRightsFor(const Loader& loader, const Poco::URI& document)
-		//		{
-		//			pimpl->recindLoadingRightsFor(loader, document);
-		//		}
-		//
+				/**
+				* Loaders need to call this method to indicate that they are recinding 
+				* responsibility for loading the document.
+				* This can be used to prevent the same document from being loaded by several
+				* loaders operating in parallel.
+				* @param loader The loader recinding loading rights.
+				* @param document The URI of the document whose loading rights are being recinded.
+				* @link Store#loadingAboutToStart(URI)
+				*/
+				void recindLoadingRightsFor(const Poco::URI& document, LoaderImpl& loader)
+				{
+					pimpl->recindLoadingRightsFor(document, loader);
+				}
+		
 				/**
 				* @param loader The loader that has started to use
 				* this store for data loading.

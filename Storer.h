@@ -126,7 +126,8 @@ struct Fragment;
 		*/
 		void deleteInactiveRelationships();
 
-	private:
+	
+private:
 Logger logger;
 };
 }

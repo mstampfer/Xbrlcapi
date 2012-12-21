@@ -30,12 +30,14 @@ namespace xbrlcapi
 {
 	struct XML;
 	class Loader;
+	class Stub;
 	class LoaderImpl;
+
 	class StoreImpl 
 	{
 
 	private:
-//		     xercesc::DOMImplementationRegistry domimplementationregistry;
+		    std::unique_ptr<xercesc::DOMImplementationLS>(domImplementationRegistry);
 			int loadingStatus;
 //			std::map<Poco::URI,Loader> loadingRights;
 
@@ -43,13 +45,13 @@ namespace xbrlcapi
 		    protected:
 			std::shared_ptr<xercesc::DOMDocument> storedom;
 		    std::shared_ptr<xercesc::DOMImplementationLS> domimplementation;
-	//    /**
-	//     * This property is used to co-ordinate the document
-	//     * loading activities of loaders that are operating in
-	//     * parallel on the one data store.  It is used to 
-	//     * prevent the same document from being simultaneously
-	//     * loaded by several of the loaders.
-	//     */
+	    /**
+	     * This property is used to co-ordinate the document
+	     * loading activities of loaders that are operating in
+	     * parallel on the one data store.  It is used to 
+	     * prevent the same document from being simultaneously
+	     * loaded by several of the loaders.
+	     */
 	//    transient private 
 			std::unordered_map<Poco::URI,std::shared_ptr<LoaderImpl>> loadingRights;		    	    
 		    /**
@@ -68,14 +70,15 @@ namespace xbrlcapi
 		void startLoading();		
 		void stopLoading();
 		std::vector<Poco::URI> getDocumentsToDiscover();
-		std::vector<Stub> getXMLResources(const std::string& interfaceName);
+		template<typename T>
+		std::vector<std::shared_ptr<T>> getXMLResources(const std::string& interfaceName);
 		std::string getId(const std::string& input);
-		bool requestLoadingRightsFor(LoaderImpl& loader, const Poco::URI& document);
-		void recindLoadingRightsFor(LoaderImpl& loader, const Poco::URI& document);
+		bool requestLoadingRightsFor(const Poco::URI& document, LoaderImpl& loader);
+		void recindLoadingRightsFor(const Poco::URI& document, LoaderImpl& loader);
 		std::unordered_set<Poco::URI> getFilteringURIs();
 		bool isFilteringByURIs();
 		std::string getURIFilteringPredicate();
-		std::vector<Stub> getStubs();
+		std::vector<std::shared_ptr<Stub>> getStubs();
 	private:
 		// The indexing specification of a container
 		//DbXml::XmlIndexSpecification xis;
@@ -152,8 +155,8 @@ namespace xbrlcapi
 	public:
 
 		StoreImpl(){}
-		StoreImpl(const StoreImpl& rhs);
-		StoreImpl& operator=(const StoreImpl& rhs);
+		StoreImpl(StoreImpl& rhs);
+		StoreImpl& operator=(StoreImpl& rhs);
 		virtual ~StoreImpl(){}
 
 		//	transient public 
@@ -255,8 +258,8 @@ namespace xbrlcapi
 		* @see org.xbrlapi.data.Store#queryForXMLResources(String)
 		*/
 		//synchronized 
-//		template <typename F>
-		std::vector<Stub> queryForXMLResources(std::string& query);
+		template <typename T>
+		std::vector<std::shared_ptr<T>> queryForXMLResources(std::string& query);
 
 		/**
 		* @see org.xbrlapi.data.Store#queryForIndices(String)
@@ -310,10 +313,8 @@ namespace xbrlcapi
 //		bool equals(Object obj);
 
 
-		std::string toString();
-
-		//bool requestLoadingRightsFor(LoaderImpl& loader, const Poco::URI& document);
-	private:
+		std::string toString();	
+private:
 Logger logger;
 };
 }

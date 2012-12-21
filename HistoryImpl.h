@@ -32,7 +32,8 @@ namespace xbrlcapi
 		*/
 		//bool equals(Object obj);
 
-	private:
+	
+private:
 Logger logger;
 };
 }

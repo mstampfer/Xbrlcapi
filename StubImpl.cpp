@@ -2,7 +2,9 @@
 #include "StubImpl.h"
 namespace xbrlcapi
 {
-
+	StubImpl::StubImpl()
+	{
+	}
 	/**
 	* @param id The unique id of the fragment being created,
 	* within the scope of the containing data store.

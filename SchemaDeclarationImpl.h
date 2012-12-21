@@ -55,7 +55,9 @@ public:
      * @see org.xbrlapi.SchemaDeclaration#getReferencedSchemaDeclaration()
      */  
     template<typename F> F getReferencedSchemaDeclaration();
-    private:
+    
+
+private:
 Logger logger;
 };
 }

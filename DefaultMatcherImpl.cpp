@@ -3,9 +3,17 @@
 
 namespace xbrlcapi
 {
-	DefaultMatcherImpl::DefaultMatcherImpl() {}
+	DefaultMatcherImpl::DefaultMatcherImpl()
+{}
 
-	DefaultMatcherImpl::DefaultMatcherImpl(const DefaultMatcherImpl& rhs) {}
+	DefaultMatcherImpl::DefaultMatcherImpl(const DefaultMatcherImpl& rhs)
+	{
+	}
+
+	DefaultMatcherImpl& DefaultMatcherImpl::operator=(const DefaultMatcherImpl& rhs)
+	{
+		return *this;
+	}
 
 	/**
 	* @see Matcher#setSigner(Signer)

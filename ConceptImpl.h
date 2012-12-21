@@ -74,7 +74,7 @@ namespace xbrlcapi
 		* @see Concept#isNumeric()
 		*/
 		bool isNumeric();
-	private:
+		private:
 Logger logger;
 };
 }

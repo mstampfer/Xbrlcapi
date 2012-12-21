@@ -30,7 +30,8 @@ namespace xbrlcapi
 	//{
 	//	List<Element> result = new Vector<Element>();
 	//	NodeList nodes = this.getDataRootElement().getElementsByTagNameNS(Constants.XMLSchemaNamespace.toString(),"annotation");
-	//	for (int i=0; i<nodes.getLength(); i++) {
+	//	for (int i=0; i<nodes.getLength(); i++)
+	//{
 	//		result.add((Element) nodes.item(i));
 	//	}
 	//	return result;
@@ -52,9 +53,11 @@ namespace xbrlcapi
 	//{
 	//	NamedNodeMap attributes = getDataRootElement().getAttributes();
 	//	LinkedList<Node> otherAttributes = new LinkedList<Node>();
-	//	for (int i=0; i<attributes.getLength(); i++) {
+	//	for (int i=0; i<attributes.getLength(); i++)
+	//{
 	//		std::string ns = attributes.item(i).getNamespaceURI();
-	//		if (! ns.equals(Constants.XMLSchemaNamespace.toString()) && ! ns.equals(Constants.XBRL21Namespace.toString())) {
+	//		if (! ns.equals(Constants.XMLSchemaNamespace.toString()) && ! ns.equals(Constants.XBRL21Namespace.toString()))
+	//{
 	//			otherAttributes.add(attributes.item(i));
 	//		}
 	//	}

@@ -24,8 +24,10 @@ namespace xbrlcapi
 
 		DefaultMatcherImpl(const DefaultMatcherImpl& rhs);
 
+		DefaultMatcherImpl& operator=(const DefaultMatcherImpl& rhs);
+
 		virtual ~DefaultMatcherImpl(){}
-		
+
 		/**
 		* @see Matcher#setSigner(Signer)
 		*/
@@ -69,7 +71,7 @@ namespace xbrlcapi
 		* @see java.lang.Object#equals(java.lang.Object)  override;
 		*/
 
-	private:
+		private:
 Logger logger;
 };
 }

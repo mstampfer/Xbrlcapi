@@ -2,6 +2,7 @@
 #include "Stdafx.h"
 #pragma once
 #include "Logger.h"
+#include <chrono>
 
 ///**
 // * Implementation of the data store using the Oracle 
@@ -24,55 +25,61 @@
 #include "FragmentFactory.h"
 #include "LoaderImpl.h"
 #include <dbxml/XmlException.hpp>
+#include "XBRLException.h"
+#include "XercesStrings.h"
+#include <xercesc/dom/DOMImplementationRegistry.hpp>
+#include <xercesc/dom/DOMException.hpp>
+#include <xercesc/dom/DOMLSException.hpp>
+#include "XmlInputStreamWrapper.hpp"
+#include <xercesc/framework/Wrapper4InputSource.hpp>
+#include "Stub.h"
 
 namespace xbrlcapi
 { 
 
-	StoreImpl::StoreImpl(const StoreImpl& rhs) 
+	StoreImpl::StoreImpl(StoreImpl& rhs) :	
+		cacheSize(rhs.cacheSize),
+		computerIdentity(rhs.computerIdentity),
+		containerName(rhs.containerName),
+		dataContainer(rhs.dataContainer),
+		dataManager(std::move(rhs.dataManager)),
+		domimplementation(rhs.domimplementation),
+		domImplementationRegistry(std::move(rhs.domImplementationRegistry)),
+		environment(std::move(rhs.environment)),
+		lastSync(rhs.lastSync),
+		loadingRights(rhs.loadingRights),
+		loadingStatus(rhs.loadingStatus),
+		locationName(rhs.locationName),
+		logger(std::move(rhs.logger)),
+		matcher(rhs.matcher),
+		namespaceBindings(rhs.namespaceBindings),
+		queryEvaluationType(rhs.queryEvaluationType),
+		storedom(rhs.storedom),
+		uris(rhs.uris)
 	{
-		DbXml::XmlManager* dm = new DbXml::XmlManager();
-		*dm = *rhs.dataManager; 
-		dataManager.reset(dm);
-
-		DbEnv* dbenv = new DbEnv(rhs.env_flags);
-		environment.reset(dbenv);
-
-		computerIdentity = rhs.computerIdentity;
-		containerName = rhs.containerName;
-		dataContainer = rhs.dataContainer;
-		domimplementation = rhs.domimplementation;
-		lastSync = rhs.lastSync;
-		//		rhs.loadingStatus;
-		locationName = rhs.locationName;
-		//matcher = rhs.matcher;
-		//		rhs.pimpl;
-		queryEvaluationType = rhs.queryEvaluationType;
-		storedom = rhs.storedom;
-		cacheSize = rhs.cacheSize;
 	}
-	StoreImpl& StoreImpl::operator=(const StoreImpl& rhs)
+	StoreImpl& StoreImpl::operator=(StoreImpl& rhs)
 	{
 		if (this != &rhs)
 		{
-			DbXml::XmlManager* dm = new DbXml::XmlManager();
-			*dm = *rhs.dataManager; 
-			dataManager.reset(dm);
-
-			DbEnv* dbenv = new DbEnv(rhs.env_flags);
-			environment.reset(dbenv);
-
+			cacheSize = rhs.cacheSize;
 			computerIdentity = rhs.computerIdentity;
 			containerName = rhs.containerName;
 			dataContainer = rhs.dataContainer;
+			dataManager = std::move(rhs.dataManager);
 			domimplementation = rhs.domimplementation;
+			domImplementationRegistry = std::move(rhs.domImplementationRegistry);
+			environment = std::move(rhs.environment);
 			lastSync = rhs.lastSync;
-			//		rhs.loadingStatus;
+			loadingRights = rhs.loadingRights;
+			loadingStatus = rhs.loadingStatus;
 			locationName = rhs.locationName;
-			//matcher = rhs.matcher;
-			//		rhs.pimpl;
+			//			logger = rhs.logger;
+			matcher = rhs.matcher;
+			namespaceBindings = rhs.namespaceBindings;
 			queryEvaluationType = rhs.queryEvaluationType;
 			storedom = rhs.storedom;
-			cacheSize = rhs.cacheSize;
+			uris = rhs.uris;
 		}
 		return *this;
 	}
@@ -119,18 +126,11 @@ namespace xbrlcapi
 
 		computerIdentity = getComputerName();
 
-		if (location != "") locationName = location;
-		//			else throw XBRLException("The Berkeley DB XML database location must be specified.");
+		if (!location.empty() && location != "") locationName = location;
+		else throw XBRLException("The Berkeley DB XML database location must be specified.");
 
-		if (container != "")  containerName = container;
-		//			else throw XBRLException("The Berkeley DB XML database container must be specified.");
-
-		//			try {
-		//			DbXml::XmlManager.setLogLevel(DbXml::XmlManager.LEVEL_ALL, false);
-		//			DbXml::XmlManager.setLogCategory(DbXml::XmlManager.CATEGORY_ALL, false);     
-		//			} catch (...) {
-		//			throw XBRLException("The BDB XML log levels could not be initialised.", e);
-		//			}
+		if (!container.empty() && container != "")  containerName = container;
+		else throw XBRLException("The Berkeley DB XML database container must be specified.");
 
 		initContainer();
 
@@ -149,8 +149,7 @@ namespace xbrlcapi
 			std::string uri, name, index;		         
 			while(xis.next(uri,name,index)) 
 			{
-				//		                logger.info("For node '" + idxDecl.uri + ":" + idxDecl.name + "', found index: '" + idxDecl.index + "'.");
-				std::cout << "For node '" + uri + ":" + name + "', found index: '" + index + "'." << std::endl;
+				logger.root.debug("For node '" + uri + ":" + name + "', found index: '" + index + "'.");
 				count ++;
 			}
 			std::cout << count;
@@ -181,27 +180,27 @@ namespace xbrlcapi
 	*/
 	void StoreImpl::initEnvironment() 
 	{
-		//	try {								
+		try {								
 
-		environment.reset(new DbEnv(env_flags));
-		int dberr = environment->set_cachesize(0, this->cacheSize, 0);
-		if (dberr)
+			environment.reset(new DbEnv(env_flags));
+			int dberr = environment->set_cachesize(0, this->cacheSize, 0);
+			if (dberr)
+			{
+				environment->close(0);
+				//return (EXIT_FAILURE); //TODO
+			}
+
+			int nwrotep = 0;
+			environment->set_error_stream(&std::cerr);
+			environment->open(locationName.c_str(), env_flags, 0);
+			environment->memp_trickle(20,&nwrotep); // ensure that 20% of cache is free
+
+			logger.root.debug("Initialised the environment.");
+		} 
+		catch (...) 
 		{
-			environment->close(0);
-			//return (EXIT_FAILURE);
-		}
-
-		environment->set_error_stream(&std::cerr);
-
-		environment->open(locationName.c_str(), env_flags, 0);
-		//environment->memp_trickle(20); // ensure that 20% of cache is free
-
-		//    logger.debug("Initialised the environment.");
-		//} catch (FileNotFoundException e) {
-		//    throw XBRLException("The physical location of the BDB XML database could not be found.", e);
-		//} catch (DatabaseException e) {
-		//    throw XBRLException("The BDB XML database environment could not be set up.", e);
-		//}	    
+			throw XBRLException("The BDB XML database environment could not be set up.");
+		}	    
 	}
 
 	/**
@@ -211,15 +210,14 @@ namespace xbrlcapi
 	void StoreImpl::initManager() 
 	{
 		if (environment == nullptr) initEnvironment();
-		//      try {
-		dataManager.reset(new DbXml::XmlManager(environment->get_DB_ENV(), DbXml::DBXML_ADOPT_DBENV |
-			DbXml::DBXML_ALLOW_EXTERNAL_ACCESS |
-			DbXml::DBXML_ALLOW_AUTO_OPEN));
-		//			);
-		/*           logger.debug("Initialised the data manager.");
-		} catch (XmlException e) {
-		throw XBRLException("The Berkeley XML database manager could not be set up.", e);
-		}	    */
+		try {
+			dataManager.reset(new DbXml::XmlManager(environment->get_DB_ENV(), DbXml::DBXML_ADOPT_DBENV |
+				DbXml::DBXML_ALLOW_EXTERNAL_ACCESS |
+				DbXml::DBXML_ALLOW_AUTO_OPEN));
+			logger.root.debug("Initialised the data manager.");
+		} catch (DbXml::XmlException e) {
+			throw XBRLException("The Berkeley XML database manager could not be set up.", e);
+		}	    
 	}
 
 	/**
@@ -229,29 +227,35 @@ namespace xbrlcapi
 	void StoreImpl::initContainer() 
 	{
 		if (dataManager == nullptr) initManager();
-		//        try {
-		if (dataManager->existsContainer(containerName) != 0) {
-			dataContainer = dataManager->openContainer(containerName);
-		} else {
-			createContainer();
+		try {
+			if (dataManager->existsContainer(containerName) != 0) {
+				dataContainer = dataManager->openContainer(containerName);
+			} else {
+				createContainer();
+			}
+			logger.root.debug("Initialised the data container.");
+		} 
+		catch (const DbXml::XmlException& e) 
+		{
+			throw XBRLException("The database container, " + containerName + ", could not be opened.");
 		}
-		//            logger.debug("Initialised the data container.");
-		//        } catch (XmlException e) {
-		//            throw XBRLException("The database container, " + containerName + ", could not be opened.");
-		//        }
 	}
 
 	void StoreImpl::createContainer()
 	{
 		if (dataManager == nullptr) initManager();
-		//try {
-		DbXml::XmlContainerConfig config;
-		config.setStatistics(DbXml::XmlContainerConfig::On);
-		dataContainer = dataManager->createContainer(containerName,config);
+		try 
+		{
+			DbXml::XmlContainerConfig config;
+			config.setStatistics(DbXml::XmlContainerConfig::On);
+			dataContainer = dataManager->createContainer(containerName,config);
 
-		//} catch (XmlException e) {
-		//    throw XBRLException("The data container could not be created.", e);
-		//} 
+		} 
+		catch (const DbXml::XmlException& e) 
+		{
+			logger.root.error("The data container could not be created.", e.getQueryFile());
+			throw;
+		} 
 
 		DbXml::XmlIndexSpecification xmlIndexSpecification;
 		DbXml::XmlUpdateContext xmlUpdateContext;
@@ -369,26 +373,17 @@ namespace xbrlcapi
 	//synchronized 
 	void StoreImpl::close()
 	{
-		//	    super.close();
-		//	    closeContainer();
-		//	    closeManager();
+		closeContainer();
 	}
 	//	
 	//
 	//	
 	void StoreImpl::closeContainer()
 	{
-		//        if (dataContainer == null) return;
-		//	    if (dataManager == null) initManager();
-		//        dataContainer.delete();
-		//        dataContainer = null;
+		//     if (dataContainer == NULL) return;
+		//dataContainer.delete();
+		dataContainer = NULL;
 	}
-	//	
-	void StoreImpl::closeManager()
-	{
-		//        if (dataManager == null) return;
-		//        dataManager.delete();
-	}	
 	//	
 	void deleteContainer()
 	{
@@ -450,13 +445,13 @@ namespace xbrlcapi
 	//synchronized 
 	bool StoreImpl::hasXMLResource(const std::string& index)
 	{
-		
-			    try {
-			        dataContainer.getDocument(index);
-					return true;
-		        } catch (DbXml::XmlException e) {
-		            return false;
-		        }
+
+		try {
+			dataContainer.getDocument(index);
+			return true;
+		} catch (DbXml::XmlException e) {
+			return false;
+		}
 		return false;
 	}
 
@@ -506,45 +501,58 @@ namespace xbrlcapi
 	* @see org.xbrlapi.data.Store#queryForXMLResources(String)
 	*/
 	//synchronized 
-	//	template <typename F>
-	std::vector<Stub> StoreImpl::queryForXMLResources(std::string& query) 
+	template <typename T>
+	std::vector<std::shared_ptr<T>> StoreImpl::queryForXMLResources(std::string& query) 
 	{
 
 		DbXml::XmlResults xmlResults;
-		//try {
 
-		//try {
-		xmlResults = runQuery(query);
+		try {
+			xmlResults = runQuery(query);
+			std::chrono::time_point<std::chrono::system_clock> start, end;
+			start = std::chrono::system_clock::now();
 
-		//	double startTime = System.currentTimeMillis();
-
-		DbXml::XmlValue xmlValue; 
-		xmlResults.next(xmlValue);
-		std::vector<Stub> fragments;
-		while (xmlValue) 
-		{
-			DbXml::XmlDocument doc = xmlValue.asDocument();
-			xercesc::DOMLSParser* builder = domimplementation->createLSParser(
-				xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, NULL);
-			//xercesc::DOMDocument* document = builder->parse(doc.getContentAsXmlInputStream());
-			//xercesc::DOMElement* root = document->getDocumentElement();
-			//fragments.push_back(FragmentFactory::newFragment(this, root));
+			DbXml::XmlValue xmlValue; 
 			xmlResults.next(xmlValue);
+			std::vector<std::shared_ptr<T>> fragments;
+			while (xmlValue) 
+			{
+				DbXml::XmlDocument XmlDoc = xmlValue.asDocument();
+
+				xercesc::DOMLSParser* builder = domimplementation->createLSParser(
+					xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, NULL);
+
+				DbXml::XmlInputStream* inputStream =  XmlDoc.getContentAsXmlInputStream();
+				DbXml::XmlInputStreamWrapper inputSource(&inputStream);
+				xercesc::Wrapper4InputSource LSInputSource(&inputSource);
+
+				xercesc::DOMDocument* document = builder->parse(&LSInputSource);					
+				xercesc::DOMElement* root = document->getDocumentElement();
+
+				std::shared_ptr<T> frag = std::make_shared<T>();//FragmentFactory::newFragment<T>(*this, *root);
+				fragments.push_back(frag);
+				xmlResults.next(xmlValue);
+			}
+
+			end = std::chrono::system_clock::now();
+			long long duration = std::chrono::duration_cast<std::chrono::seconds>(end-start).count();
+			logger.root.debug(std::to_string(duration) + " milliseconds to create fragment list from" + query);
+
+			return fragments;
+
+		} 
+		catch (xercesc::DOMLSException e) 
+		{
+			throw XBRLException("Failed query: Parser busy" + query,xerces_util::toNative(e.getMessage()));
 		}
-
-		//	Double time = new Double((System.currentTimeMillis()-startTime));
-		//       logger.debug(time + " milliseconds to create fragment list from" + query);
-		return fragments;
-
-		//} catch (XmlException e) {
-		//	throw XBRLException("Failed query: " + query,e);
-		//}
-
+		catch (xercesc::DOMException e) 
+		{
+			throw XBRLException("Failed query: Parser was unable to load the XML document" + query,xerces_util::toNative(e.getMessage()));
+		}
 		//} finally {
-		if (xmlResults != nullptr) delete xmlResults;
+		//if (xmlResults != nullptr) delete xmlResults; //TODO
 		//}
 	}
-
 	/**
 	* @see org.xbrlapi.data.Store#queryForIndices(String)
 	*/
@@ -585,12 +593,15 @@ namespace xbrlcapi
 	bool StoreImpl::hasDocument(const Poco::URI& uri) 
 	{
 		Poco::URI matchURI;
-		//		        try {
-		matchURI = getMatcher().getMatch(uri);
-		//		        } catch (XBRLException e) {
-		//		            logger.warn(uri + " could not be matched. " + e.getMessage());
-		//		            matchURI = uri;
-		//		        }
+		try 
+		{
+			matchURI = getMatcher().getMatch(uri);
+		} 
+		catch (XBRLException e) 
+		{
+			logger.root.warn(uri.toString() + " could not be matched. " + e.getMessage());
+			matchURI = uri;
+		}
 		std::string query = "for $root in #roots# where $root/@uri='" + matchURI.toString() + "' and $root/@parentIndex='' return string($root/@index)";
 		std::unordered_set<std::string> rootIndices =  queryForStrings(query);
 		if (rootIndices.size() == 1) return true;
@@ -1004,7 +1015,7 @@ namespace xbrlcapi
 	//        }
 	//
 	//         std::string documentId = getId(uri.toString() + "_stub");
-	//        Stub stub = new StubImpl(documentId,uri,reason);
+	//        Stub stub = new Stub(documentId,uri,reason);
 	//        persist(stub);
 	//    }
 	//    
@@ -1493,11 +1504,10 @@ namespace xbrlcapi
 	/**
 	* @see org.xbrlapi.data.Store#getStubs()
 	*/
-	std::vector<Stub> StoreImpl::getStubs() 
+	std::vector<std::shared_ptr<Stub>> StoreImpl::getStubs() 
 	{
-		std::vector<Stub> stubs = getXMLResources("Stub");
+		std::vector<std::shared_ptr<Stub>> stubs = getXMLResources<Stub>("Stub");
 		return stubs;
-		return std::vector<Stub>();
 	}
 	//    
 	//    /**
@@ -1527,10 +1537,10 @@ namespace xbrlcapi
 	//synchronized 
 	std::vector<Poco::URI> StoreImpl::getDocumentsToDiscover() 
 	{
-		std::vector<Stub> stubs = getStubs();
+		std::vector<std::shared_ptr<Stub>> stubs = getStubs();
 		std::vector<Poco::URI> v;
-		for (Stub& stub : stubs) {
-			v.push_back(stub.getResourceURI());
+		for (auto stub : stubs) {
+			v.push_back(stub->getResourceURI());
 		}
 		return v;
 	}
@@ -1590,14 +1600,14 @@ namespace xbrlcapi
 	/**
 	* @see org.xbrlapi.data.Store#getXMLResources(String)
 	*/
-	std::vector<Stub> StoreImpl::getXMLResources(const std::string& interfaceName) 
+	template <typename T>
+	std::vector<std::shared_ptr<T>> StoreImpl::getXMLResources(const std::string& interfaceName) 
 	{
 		std::string query = "for $root in #roots# where $root/@type='org.xbrlapi.impl." + interfaceName + "Impl' return $root";
 		if (interfaceName.find(".") > -1) {
 			query = "for $root in #roots# where $root/@type='" + interfaceName + "' return $root";
 		}
-		return queryForXMLResources(query);
-		return std::vector<Stub>();
+		return queryForXMLResources<T>(query);
 	}
 	//    
 	//    /**
@@ -2862,32 +2872,31 @@ namespace xbrlcapi
 	//     */
 	//    transient private int loadingStatus = 0;
 	//    
-	//    /**
-	//     * This property is used to co-ordinate the document
-	//     * loading activities of loaders that are operating in
-	//     * parallel on the one data store.  It is used to 
-	//     * prevent the same document from being simultaneously
-	//     * loaded by several of the loaders.
-	//     */
-	//    transient private HashMap<URI,LoaderImpl> loadingRights = new HashMap<URI,LoaderImpl>();
-	//    
+	/**
+	* This property is used to co-ordinate the document
+	* loading activities of loaders that are operating in
+	* parallel on the one data store.  It is used to 
+	* prevent the same document from being simultaneously
+	* loaded by several of the loaders.
+	*/	 
 	/**
 	* @see Store#requestLoadingRightsFor(LoaderImpl, URI)
 	*/
 	//public synchronized 
-	bool StoreImpl::requestLoadingRightsFor(LoaderImpl& loader, const Poco::URI& document) 
+	bool StoreImpl::requestLoadingRightsFor(const Poco::URI& document, LoaderImpl& loader) 
 	{
-		// if (document == null) throw XBRLException("Cannot start loading a document with a null URI");
 		if (loadingRights.find(document) == loadingRights.end()) 
 		{
-			//   loadingRights.insert(std::make_pair(document,loader));
+//TODO			loadingRights.insert(std::make_pair(document, std::make_shared<LoaderImpl>(&loader)));
 			return true;
 		}
-		if (*loadingRights[document] == loader) 
+
+		if (*loadingRights[document].get() == loader) 
 		{
 			return true;
 		}
-		//logger.debug("Two loaders have been seeking loading rights for " + document);
+
+		logger.root.debug("Two loaders have been seeking loading rights for " + document.toString());
 		return false;
 	}
 
@@ -2895,11 +2904,10 @@ namespace xbrlcapi
 	* @see Store#recindLoadingRightsFor(LoaderImpl, URI)
 	*/
 	//synchronized 
-	void StoreImpl::recindLoadingRightsFor(LoaderImpl& loader, const Poco::URI& document) 
+	void StoreImpl::recindLoadingRightsFor(const Poco::URI& document, LoaderImpl& loader) 
 	{
-		if (document == NULL) return;
-		//	        if (loadingRights.find(document) == loadingRights.end()) return;
-		//	        if (loadingRights[document] == loader) loadingRights.erase(document); //TODO
+		if (loadingRights.find(document) == loadingRights.end()) return;
+		if (*loadingRights[document].get() == loader) loadingRights.erase(document); 
 	}
 	//    
 	//    protected void finalize() throws Throwable {

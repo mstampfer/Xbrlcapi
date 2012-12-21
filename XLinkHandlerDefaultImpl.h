@@ -192,8 +192,9 @@ namespace xbrlcapi
 		//		return true;
 		//}
 
+
 	private:
-Logger logger;
-};
+		Logger logger;
+	};
 }
 

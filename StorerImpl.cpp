@@ -27,10 +27,10 @@ namespace xbrlcapi
 	* to be persisted.
 	* @throws XBRLException if the data store is null.
 	*/
-	void StorerImpl::setStore(Store& store)
+	void StorerImpl::setStore(Store& s)
 	{
 //		if (store == null) throw; // new XBRLException("The store must not be null.");
-		this->store = store;
+		store = s;
 	}
 
 	///**
@@ -40,7 +40,8 @@ namespace xbrlcapi
 	//{
 	//	try {
 	//		getStore().persist(relationship);
-	//	} catch (XBRLException e) {
+	//	}catch (XBRLException e)
+	//{
 	//		 std::string arcIndex = relationship.getArcIndex();
 	//		URI document = relationship.getArc().getURI();
 	//		logger.error("Had problems persisting relationships for arc " + arcIndex);
@@ -56,7 +57,9 @@ namespace xbrlcapi
 	//	try {
 	//		Relationship relationship = new RelationshipImpl(arc, source, target);
 	//		if (! getStore().hasXMLResource(relationship.getIndex())) getStore().persist(relationship);
-	//	} catch (XBRLException e) {
+	//	}
+	//catch (XBRLException e)
+	//{
 	//		 std::string arcIndex = arc.getIndex();
 	//		URI document = arc.getURI();
 	//		logger.error("Had problems persisting relationships for arc " + arcIndex);
@@ -70,7 +73,8 @@ namespace xbrlcapi
 	//*/
 	//void StorerImpl::storeRelationships(Network network)
 	//{
-	//	for (const Relationship& relationship: network.getAllRelationships()) {            
+	//	for (const Relationship& relationship: network.getAllRelationships())
+	//{            
 	//		storeRelationship(relationship);
 	//	}
 	//}
@@ -80,7 +84,8 @@ namespace xbrlcapi
 	//*/
 	//void StorerImpl::storeRelationships(Networks networks)
 	//{
-	//	for (Network network: networks) {
+	//	for (Network network: networks)
+	//{
 	//		storeRelationships(network);
 	//	}
 	//}
@@ -100,7 +105,8 @@ namespace xbrlcapi
 	//{
 	//	Store store = getStore();
 	//	Set<String> indices = store.queryForIndices("#roots#[@type='org.xbrlapi.impl.RelationshipImpl' and @arcRole='"+arcrole+"' and @linkRole='"+linkRole+"']");
-	//	for ( std::string index: indices) {
+	//	for ( std::string index: indices)
+	//{
 	//		store.remove(index);
 	//	}
 	//}
@@ -112,7 +118,8 @@ namespace xbrlcapi
 	//{
 	//	Store store = getStore();
 	//	Set<String> indices = store.queryForIndices("#roots#[@type='org.xbrlapi.impl.RelationshipImpl' and @arcURI='"+document+"']");
-	//	for ( std::string index: indices) {
+	//	for ( std::string index: indices)
+	//{
 	//		store.remove(index);
 	//	}
 	//}
@@ -124,7 +131,8 @@ namespace xbrlcapi
 	//{
 	//	Store store = getStore();
 	//	Set<String> indices = store.queryForIndices("#roots#[@type='org.xbrlapi.impl.RelationshipImpl']");
-	//	for ( std::string index: indices) {
+	//	for ( std::string index: indices)
+	//{
 	//		store.remove(index);
 	//	}
 	//}
@@ -134,7 +142,8 @@ namespace xbrlcapi
 	//*/
 	//void StorerImpl::storeRelationships(Collection<URI> documents)
 	//{
-	//	for (URI document: documents) {
+	//	for (URI document: documents)
+	//{
 	//		storeRelationships(document);
 	//		this.getStore().sync();
 	//	}
@@ -153,18 +162,21 @@ namespace xbrlcapi
 	//		// Get indices of all arcs in the document.
 	//		Set<String> arcIndices = store.getFragmentIndicesFromDocument(document,"Arc");
 
-	//		if (arcIndices.size() > 0) {
+	//		if (arcIndices.size() > 0)
+	//{
 	//			logger.info("Persisting relationships for " + arcIndices.size() + " arcs in " + document);
 
 	//			// Get indices of arc ends in the document.
 	//			Map<String,List<String>> endIndices = new HashMap<String,List<String>>();
 	//			 std::string query = "for $fragment in #roots#[@uri='" + document + "' and */*[@xlink:type='resource' or @xlink:type='locator']] return concat($fragment/@index,' ',$fragment/@parentIndex,$fragment/*/*/@xlink:label)";
 	//			Set<String> pairs = getStore().queryForStrings(query);
-	//			for ( std::string pair: pairs) {
+	//			for ( std::string pair: pairs)
+	//{
 	//				int split = pair.indexOf(" ");
 	//				 std::string index = pair.substring(0,split);
 	//				 std::string parentIndexPlusLabel = pair.substring(split+1);
-	//				if (endIndices.containsKey(parentIndexPlusLabel)) {
+	//				if (endIndices.containsKey(parentIndexPlusLabel))
+	//{
 	//					endIndices.get(parentIndexPlusLabel).add(index);
 	//				} else {
 	//					List<String> list = new Vector<String>();
@@ -178,7 +190,8 @@ namespace xbrlcapi
 	//			//query = "for $locator in #roots#[@uri='" + document + "' and */*/@xlink:type='locator'] return concat($locator/@index,' ',#roots#[@uri=$locator/@targetDocumentURI and xbrlapi:xptr/@value=$locator/@targetPointerValue]/@index)";
 	//			query = "for $locator in #roots#[@uri='" + document + "' and xbrlapi:data/*/@xlink:type='locator'], $target in #roots# let $uri := $locator/@targetDocumentURI let $pointer := $locator/@targetPointerValue where $target/@uri=$uri and $target/xbrlapi:xptr/@value=$pointer return concat($locator/@index,' ',$target/@index)";                
 	//			pairs = getStore().queryForStrings(query);
-	//			for ( std::string pair: pairs) {
+	//			for ( std::string pair: pairs)
+	//{
 	//				int split = pair.indexOf(" ");
 	//				 std::string locatorIndex = pair.substring(0,split);
 	//				 std::string targetIndex = pair.substring(split+1);
@@ -186,40 +199,51 @@ namespace xbrlcapi
 	//			}
 
 	//			// Iterate arcs, storing relationships defined by each
-	//			for ( std::string arcIndex: arcIndices) {
+	//			for ( std::string arcIndex: arcIndices)
+	//{
 	//				Arc arc = getStore().<Arc>getXMLResource(arcIndex);
 	//				 std::string parentIndex = arc.getParentIndex();
 	//				 std::string fromKey = parentIndex + arc.getFrom();
 	//				 std::string toKey = parentIndex + arc.getTo();
-	//				if (endIndices.containsKey(fromKey) && endIndices.containsKey(toKey)) {
-	//					for ( std::string sourceIndex: endIndices.get(fromKey)) {
-	//						for ( std::string targetIndex: endIndices.get(toKey)) {
+	//				if (endIndices.containsKey(fromKey) && endIndices.containsKey(toKey))
+	//{
+	//					for ( std::string sourceIndex: endIndices.get(fromKey))
+	//{
+	//						for ( std::string targetIndex: endIndices.get(toKey))
+	//{
 	//							try {
 	//								boolean storeThisRelationship = true;
 	//								Fragment source = null;
-	//								if (locatorTargets.containsKey(sourceIndex)) {
+	//								if (locatorTargets.containsKey(sourceIndex))
+	//{
 	//									source = store.getXMLResource(locatorTargets.get(sourceIndex));
 	//								} else {
 	//									source = store.getXMLResource(sourceIndex);
-	//									if (source.isa(LocatorImpl.class)) {
+	//									if (source.isa(LocatorImpl.class))
+	//{
 	//										storeThisRelationship = false;
 	//										store.persist(new ErrorImpl(getStore().getId(document.toString() + "_error"), document,"Locator " + sourceIndex + " does not reference an external resource.  Check its href attribute."));
 	//									}
 	//								}
 	//								Fragment target = null;
-	//								if (locatorTargets.containsKey(targetIndex)) {
+	//								if (locatorTargets.containsKey(targetIndex))
+	//{
 	//									target = store.getXMLResource(locatorTargets.get(targetIndex));
 	//								} else {
 	//									target = store.getXMLResource(targetIndex);
-	//									if (target.isa(LocatorImpl.class)) {
+	//									if (target.isa(LocatorImpl.class))
+	//{
 	//										storeThisRelationship = false;
 	//										store.persist(new ErrorImpl(getStore().getId(document.toString() + "_error"), document,"Locator " + targetIndex + " does not reference an external resource.  Check its href attribute."));
 	//									}
 	//								}
-	//								if (storeThisRelationship) {
+	//								if (storeThisRelationship)
+	//{
 	//									this.storeRelationship(arc,source,target);
 	//								}
-	//							} catch (XBRLException e) {
+	//							}
+	//catch (XBRLException e)
+	//{
 	//								logger.error("Had problems persisting relationships for arc " + arcIndex);
 	//								store.persist(new ErrorImpl(getStore().getId(document.toString() + arcIndex + "_error"), document,arcIndex,"Relationship persistence failed because of trouble finding sources/targets."));
 	//							}
@@ -228,7 +252,9 @@ namespace xbrlcapi
 	//				}
 	//			}
 	//		}
-	//	} catch (XBRLException e) {
+	//	}
+	//catch (XBRLException e)
+	//{
 	//		logger.error("Had problems persisting relationships for " + document);
 	//		e.printStackTrace();
 	//		store.persist(new ErrorImpl(getStore().getId(document.toString() + "_error"), document,"Relationship persistence failed."));
@@ -250,8 +276,10 @@ namespace xbrlcapi
 	//	try {
 	//		List<ArcEnd> sources = arc.getSourceFragments();
 	//		List<ArcEnd> targets = arc.getTargetFragments();
-	//		for (ArcEnd source: sources) {
-	//			for (ArcEnd target: targets) {
+	//		for (ArcEnd source: sources)
+	//{
+	//			for (ArcEnd target: targets)
+	//{
 	//				Fragment s = source;
 	//				Fragment t = target;
 	//				if (source.getType().equals("org.xbrlapi.impl.LocatorImpl")) s = ((Locator) source).getTarget();
@@ -262,7 +290,9 @@ namespace xbrlcapi
 
 	//		logger.debug("" + (System.currentTimeMillis() - start) + " ms to store relationships for arc " + arc.getIndex());
 
-	//	} catch (XBRLException e) {
+	//	}
+	//catch (XBRLException e)
+	//{
 	//		logger.error("The relationship expressed by arc " + arc.getIndex() + " could not be persisted. " + e.getMessage());
 	//	}
 
@@ -279,9 +309,11 @@ namespace xbrlcapi
 	//	Analyser analyser = new AnalyserImpl(getStore());
 
 	//	Set<String> arcroles = analyser.getArcroles();
-	//	for ( std::string arcrole: arcroles) {
+	//	for ( std::string arcrole: arcroles)
+	//{
 	//		Set<String> linkRoles = analyser.getLinkRoles(arcrole);
-	//		for ( std::string linkRole: linkRoles) {
+	//		for ( std::string linkRole: linkRoles)
+	//{
 	//			this.deleteInactiveRelationships(linkRole,arcrole);
 	//		}
 	//	}
@@ -299,16 +331,21 @@ namespace xbrlcapi
 	//	 std::string query = "#roots#[@linkRole='"+linkRole+"' and @arcRole='"+arcrole+"']/@sourceIndex";
 	//	Set<String> sourceIndices = getStore().queryForStrings(query);
 	//	logger.info("# sources = " + sourceIndices.size());
-	//	for ( std::string sourceIndex: sourceIndices) {
+	//	for ( std::string sourceIndex: sourceIndices)
+	//{
 	//		query = "#roots#[@linkRole='"+linkRole+"' and @arcRole='"+arcrole+"' and @sourceIndex='"+sourceIndex+"']/@targetIndex";
 	//		Set<String> targetIndices = getStore().queryForStrings(query);
-	//		for ( std::string targetIndex: targetIndices) {
+	//		for ( std::string targetIndex: targetIndices)
+	//{
 	//			Map<String,SortedSet<Relationship>> map = getEquivalentRelationships(linkRole,arcrole,sourceIndex,targetIndex);
-	//			for ( std::string key: map.keySet()) {
+	//			for ( std::string key: map.keySet())
+	//{
 	//				SortedSet<Relationship> equivalents = map.get(key);
 	//				Relationship active = equivalents.first();
-	//				for (const Relationship& equivalent: equivalents) {
-	//					if (equivalent != active) {
+	//				for (const Relationship& equivalent: equivalents)
+	//{
+	//					if (equivalent != active)
+	//{
 	//						logger.info("removing " + equivalent.getArc().getURI() + " " + equivalent.getIndex());
 	//					}
 	//				}
@@ -330,12 +367,15 @@ namespace xbrlcapi
 	//	 std::string query = "#roots#[@linkRole='"+linkRole+"' and @arcRole='"+arcrole+"']/@sourceIndex";
 	//	Set<String> sourceIndices = getStore().queryForStrings(query);
 	//	logger.info("# sources = " + sourceIndices.size());
-	//	for ( std::string sourceIndex: sourceIndices) {
+	//	for ( std::string sourceIndex: sourceIndices)
+	//{
 	//		query = "#roots#[@linkRole='"+linkRole+"' and @arcRole='"+arcrole+"' and @sourceIndex='"+sourceIndex+"']/@targetIndex";
 	//		Set<String> targetIndices = getStore().queryForStrings(query);
-	//		for ( std::string targetIndex: targetIndices) {
+	//		for ( std::string targetIndex: targetIndices)
+	//{
 	//			Map<String,SortedSet<Relationship>> map = getEquivalentRelationships(linkRole,arcrole,sourceIndex,targetIndex);
-	//			for ( std::string key: map.keySet()) {
+	//			for ( std::string key: map.keySet())
+	//{
 	//				map.get(key).first().setMetaAttribute("active","");
 	//			}
 	//		}
@@ -356,9 +396,11 @@ namespace xbrlcapi
 	//	Map<String,SortedSet<Relationship>> map = new HashMap<String,SortedSet<Relationship>>();
 	//	 std::string query = "#roots#[@linkRole='"+linkRole+"' and @arcRole='"+arcrole+"' and @sourceIndex='"+sourceIndex+"' and @targetIndex='"+targetIndex+"']";
 	//	List<Relationship> relationships = this.getStore().<Relationship>queryForXMLResources(query);
-	//	for (const Relationship& relationship: relationships) {
+	//	for (const Relationship& relationship: relationships)
+	//{
 	//		 std::string key = relationship.getSourceIndex() + relationship.getTargetIndex() + relationship.getLinkRole() + relationship.getArcrole() + relationship.getSignature();
-	//		if (map.containsKey(key)) {
+	//		if (map.containsKey(key))
+	//{
 	//			map.get(key).add(relationship);
 	//		} else {
 	//			SortedSet<Relationship> set = new TreeSet<Relationship>(new RelationshipPriorityComparator());

@@ -25,7 +25,6 @@ namespace xbrlcapi
 		* modified.
 		*/
 	private:
-//		static const 		Logger logger;
 		/**
 		* The cache implementation to be used by the matcher when accessing
 		* resources.  If this is null, then no cache is used.
@@ -47,7 +46,7 @@ namespace xbrlcapi
 
 		//int hashCode();
 
-//		bool equals(Object obj); 
+		//		bool equals(Object obj); 
 
 	public:
 		void setSigner(const Signer& signer);
@@ -64,7 +63,7 @@ namespace xbrlcapi
 		* @see org.xbrlapi.data.resource.Matcher#getSignature(URI)
 		*/
 		//std::string getSignature(const Poco::URI& uri);
-	private:
+		private:
 Logger logger;
 };
 }

@@ -29,7 +29,7 @@ namespace xbrlcapi
 		*/
 		template <typename I>
 		std::vector<I> getReferencingItems();
-	private:
+		private:
 Logger logger;
 };
 }

@@ -59,7 +59,8 @@ namespace xbrlcapi
 		*/
 		std::string getSchemaId();
 
-	private:
+	
+private:
 Logger logger;
 };
 }

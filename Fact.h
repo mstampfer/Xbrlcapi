@@ -70,7 +70,7 @@ namespace xbrlcapi
 		*/
 		virtual bool isNil();
 
-	private:
+		private:
 Logger logger;
 };
 }

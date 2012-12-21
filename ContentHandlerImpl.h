@@ -413,7 +413,8 @@ namespace xbrlcapi
 		//    this.xml = xml;
 		//}
 
-	private:
+	
+private:
 Logger logger;
 };
 }

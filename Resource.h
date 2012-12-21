@@ -22,6 +22,7 @@ namespace xbrlcapi
 	virtual std::string getResourceRole();
     
     
+
 private:
 Logger logger;
 };

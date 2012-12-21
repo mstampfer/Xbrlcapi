@@ -75,7 +75,7 @@ namespace xbrlcapi
 		virtual std::vector<std::string> getPresentationNetworkLinkroles();
 
 
-	private:
+		private:
 Logger logger;
 };  
 }

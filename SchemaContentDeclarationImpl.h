@@ -92,7 +92,8 @@ namespace xbrlcapi
 		*/
 //		TypeDeclaration getLocalType();
 
-	private:
+	
+private:
 Logger logger;
 };
 }

@@ -156,7 +156,7 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual bool substitutesFor(ElementDeclaration candidate);     
-	private:
+		private:
 Logger logger;
 };
 }

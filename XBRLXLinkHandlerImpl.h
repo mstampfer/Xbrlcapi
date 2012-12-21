@@ -23,10 +23,10 @@ namespace xbrlcapi
 
 		//
 		/**
-		 * The XBRL DTS loader that is using this XLink handler
-		 */
-		protected:
-			std::shared_ptr<Loader> loader;
+		* The XBRL DTS loader that is using this XLink handler
+		*/
+	protected:
+		std::shared_ptr<Loader> loader;
 		//
 		///**
 		// * The base URI resolver used by the XLink handler
@@ -40,15 +40,15 @@ namespace xbrlcapi
 		//transient protected ElementState elementState;
 		//
 		/**
-		 * XBRL XLink handler constructor
-		 */
+		* XBRL XLink handler constructor
+		*/
 	public:
 		XBRLXLinkHandlerImpl();
 
 		/**
-		 * Set the XBRL DTS loader
-		 * @param loader The XBRL DTS loader
-		 */
+		* Set the XBRL DTS loader
+		* @param loader The XBRL DTS loader
+		*/
 		void XBRLXLinkHandlerImpl::setLoader(std::shared_ptr<Loader>& rhs);
 		//
 		///**
@@ -452,7 +452,7 @@ namespace xbrlcapi
 		//   }
 		//   
 	private:
-Logger logger;
-};
+		Logger logger;
+	};
 }
 

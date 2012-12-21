@@ -23,7 +23,7 @@ namespace xbrlcapi
 
 		virtual std::unordered_set<Poco::URI> getURIs() = 0;
 
-	private:
+		private:
 Logger logger;
 };
 }

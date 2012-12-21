@@ -20,7 +20,6 @@
 //#include "LoaderImpl.h"
 #include "Store.h"
 #include "HashFunctions.h"
-//#include "Logger.h"
 
 using Poco::URI;
 namespace xbrlcapi
@@ -85,7 +84,7 @@ namespace xbrlcapi
 		* @param store the store for the XBRL data.
 		* @throws XBRLException if the store cannot be closed. 
 		*/
-		static void cleanup(const Store& store);
+		static void cleanup(Store& store);
 
 		static void badUsage(const std::string& message); 
 
@@ -104,7 +103,8 @@ namespace xbrlcapi
 
 
 
-	private:
+	
+private:
 Logger logger;
 };
 }

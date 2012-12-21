@@ -33,8 +33,6 @@ namespace xbrlcapi
 		* modified.
 		*/
 	private:
-
-
 		/**
 		* Root of the local document cache.
 		*/
@@ -151,7 +149,7 @@ namespace xbrlcapi
 		* @see java.lang.Object#equals(java.lang.Object)
 		*/
 		//bool equals(Object obj);
-	private:
+		private:
 Logger logger;
 };
 }

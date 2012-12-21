@@ -252,8 +252,6 @@ namespace xbrlcapi
 		static const std::string CalculationLinkbaseReferenceRole;
 		static const std::string LabelLinkbaseReferenceRole;
 		static const std::string ReferenceLinkbaseReferenceRole;
-	private:
-Logger logger;
-};
+	};
 }
 #endif

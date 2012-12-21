@@ -212,7 +212,8 @@ namespace xbrlcapi
 		*/
 		virtual std::vector<Fact&> getFacts(const Concept& concept);
 
-	private:
+	
+private:
 Logger logger;
 };
 }

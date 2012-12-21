@@ -323,6 +323,7 @@ namespace xbrlcapi
 	*/
 	std::string getIDXPointerExpression();
 
+
 private:
 Logger logger;
 };

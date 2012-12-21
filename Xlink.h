@@ -68,7 +68,8 @@ namespace xbrlcapi
 		*/
 		virtual std::string getAttribute(const std::string& name);
 
-	private:
+	
+private:
 Logger logger;
 };
 }

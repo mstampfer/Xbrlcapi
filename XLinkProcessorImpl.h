@@ -28,7 +28,8 @@ namespace xbrlcapi
 		//* The XLink handler to use for responding to XLink events
 		//* in the SAX parsing process.
 		//*/
-		//private XLinkHandler xlinkHandler;
+	private:
+		XLinkHandler xlinkHandler;
 
 		/**
 		* The Custom Link Recogniser, to be used for simple link
@@ -37,7 +38,6 @@ namespace xbrlcapi
 		* Set to null by default for cases where no non-XLink 
 		* syntax needs to be treated as a link.
 		*/
-	private:
 		CustomLinkRecogniser customLinkRecogniser;
 
 		///**
@@ -46,7 +46,8 @@ namespace xbrlcapi
 		//* This is important for the implementation of the
 		//* elementStart functionality. 
 		//*/
-		//transient private Stack<Integer> ancestorTypes;
+		//transient 
+		std::stack<int> ancestorTypes;
 
 		///**
 		//* bool to track whether we are inside an extended
@@ -61,8 +62,28 @@ namespace xbrlcapi
 		//* can be expected to occur. (Documentation by Geoff Shuetrim)
 		//* Property added by Henry S Thompson.
 		//*/
-		//transient static private HashMap<String,Integer> XLINKATTRS = null;
+		//transient 
+		std::unordered_map<std::string,int> xlinkAttrs;
 
+		void initialize(const XLinkHandler& xlinkHandler) 
+		{
+			//this->xlinkHandler = xlinkHandler; //TODO
+			ancestorTypes.push(NOT_XLINK);
+			if ( xlinkAttrs.empty() ) 
+			{
+				xlinkAttrs.insert(std::make_pair("type",-1));
+				xlinkAttrs.insert(std::make_pair("href",	SIMPLE_LINK + LOCATOR));
+				xlinkAttrs.insert(std::make_pair("role",	SIMPLE_LINK + EXTENDED_LINK + LOCATOR + RESOURCE));
+				xlinkAttrs.insert(std::make_pair("arcrole",	SIMPLE_LINK + ARC));
+				xlinkAttrs.insert(std::make_pair("title",	SIMPLE_LINK + EXTENDED_LINK + ARC + LOCATOR + RESOURCE));
+				xlinkAttrs.insert(std::make_pair("show",	SIMPLE_LINK + ARC));
+				xlinkAttrs.insert(std::make_pair("actuate",	SIMPLE_LINK + ARC));
+				xlinkAttrs.insert(std::make_pair("label",	LOCATOR + RESOURCE));
+				xlinkAttrs.insert(std::make_pair("from",	ARC));
+				xlinkAttrs.insert(std::make_pair("to",		ARC));
+			}
+
+		}
 	public:
 		/**
 		* constructor
@@ -77,9 +98,9 @@ namespace xbrlcapi
 		* copy constructor
 		* ToDo: implement
 		*/
-//		XLinkProcessorImpl(XLinkProcessorImpl&& rhs) = default;
+		//		XLinkProcessorImpl(XLinkProcessorImpl&& rhs) = default;
 
-//		XLinkProcessorImpl& operator=(XLinkProcessorImpl& rhs) = default
+		//		XLinkProcessorImpl& operator=(XLinkProcessorImpl& rhs) = default
 
 		/**
 		* constructor
@@ -109,27 +130,16 @@ namespace xbrlcapi
 		{
 			customLinkRecogniser = std::move(clr);
 		}
+		const static int SIMPLE_LINK = 1;
+		const static int EXTENDED_LINK = 2;
+		const static int CUSTOM_LINK = 4;
+		const static int RESOURCE = 8;
+		const static int LOCATOR = 16;
+		const static int ARC = 32;
+		const static int TITLE = 64;
+		const static int NOT_XLINK=  0;
 
-	private:
-		void initialize(XLinkHandler xlinkHandler) {
-			//	this.xlinkHandler = xlinkHandler;
-			//	ancestorTypes = new Stack<Integer>();
-			//	ancestorTypes.push(NOT_XLINK);
-			//	if ( XLINKATTRS == null ) {
-			//		XLINKATTRS=new HashMap<String,Integer>();
-			//		XLINKATTRS.put("type",new Integer(-1));
-			//		XLINKATTRS.put("href",new Integer(SIMPLE_LINK.intValue()+LOCATOR.intValue()));
-			//		XLINKATTRS.put("role",new Integer(SIMPLE_LINK.intValue()+EXTENDED_LINK.intValue()+LOCATOR.intValue()+RESOURCE.intValue()));
-			//		XLINKATTRS.put("arcrole",new Integer(SIMPLE_LINK.intValue()+ARC.intValue()));
-			//		XLINKATTRS.put("title",new Integer(SIMPLE_LINK.intValue()+EXTENDED_LINK.intValue()+ARC.intValue()+LOCATOR.intValue()+RESOURCE.intValue()));
-			//		XLINKATTRS.put("show",new Integer(SIMPLE_LINK.intValue()+ARC.intValue()));
-			//		XLINKATTRS.put("actuate",new Integer(SIMPLE_LINK.intValue()+ARC.intValue()));
-			//		XLINKATTRS.put("label",new Integer(LOCATOR.intValue()+RESOURCE.intValue()));
-			//		XLINKATTRS.put("from",ARC);
-			//		XLINKATTRS.put("to",ARC);
-			//	}
 
-		}
 		///**
 		//* @see org.xbrlapi.xlink.XLinkProcessor#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 		//*/
@@ -610,6 +620,6 @@ namespace xbrlcapi
 		//}
 
 	private:
-Logger logger;
-};
+		Logger logger;
+	};
 }

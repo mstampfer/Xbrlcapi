@@ -10,6 +10,7 @@
 #include "Loader.h"
 #include "CacheFile.h"
 #include "XBRLXLinkHandlerImpl.h"
+#include "XBRLException.h"
 #include "Logger.h"
 #include "XBRLException.h"
 
@@ -134,18 +135,19 @@ namespace xbrlcapi
 				Poco::URI("http://www.xbrl.org/2003/xlink-2003-12-31.xsd")));
 			map.insert(std::make_pair( Poco::URI("http://www.xbrl.org/2003/linkbase/xlink-2003-12-31.xsd"),
 				Poco::URI("http://www.xbrl.org/2003/xlink-2003-12-31.xsd")));
-		} catch (...) {
+		} catch (...) 
+		{
 			throw std::exception("URI syntax exception");
 		}
 		try
 		{
-		EntityResolver entityResolver(cacheFile, map);      
-		std::shared_ptr<Loader> loader(new Loader(store, xlinkProcessor, entityResolver));
-		loader->setCache(Cache(cacheFile));
-		loader->setEntityResolver(entityResolver);
-		xlinkHandler.setLoader(loader);
-		return loader;
-	}
+			EntityResolver entityResolver(cacheFile, map);      
+			std::shared_ptr<Loader> loader(new Loader(store, xlinkProcessor, entityResolver));
+			loader->setCache(Cache(cacheFile));
+			loader->setEntityResolver(entityResolver);
+			xlinkHandler.setLoader(loader);
+			return loader;
+		}
 		catch (const XBRLException& e)
 		{
 			logger.root.error("Error initializing Loader " + e.getMessage());
@@ -161,9 +163,9 @@ namespace xbrlcapi
 	* @param store the store for the XBRL data.
 	* @throws XBRLException if the store cannot be closed. 
 	*/
-	void Load::cleanup(const Store& store) 
+	void Load::cleanup(Store& store) 
 	{
-//			store.close();
+					store.close();
 	}    
 	/**
 	/* Report incorrect usage of the command line, with a list of the arguments
@@ -195,10 +197,9 @@ namespace xbrlcapi
 
 int main(int argv, char * args[]) 
 { 
-	xbrlcapi::Logger logger;
-	logger.root.warn("Storm is comming");
 
-	setlocale( LC_ALL, "" );
+	xbrlcapi::Logger logger;
+
 	try 
 	{
 		xercesc::XMLPlatformUtils::Initialize();
@@ -270,11 +271,13 @@ int main(int argv, char * args[])
 		if (inputs.size() < 1) xbrlcapi::Load::badUsage("You need to specify at least one starting point for discovery.");
 
 		// Make sure that the taxonomy cache exists
-		try {
+		try 
+		{
 			xbrlcapi::CacheFile cache(arguments["cache"]);
 			if (!cache) 
 				xbrlcapi::Load::badUsage("The document cache directory does not exist. " + arguments["cache"]);
-		} catch (...) {
+		} catch (...) 
+		{
 			xbrlcapi::Load::badUsage("There are problems with the cache location: " + arguments["cache"]);
 		}
 
@@ -292,12 +295,16 @@ int main(int argv, char * args[])
 
 		// Clean up the data store and exit
 		xbrlcapi::Load::cleanup(store);
-
-	} 
+	}
+	catch (const xbrlcapi::XBRLException& e)
+	{
+		logger.root.info(e.getMessage());
+	}
 	catch (std::exception& e) 
 	{
 		xbrlcapi::Load::badUsage(e.what());
 	}
 
 }
+
 

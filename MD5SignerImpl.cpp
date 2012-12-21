@@ -26,7 +26,8 @@ namespace xbrlcapi
 		//	}
 		//	return hexString.toString();
 
-		//} catch (NoSuchAlgorithmException e) 
+		//}
+		//catch (NoSuchAlgorithmException e) 
 		//{
 		//	logger.error("Your system is missing an MD5 algorithm.");
 		//	return "corruptedSignature";

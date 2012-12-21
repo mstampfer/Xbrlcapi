@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #pragma once
-#include "Logger.h"
 #include <Poco/URI.h>
 #include <vector>
 

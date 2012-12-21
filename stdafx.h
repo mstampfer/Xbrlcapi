@@ -4,8 +4,6 @@
 //
 
 #pragma once
-#include "Logger.h"
-
 #include "targetver.h"
 
 #include <stdio.h>

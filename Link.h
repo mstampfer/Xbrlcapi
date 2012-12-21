@@ -22,7 +22,8 @@ namespace xbrlcapi
 		*/
 		virtual std::string getLinkRole();
 
-	private:
+	
+private:
 Logger logger;
 };
 }

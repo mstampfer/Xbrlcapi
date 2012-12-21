@@ -3,6 +3,8 @@
 #include "Poco/Path.h"
 #include "CacheFile.h"
 #include "XBRLException.h"
+#include "Logger.h"
+
 #include <regex>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem.hpp>
@@ -24,7 +26,6 @@
 
 namespace xbrlcapi
 {
-
 	std::vector<std::string> split(std::string& input, const char* regex) 
 	{
 		// passing -1 as the submatch index parameter performs splitting
@@ -55,10 +56,9 @@ namespace xbrlcapi
 	* @throws XBRLException if the cacheFile is null or does not exist or cannot be
 	* written to or read from.
 	*/
-	CacheImpl::CacheImpl(CacheFile& rhs) 
+	CacheImpl::CacheImpl(CacheFile& rhs) : cacheFile(std::move(rhs))
 	{
-		if (! cacheFile) throw XBRLException("The cache " + cacheFile.getFilename() + " does not exist.");
-		//cacheFile = rhs;
+		if (! exists(cacheFile.getPath())) throw XBRLException("The cache " + cacheFile.getFilename() + " does not exist.");
 	}
 
 	/**
@@ -97,16 +97,16 @@ namespace xbrlcapi
 	*/
 	bool CacheImpl::isCacheURI(const Poco::URI& uri) 
 	{
-		//			logger.debug("Checking if " + uri + " is in the cache.");
+		logger.root.debug("Checking if " + uri.toString() + " is in the cache.");
 
 		if (! (uri.getScheme() == "file")) 
 		{
-			//				logger.debug("Protocol is wrong so not in cache.");
+			logger.root.debug("Protocol is wrong so not in cache.");
 			return false;
 		}
 		try 
 		{
-			//	logger.root.debug("The canonical path to the cache root is: " + cacheFile.getCanonicalPath()); TODO
+			//logger.root.debug("The canonical path to the cache root is: " + cacheFile.getCanonicalPath()); TODO
 			logger.root.debug("The path component of the URI being tested is: " + uri.getPath());
 
 			std::string uriPath("");
@@ -218,9 +218,9 @@ namespace xbrlcapi
 			auto part = boost::filesystem::canonical(cacheFile.getPath()).string().substr(1);
 			data = data.replace(data.find(part),part.length(),"").substr(2);
 		} 
-catch (const boost::filesystem::filesystem_error& e) 
+		catch (const boost::filesystem::filesystem_error& e) 
 		{
-			throw XBRLException("The original URI could not be determined for " + uri.toString());
+			throw XBRLException("The original URI could not be determined for " + uri.toString(), e.what());
 		}
 
 		std::vector<std::string> parts = split(data, "\\");
@@ -403,7 +403,7 @@ catch (const boost::filesystem::filesystem_error& e)
 		} 
 		catch (std::exception& e) 
 		{
-			throw XBRLException(uri.toString() + " cannot be translated into a location in the cache");
+			throw XBRLException(uri.toString() + " cannot be translated into a location in the cache", e.what());
 		}
 
 	}
@@ -531,7 +531,8 @@ catch (const boost::filesystem::filesystem_error& e)
 	//{
 	//			return (!file.isDirectory());
 	//		}
-	//	};
+
+	//};
 	//	for (File childFile: file.listFiles(fileFilter)) 
 	//{
 	//		result.add(this.getOriginalURI(childFile));
@@ -543,7 +544,7 @@ catch (const boost::filesystem::filesystem_error& e)
 	//{
 	//			return (file.isDirectory());
 	//		}
-	//	};
+	//};
 	//	for (File childDirectory: file.listFiles(directoryFilter)) 
 	//{
 	//		result.addAll(getAllUris(this.getOriginalURI(childDirectory)));

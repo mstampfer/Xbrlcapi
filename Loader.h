@@ -47,7 +47,7 @@ namespace xbrlcapi
 		Loader(Store& store, XLinkProcessor& xlinkProcessor, EntityResolver& entityResolver)
 			: pimpl(new LoaderImpl(store, xlinkProcessor, entityResolver)) {}
 
-		Loader(Store& store, XLinkProcessor& xlinkProcessor, EntityResolver& entityResolver, const std::vector<Poco::URI>& uris)
+		Loader(Store& store, XLinkProcessor& xlinkProcessor, EntityResolver& entityResolver, std::vector<Poco::URI>& uris)
 			: pimpl(new LoaderImpl(store, xlinkProcessor, entityResolver, uris)) {}
 
 		/**
@@ -424,7 +424,8 @@ namespace xbrlcapi
 			pimpl->hasHistory();
 		}
 
-	private:
+	
+private:
 Logger logger;
 };
 }

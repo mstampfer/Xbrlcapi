@@ -30,7 +30,8 @@ namespace xbrlcapi
 		*/
 		virtual std::string getContentAsXHTMLString();
 
-	private:
+	
+private:
 Logger logger;
 };
 }

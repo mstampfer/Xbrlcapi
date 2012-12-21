@@ -21,7 +21,7 @@ namespace xbrlcapi
 		*/
 		virtual ExtendedLink getExtendedLink();
 
-	private:
+		private:
 Logger logger;
 };
 }

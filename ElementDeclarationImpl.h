@@ -125,7 +125,7 @@ namespace xbrlcapi
 		*/
 		std::string getMinOccurs();
 
-	private:
+		private:
 Logger logger;
 };
 }

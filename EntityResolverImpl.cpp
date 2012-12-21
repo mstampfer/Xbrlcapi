@@ -4,7 +4,9 @@
 #include <Poco/URI.h>
 #include <xercesc/util/XMLString.hpp>
 #include <memory>
-
+#include "XercesStrings.h"
+#include "XBRLException.h"
+#include <Poco/Exception.h>
 
 namespace xbrlcapi
 {
@@ -30,8 +32,8 @@ namespace xbrlcapi
 
 	xercesc::InputSource* EntityResolverImpl::resolveEntity(const std::wstring& publicId, const std::wstring& systemId) 
 	{
-		//logger.debug("SAX: Resolving the entity for " + systemId);
-	//	try {
+		logger.root.debug("SAX: Resolving the entity for " + xerces_util::toNative(systemId));
+		try {
 			std::string id(systemId.begin(), systemId.end());
 			Poco::URI uri(id);
 			if (hasCache()) 
@@ -40,13 +42,17 @@ namespace xbrlcapi
 			}
 			auto wc_uri = xercesc::XMLString::transcode(uri.toString().c_str());
 			return new xercesc::URLInputSource(wc_uri);
-		//} catch (XBRLException e) {
-		//	logger.warn("Cache handling for " + systemId + "failed.");
+		} 
+		catch (const XBRLException& e) 
+		{
+			logger.root.warn("Cache handling for " + xerces_util::toNative(systemId) + "failed.");
 		//	return new InputSource(systemId);
-		//} catch (URISyntaxException e) {
-		//	logger.warn(systemId + " is a malformed URI.");
+		} 
+		catch (Poco::SyntaxException e) 
+		{
+			logger.root.warn(xerces_util::toNative(systemId) + " is a malformed URI.");
 		//	return new InputSource(systemId);
-		//}
+		}
 	}
 
 	bool EntityResolverImpl::hasCache() 

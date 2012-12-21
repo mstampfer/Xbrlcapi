@@ -19,7 +19,7 @@ namespace xbrlcapi
 
 		ContentHandler(const LoaderImpl& loader, const Poco::URI& uri) : pimpl(new ContentHandlerImpl()) 
 		{
-		
+
 		}
 		/**
 		* @return the loader using this content handler.
@@ -140,7 +140,7 @@ namespace xbrlcapi
 		{
 			pimpl->warning(exc);
 		}
-	private:
+		private:
 Logger logger;
 };
 }

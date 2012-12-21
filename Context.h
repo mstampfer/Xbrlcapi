@@ -49,7 +49,8 @@ namespace xbrlcapi
 		*/
 		virtual bool equals(Context context);    
 
-	private:
+	
+private:
 Logger logger;
 };
 }

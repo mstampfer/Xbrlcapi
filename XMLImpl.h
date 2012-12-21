@@ -8,14 +8,10 @@
 namespace xbrlcapi
 {
 	class Store;
-	class XMLImpl : public XML {
+	class XMLImpl : public XML 
+	{
 
-		/**
-		* 
-		*/
 	private:
-
-
 		XMLImpl();
 
 	protected:
@@ -31,7 +27,7 @@ namespace xbrlcapi
 		* The data store that manages this fragment.
 		*/
 	private:
-		std::unique_ptr<Store> store;
+		//std::unique_ptr<Store> store;
 
 		/**
 		* The DOM instantiation of the fragment's root element or null
@@ -65,7 +61,7 @@ namespace xbrlcapi
 		* Comparison is based upon the fragment index.
 		* @see java.lang.Comparable#compareTo(Object o)
 		*/
-		int compareTo(XML other);
+		int compareTo(const XML& other);
 
 		/**
 		* @see org.xbrlapi.XML#setResource(Element)
@@ -97,7 +93,7 @@ namespace xbrlcapi
 		/**
 		* @see org.xbrlapi.XML#getStore()
 		*/
-		Store getStore();
+		std::unique_ptr<Store> getStore();
 
 		/**
 		* Update this fragment in the data store by storing it again.
@@ -201,7 +197,7 @@ namespace xbrlcapi
 		//		void readObject(ObjectInputStream in);
 
 	private:
+		Logger logger;
 
-Logger logger;
-};
+	};
 }

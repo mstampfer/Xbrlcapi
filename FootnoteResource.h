@@ -13,6 +13,7 @@ namespace xbrlcapi
 
 struct FootnoteResource : public MixedContentResource {
 
+
 private:
 Logger logger;
 };

@@ -31,6 +31,7 @@ namespace xbrlcapi
      */
     std::string getContextId();	
 
+
 private:
 Logger logger;
 };

@@ -485,7 +485,8 @@ namespace xbrlcapi
 		*/
 		virtual std::string getLanguageName(std::vector<std::string> languageNameEncodings);
 
-	private:
+	
+private:
 Logger logger;
 };
 }

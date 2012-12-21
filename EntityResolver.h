@@ -73,7 +73,7 @@ namespace xbrlcapi
 		}
 
 
-	private:
+		private:
 Logger logger;
 };
 }

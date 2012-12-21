@@ -69,7 +69,7 @@ namespace xbrlcapi
 		*/
 		virtual std::vector<Arc> getArcsToWithArcrole(const std::string& arcrole);
 
-	private:
+		private:
 Logger logger;
 };
 }

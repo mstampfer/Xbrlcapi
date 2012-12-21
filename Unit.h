@@ -61,7 +61,8 @@ namespace xbrlcapi
 		virtual std::vector<Measure> getResolvedDenominatorMeasures();
 
 
-	private:
+	
+private:
 Logger logger;
 };
 }

@@ -29,9 +29,9 @@ namespace xbrlcapi
 	public:
 		XLinkProcessor(){}
 		XLinkProcessor(XBRLXLinkHandlerImpl& xlinkHandler) : 
-							pimpl(new XLinkProcessorImpl(xlinkHandler)) {}
+			pimpl(new XLinkProcessorImpl(xlinkHandler)) {}
 		XLinkProcessor(XBRLXLinkHandlerImpl& xlinkHandler, CustomLinkRecogniser& recogniser) : 
-							pimpl(new XLinkProcessorImpl(xlinkHandler, recogniser)) {}
+			pimpl(new XLinkProcessorImpl(xlinkHandler, recogniser)) {}
 		XLinkProcessor& operator=(XLinkProcessor&& rhs)
 		{
 			if (pimpl != rhs.pimpl)
@@ -43,17 +43,9 @@ namespace xbrlcapi
 
 		XLinkProcessor(XLinkProcessor&& rhs)
 		{
-				pimpl = std::move(rhs.pimpl);
+			pimpl = std::move(rhs.pimpl);
 		}
 
-		//public final static Integer SIMPLE_LINK = new Integer(1);
-		//public final static Integer EXTENDED_LINK = new Integer(2);
-		//public final static Integer CUSTOM_LINK = new Integer(4);
-		//public final static Integer RESOURCE = new Integer(8);
-		//public final static Integer LOCATOR = new Integer(16);
-		//public final static Integer ARC = new Integer(32);
-		//public final static Integer TITLE = new Integer(64);
-		//public final static Integer NOT_XLINK = new Integer(0);
 		//
 		//   /**
 		//    * Set the custom link recogniser
@@ -119,6 +111,6 @@ namespace xbrlcapi
 		//public XLinkHandler getXLinkHandler();
 
 	private:
-Logger logger;
-};
+		Logger logger;
+	};
 }

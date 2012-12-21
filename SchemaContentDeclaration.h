@@ -105,6 +105,7 @@ struct SchemaContentDeclaration : public SchemaDeclaration {
      */
     virtual TypeDeclaration getLocalType();
     
+
 private:
 Logger logger;
 };

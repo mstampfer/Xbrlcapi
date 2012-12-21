@@ -1,10 +1,10 @@
 #include "stdafx.h"
+#include "Logger.h"
 #include <Poco/URI.h>
-#include "Stub.h"
 
 namespace xbrlcapi
 {
-	class StubImpl : public Stub 
+	class StubImpl 
 	{
 	private:
 
@@ -41,7 +41,8 @@ namespace xbrlcapi
 		* @see org.xbrlapi.Stub#setReason(std::string)
 		*/
 		void setReason(const std::string& reason);
+
 	private:
-Logger logger;
-};
+		Logger logger;
+	};
 }

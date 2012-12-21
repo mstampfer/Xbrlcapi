@@ -60,7 +60,7 @@ namespace xbrlcapi
 		{
 			return path;
 		}
-	private:
+		private:
 Logger logger;
 };
 }

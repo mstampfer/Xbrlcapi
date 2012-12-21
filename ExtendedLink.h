@@ -143,7 +143,7 @@ namespace xbrlcapi
 		virtual std::unordered_map<std::string,std::string> getLocatorTargetIndices();
 
 
-	private:
+		private:
 Logger logger;
 };
 }
