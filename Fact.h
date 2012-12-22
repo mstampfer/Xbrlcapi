@@ -1,14 +1,12 @@
-
-#include "Stdafx.h"
 #pragma once
 #include "Logger.h"
-
+#include "Fragment.h"
 
 //#include "Instance.h"
 //#include "Concept.h"
 
 /**
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 namespace xbrlcapi
 {

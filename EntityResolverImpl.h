@@ -1,5 +1,5 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -17,7 +17,7 @@
 * cache if it is set up and that gives preference to the local 
 * cache (if it is set up) as resources are identified by the 
 * resolution process.
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 
 namespace xbrlcapi

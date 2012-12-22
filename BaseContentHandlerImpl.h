@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #pragma once
 #include "Logger.h"
 #include <xercesc/sax/ErrorHandler.hpp>
@@ -14,7 +14,7 @@
 * to assist with data storage and XLink processing. These are 
 * supplied by the loader.
 * 
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 namespace xbrlcapi
 {

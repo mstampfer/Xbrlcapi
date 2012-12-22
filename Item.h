@@ -1,5 +1,5 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -8,7 +8,7 @@
 #include "Fact.h"
 //#include "Context.h"
 /**
- * @author Geoffrey Shuetrim (geoff@galexy.net)
+ 
  */
 
 namespace xbrlcapi

@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -17,7 +17,7 @@
 * resolved to obtain the original URI of the resource identified
 * by the relative URI.
 * This class also provides a method for testing if a URI is a cache URI.
-* @author Geoffrey Shuetrim (geoff@galexy.net) 
+ 
 */
 
 

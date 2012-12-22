@@ -1,5 +1,5 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 #include "XLinkHandler.h"
@@ -7,7 +7,7 @@
 /**
 * Default XLinkHandler implementation, does nothing for any of the events.
 * Extend this class to create your own XLinkHandler.
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 
 namespace xbrlcapi

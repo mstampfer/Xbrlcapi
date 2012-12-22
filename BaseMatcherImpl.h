@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #pragma once
 #include "Logger.h"
 #include "Cache.h"
@@ -11,7 +11,7 @@ namespace xbrlcapi
 {
 
 	/**
-	* @author Geoffrey Shuetrim (geoff@galexy.net)
+	
 	*/
 
 

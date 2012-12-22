@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #include "DefaultMatcherImpl.h"
 
 namespace xbrlcapi

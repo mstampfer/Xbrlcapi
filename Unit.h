@@ -1,11 +1,11 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
 #include "FactDimensionContainer.h"
 /**
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 namespace xbrlcapi
 {

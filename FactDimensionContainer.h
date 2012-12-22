@@ -1,5 +1,5 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -9,7 +9,7 @@
 #include <vector>
 
 /**
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 namespace xbrlcapi
 {

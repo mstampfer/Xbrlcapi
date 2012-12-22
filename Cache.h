@@ -1,58 +1,43 @@
-#include "Stdafx.h"
 #pragma once
-#include "Logger.h"
-
-#include "HashFunctions.h"
-#include "CacheImpl.h"
-#include <memory>
+#include "PimplImpl.h"
 #include <unordered_map>
-#include <map>
+#include <Poco/URI.h>
 
 namespace xbrlcapi
 {
-
-	/**
-	* @author Geoffrey Shuetrim (geoff@galexy.net) 
-	*/
-	struct Cache //extends Serializable 
+	class CacheFile;
+	class Cache //extends Serializable 
 	{
-	private:
-		std::unique_ptr<CacheImpl> pimpl;
+		struct Impl;
+		Pimpl<Impl> p;
 	public:
-		Cache() : pimpl(new CacheImpl()) {}
-		Cache(CacheFile& cacheFile, const std::unordered_map<Poco::URI , Poco::URI>& uriMap) 
-			: pimpl(new CacheImpl(cacheFile, uriMap)) {}
-		Cache(CacheFile& cacheFile) : pimpl(new CacheImpl(cacheFile)) {}
+		/**
+		* Constructs a URI translator for usage with a local cache location.
+		*/
+		Cache();
+		~Cache();
 
-		Cache& operator=(Cache&& rhs)
-		{
-			swap(rhs);
-			return *this;
-		}
+		Cache(Cache&& rhs);
+		/**
+		* Constructs a URI translator for usage with a local cache location.
+		* @param cacheFile The root directory for the cache.
+		* @throws XBRLException if the cacheFile is null or does not exist or cannot be
+		* written to or read from.
+		*/
+		Cache(CacheFile&);
+		/**
+		* Constructs a URI translator for usage with a local cache location.
+		* @param cacheFile
+		* @param uriMap The hash map from original URIs to local URIs.
+		* @throws XBRLException if the cacheFile is null or does not exist
+		*/
+		Cache(CacheFile& cf, const std::unordered_map<Poco::URI, Poco::URI>& map);
 
-		Cache(Cache&& rhs)
-		{
-			swap(rhs);
-		}
 
-		void swap(Cache& rhs)
-		{
-			if (pimpl)
-				pimpl = std::move(rhs.pimpl);
-			else
-				pimpl.swap(rhs.pimpl);
-		}
-
-		bool operator==(const Cache& rhs)
-		{
-			return pimpl->operator==(*rhs.pimpl);
-
-		}
-
-		operator bool()
-		{
-			return pimpl->operator bool();
-		}
+		Cache& operator=(Cache&& rhs);
+		bool operator==(const Cache& rhs);
+		bool operator!=(const Cache& rhs);
+		operator bool();
 		///**
 		// * Tests if a URI is a URI of a resource in the local cache.
 		// * @param uri The URI to be tested to see if it identifies a 
@@ -70,10 +55,7 @@ namespace xbrlcapi
 		* @return the cache URI corresponding to the provided URI.
 		* @throws XBRLException if the resource cannot be cached.
 		*/
-		Poco::URI getCacheURI(const Poco::URI& uri)
-		{
-			return pimpl->getCacheURI(uri);
-		}
+		Poco::URI getCacheURI(const Poco::URI& uri);
 
 		///**
 		// * @param uri The URI to be translated into an original URI (if necessary).
@@ -138,9 +120,5 @@ namespace xbrlcapi
 		// * @throws XBRLException
 		// */
 		//public abstract std::vector<URI> getAllUris(URI uri);
-
-
-		private:
-Logger logger;
-};
+	};
 }

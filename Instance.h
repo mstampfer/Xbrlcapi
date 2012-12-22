@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -21,7 +21,7 @@ namespace xbrlcapi
 {
 	struct Item;
 	/**
-	* @author Geoffrey Shuetrim (geoff@galexy.net)
+	
 	*/
 
 	class Tuple;

@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -57,7 +57,7 @@ namespace xbrlcapi
 	* steps would be taken if XML data binding to Java objects were
 	* being used to handle the underlying data.
 	*
-	* @author Geoffrey Shuetrim (geoff@galexy.net)
+	
 	*/
 	//template <typename F>
 	class Store// extends Serializable 
@@ -1701,7 +1701,7 @@ namespace xbrlcapi
 				* Only start loading if this function returns true.
 				* @throws XBRLException
 				*/
-				bool  requestLoadingRightsFor(const Poco::URI& document, LoaderImpl& loader)
+				bool  requestLoadingRightsFor(const Poco::URI& document, const Loader& loader)
 				{
 					return pimpl->requestLoadingRightsFor(document, loader);
 				}
@@ -1715,7 +1715,7 @@ namespace xbrlcapi
 				* @param document The URI of the document whose loading rights are being recinded.
 				* @link Store#loadingAboutToStart(URI)
 				*/
-				void recindLoadingRightsFor(const Poco::URI& document, LoaderImpl& loader)
+				void recindLoadingRightsFor(const Poco::URI& document, const Loader& loader)
 				{
 					pimpl->recindLoadingRightsFor(document, loader);
 				}

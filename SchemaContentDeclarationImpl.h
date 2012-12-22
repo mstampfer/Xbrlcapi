@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -8,7 +8,7 @@
 
 //**
 /* Base interface for XML Schema element and attribute declaration fragments.
-/* @author Geoffrey Shuetrim (geoff@galexy.net)
+/
 */
 
 namespace xbrlcapi

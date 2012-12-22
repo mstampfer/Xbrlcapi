@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -16,7 +16,7 @@
 
 /**
 * Implements the functionality that is common to all types of XBRL fragments.
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 namespace xbrlcapi
 {

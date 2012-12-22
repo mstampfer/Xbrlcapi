@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -8,7 +8,7 @@
 #include "SchemaContentDeclarationImpl.h"
 #include <string>
 /**
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 namespace xbrlcapi 
 {

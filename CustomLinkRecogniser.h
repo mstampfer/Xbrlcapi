@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 #include <xercesc/sax2/Attributes.hpp>
@@ -16,7 +16,7 @@
 * its construction, thus enabling the XLink processor to recognise
 * a simple link using one of the defined custom syntaxes.
 * 
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 namespace xbrlcapi
 {

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #pragma once
 #include "Logger.h"
 #include "Storer.h"

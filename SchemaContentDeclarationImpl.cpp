@@ -1,5 +1,5 @@
 
-#include "stdafx.h"
+
 #include "SchemaContentDeclarationImpl.h"
 #include "SchemaContentDeclaration.h"
 #include "SchemaDeclarationImpl.h"
@@ -7,7 +7,7 @@
 
 /**
 * Base interface for XML Schema element and attribute declaration fragments.
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 
 namespace xbrlcapi

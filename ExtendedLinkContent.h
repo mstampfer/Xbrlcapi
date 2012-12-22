@@ -1,5 +1,5 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -7,7 +7,7 @@
 #include "Xlink.h"
 
 /**
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 namespace xbrlcapi
 {

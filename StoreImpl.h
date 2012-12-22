@@ -1,5 +1,5 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -8,7 +8,7 @@
 // * Berkeley Database.  Note that this store implementation
 // * does not use the XML:DB API and so does not require
 // * a DBConnection implementation.
-// * @author Geoffrey Shuetrim (geoff@galexy.net)
+// 
 // */
 #include "DefaultMatcherImpl.h"
 #include "Fragment.h"
@@ -31,7 +31,7 @@ namespace xbrlcapi
 	struct XML;
 	class Loader;
 	class Stub;
-	class LoaderImpl;
+	class Loader;
 
 	class StoreImpl 
 	{
@@ -53,7 +53,7 @@ namespace xbrlcapi
 	     * loaded by several of the loaders.
 	     */
 	//    transient private 
-			std::unordered_map<Poco::URI,std::shared_ptr<LoaderImpl>> loadingRights;		    	    
+			std::unordered_map<Poco::URI,std::shared_ptr<Loader>> loadingRights;		    	    
 		    /**
 		     * resource matcher
 		     */
@@ -73,8 +73,8 @@ namespace xbrlcapi
 		template<typename T>
 		std::vector<std::shared_ptr<T>> getXMLResources(const std::string& interfaceName);
 		std::string getId(const std::string& input);
-		bool requestLoadingRightsFor(const Poco::URI& document, LoaderImpl& loader);
-		void recindLoadingRightsFor(const Poco::URI& document, LoaderImpl& loader);
+		bool requestLoadingRightsFor(const Poco::URI& document, const Loader& loader);
+		void recindLoadingRightsFor(const Poco::URI& document, const Loader& loader);
 		std::unordered_set<Poco::URI> getFilteringURIs();
 		bool isFilteringByURIs();
 		std::string getURIFilteringPredicate();

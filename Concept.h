@@ -1,9 +1,9 @@
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
 /**
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 #include <string>
 #include <vector>

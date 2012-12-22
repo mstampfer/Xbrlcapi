@@ -1,12 +1,14 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
+#include <stack>
+#include <unordered_map>
 
 
 /**
 * XLink 1.1 processor for use with SAX parsers.
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 * @author Henry S. Thompson (ht@w3.org)
 */
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #include "ContentHandlerImpl.h"
 #include <iostream>
 /**
@@ -13,7 +13,7 @@
 * of helpers to assist with data storage and XLink processing. 
 * These are supplied by the loader.
 * 
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 namespace xbrlcapi
 {

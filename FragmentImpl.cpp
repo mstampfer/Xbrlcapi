@@ -1,11 +1,11 @@
-#include "stdafx.h"
+
 #include "FragmentImpl.h"
 
 namespace xbrlcapi
 {
 /**
 * Implements the functionality that is common to all types of XBRL fragments.
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 		/**
 		//* @see Fragment#getAncestorOrSelf(String)

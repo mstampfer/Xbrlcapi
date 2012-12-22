@@ -3,7 +3,7 @@
 * 1. How to load an XBRL instance document
 * 2. How to analyse the presentation networks for that instance
 */
-#include "stdafx.h"
+
 #include "Load.h"
 #include "Instance.h"
 #include "Item.h"
@@ -13,6 +13,10 @@
 #include "XBRLException.h"
 #include "Logger.h"
 #include "XBRLException.h"
+#include "CustomLinkRecogniser.h"
+#include "XLinkProcessor.h"
+#include "EntityResolver.h"
+#include "Cache.h"
 
 using Poco::URI;
 namespace xbrlcapi
@@ -139,14 +143,14 @@ namespace xbrlcapi
 		{
 			throw std::exception("URI syntax exception");
 		}
-		try
-		{
 			EntityResolver entityResolver(cacheFile, map);      
 			std::shared_ptr<Loader> loader(new Loader(store, xlinkProcessor, entityResolver));
-			loader->setCache(Cache(cacheFile));
+		try
+		{
+			Cache cache(cacheFile);
+			loader->setCache(cache);
 			loader->setEntityResolver(entityResolver);
 			xlinkHandler.setLoader(loader);
-			return loader;
 		}
 		catch (const XBRLException& e)
 		{
@@ -156,6 +160,8 @@ namespace xbrlcapi
 		{
 			logger.root.error("Unknown error initializing Loader ");
 		}
+		return loader;
+
 	}
 
 	/**

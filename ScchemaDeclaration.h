@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #pragma once
 #include "Logger.h"
 #include "SchemaDeclaration.h"
@@ -7,7 +7,7 @@
 namespace xbrlcapi
 {
 /**
- * @author Geoffrey Shuetrim (geoff@galexy.net)
+ 
  */
 
 class SchemaDeclarationImpl : public  SchemaContentImpl, public SchemaDeclaration 

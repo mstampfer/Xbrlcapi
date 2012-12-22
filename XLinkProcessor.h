@@ -1,5 +1,5 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 #include <memory>
@@ -16,7 +16,7 @@
 * Note that the XLink specification is pretty persnicketty regarding
 * nested XLink structures.
 * 
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 namespace xbrlcapi
 {

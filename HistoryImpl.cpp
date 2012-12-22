@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #include "HistoryImpl.h"
 
 namespace xbrlcapi

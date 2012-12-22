@@ -1,5 +1,5 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -12,7 +12,7 @@ namespace xbrlcapi
 	class TypeDeclaration;
 /**
  * Base interface for XML Schema element and attribute declarations
- * @author Geoffrey Shuetrim (geoff@galexy.net)
+ 
  */
 
 struct SchemaContentDeclaration : public SchemaDeclaration {

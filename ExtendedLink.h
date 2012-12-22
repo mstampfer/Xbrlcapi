@@ -1,5 +1,5 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -10,7 +10,7 @@
 #include "Link.h"
 
 /**
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 struct Resulrce;
 namespace xbrlcapi

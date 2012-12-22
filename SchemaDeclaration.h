@@ -1,5 +1,5 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -8,7 +8,7 @@
 #include <memory>
 /**
 * Base interface for all kinds of XML Schema declarations
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 
 namespace xbrlcapi

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #include "HashFunctions.h"
 namespace std
 {

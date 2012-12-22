@@ -1,5 +1,5 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 #include <chrono>
@@ -9,30 +9,31 @@
 // * Berkeley Database.  Note that this store implementation
 // * does not use the XML:DB API and so does not require
 // * a DBConnection implementation.
-// * @author Geoffrey Shuetrim (geoff@galexy.net)
+// 
 // */
-#include <string>
-#include <algorithm>
-#include "StoreImpl.h"
-#include "dbxml/XmlManager.hpp"
-#include "db_cxx.h"
-#include "Winsock2.h"
-#include "dbxml/DbXml.hpp"
-#include "XML.h"
 #include "Constants.h"
-#include "dbxml/XmlQueryContext.hpp"
-#include <xercesc/dom/DOMLSParser.hpp>
 #include "FragmentFactory.h"
-#include "LoaderImpl.h"
-#include <dbxml/XmlException.hpp>
-#include "XBRLException.h"
-#include "XercesStrings.h"
-#include <xercesc/dom/DOMImplementationRegistry.hpp>
-#include <xercesc/dom/DOMException.hpp>
-#include <xercesc/dom/DOMLSException.hpp>
-#include "XmlInputStreamWrapper.hpp"
-#include <xercesc/framework/Wrapper4InputSource.hpp>
+#include "Loader.h"
+#include "StoreImpl.h"
 #include "Stub.h"
+#include "Winsock2.h"
+#include "XBRLException.h"
+#include "XML.h"
+#include "XercesStrings.h"
+#include "XmlInputStreamWrapper.hpp"
+#include <algorithm>
+#include <db_cxx.h>
+#include <dbxml/DbXml.hpp>
+#include <dbxml/XmlException.hpp>
+#include <dbxml/XmlManager.hpp>
+#include <dbxml/XmlQueryContext.hpp>
+#include <memory>
+#include <string>
+#include <xercesc/dom/DOMException.hpp>
+#include <xercesc/dom/DOMImplementationRegistry.hpp>
+#include <xercesc/dom/DOMLSException.hpp>
+#include <xercesc/dom/DOMLSParser.hpp>
+#include <xercesc/framework/Wrapper4InputSource.hpp>
 
 namespace xbrlcapi
 { 
@@ -2880,14 +2881,14 @@ namespace xbrlcapi
 	* loaded by several of the loaders.
 	*/	 
 	/**
-	* @see Store#requestLoadingRightsFor(LoaderImpl, URI)
+	* @see Store#requestLoadingRightsFor(Loader, URI)
 	*/
 	//public synchronized 
-	bool StoreImpl::requestLoadingRightsFor(const Poco::URI& document, LoaderImpl& loader) 
+	bool StoreImpl::requestLoadingRightsFor(const Poco::URI& document, const Loader& loader) 
 	{
 		if (loadingRights.find(document) == loadingRights.end()) 
 		{
-//TODO			loadingRights.insert(std::make_pair(document, std::make_shared<LoaderImpl>(&loader)));
+//TODO			loadingRights.insert(std::make_pair(document, std::make_shared<Loader>(&loader)));
 			return true;
 		}
 
@@ -2901,10 +2902,10 @@ namespace xbrlcapi
 	}
 
 	/**
-	* @see Store#recindLoadingRightsFor(LoaderImpl, URI)
+	* @see Store#recindLoadingRightsFor(Loader, URI)
 	*/
 	//synchronized 
-	void StoreImpl::recindLoadingRightsFor(const Poco::URI& document, LoaderImpl& loader) 
+	void StoreImpl::recindLoadingRightsFor(const Poco::URI& document, const Loader& loader) 
 	{
 		if (loadingRights.find(document) == loadingRights.end()) return;
 		if (*loadingRights[document].get() == loader) loadingRights.erase(document); 
@@ -2979,7 +2980,7 @@ namespace xbrlcapi
 	//    }
 
 	/**
-	* @see Store#startLoading(LoaderImpl)
+	* @see Store#startLoading(Loader)
 	*/
 	void StoreImpl::startLoading() 
 	{
@@ -2987,7 +2988,7 @@ namespace xbrlcapi
 	}
 
 	/**
-	* @see Store#stopLoading(LoaderImpl)
+	* @see Store#stopLoading(Loader)
 	*/
 	//synchronized
 	void StoreImpl::stopLoading() 

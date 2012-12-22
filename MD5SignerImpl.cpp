@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #include <string>
 #include "MD5SignerImpl.h"
 

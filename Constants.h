@@ -1,11 +1,11 @@
-#include "Stdafx.h"
+
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 /**
 * Defines a range of constants (namespaces etc) that are used throughout the
 * XBRLAPI implementation
 * 
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 
 #include <string>

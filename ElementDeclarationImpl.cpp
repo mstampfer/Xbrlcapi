@@ -1,9 +1,9 @@
 
-#include "stdafx.h"
+
 //#include "ComplexTypeDeclaration.h"
 #include "ElementDeclarationImpl.h"
 /**
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 namespace xbrlcapi 
 {

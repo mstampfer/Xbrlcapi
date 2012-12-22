@@ -1,5 +1,5 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 
@@ -15,7 +15,7 @@ namespace xbrlcapi
 	/**
 	* XBRL XLink Handler
 	* This class provides a real world example of an XLink handler for XBRL.
-	* @author Geoffrey Shuetrim (geoff@galexy.net)
+	
 	*/
 		XBRLXLinkHandlerImpl::XBRLXLinkHandlerImpl() // Todo: use delegating ctor here when available 
 		{

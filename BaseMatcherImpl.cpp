@@ -1,6 +1,7 @@
-#include "stdafx.h"
+
 #include "BaseMatcherImpl.h"
 #include "XBRLException.h"
+#include <fstream>
 
 //#include "Signer.h"
 
@@ -8,7 +9,7 @@ namespace xbrlcapi
 {
 
 	/**
-	* @author Geoffrey Shuetrim (geoff@galexy.net)
+	
 	*/
 
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 //#include "Schema.h"
 #include "SchemaContentImpl.h"
 

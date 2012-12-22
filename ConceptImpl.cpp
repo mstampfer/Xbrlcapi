@@ -1,10 +1,10 @@
-#include "stdafx.h"
+
 #include "ConceptImpl.h"
 
 namespace xbrlcapi
 {
 	/**
-	* @author Geoffrey Shuetrim (geoff@galexy.net)	
+		
 	*/
 
 

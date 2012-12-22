@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #pragma once
 #include "Logger.h"
 #include "Loader.h"
@@ -17,7 +17,7 @@ namespace xbrlcapi
 	public:
 		ContentHandler() : pimpl(new ContentHandlerImpl()) {}
 
-		ContentHandler(const LoaderImpl& loader, const Poco::URI& uri) : pimpl(new ContentHandlerImpl()) 
+		ContentHandler(const Poco::URI& uri, const Loader& loader) : pimpl(new ContentHandlerImpl()) 
 		{
 
 		}

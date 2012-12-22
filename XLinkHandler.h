@@ -1,5 +1,5 @@
 
-#include "Stdafx.h"
+
 #pragma once
 #include "Logger.h"
 /**
@@ -12,7 +12,7 @@
 * through to the nominated XLinkHandler, augmented with a range of
 * state information relating to where abouts in an XLink structure
 * the XLink event has been triggered from.
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 namespace xbrlcapi
 {

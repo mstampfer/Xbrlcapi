@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #pragma once
 #include <Poco/URI.h>
 #include <vector>
@@ -6,7 +6,7 @@
 /**
 * The resource matcher interface, defining all methods that need to be 
 * implemented by a resource matcher to support XBRLAPI data stores.
-* @author Geoffrey Shuetrim (geoff@galexy.net)
+
 */
 
 namespace xbrlcapi
