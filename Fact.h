@@ -1,5 +1,4 @@
 #pragma once
-#include "Logger.h"
 #include "Fragment.h"
 
 //#include "Instance.h"
@@ -67,8 +66,5 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual bool isNil();
-
-		private:
-Logger logger;
-};
+	};
 }

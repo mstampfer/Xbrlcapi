@@ -19,7 +19,7 @@ namespace xbrlcapi
 	*/
 	Store StorerImpl::getStore() 
 	{
-		return store;
+		return std::move(store);
 	}
 
 	/**
@@ -30,7 +30,7 @@ namespace xbrlcapi
 	void StorerImpl::setStore(Store& s)
 	{
 //		if (store == null) throw; // new XBRLException("The store must not be null.");
-		store = s;
+		store = std::move(s);
 	}
 
 	///**

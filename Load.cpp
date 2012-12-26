@@ -11,8 +11,6 @@
 #include "CacheFile.h"
 #include "XBRLXLinkHandlerImpl.h"
 #include "XBRLException.h"
-#include "Logger.h"
-#include "XBRLException.h"
 #include "CustomLinkRecogniser.h"
 #include "XLinkProcessor.h"
 #include "EntityResolver.h"
@@ -105,6 +103,29 @@ namespace xbrlcapi
 	}
 
 
+void initLogger()
+{
+	log4cpp::Category &log_root = log4cpp::Category::getRoot();
+	log4cpp::Category &log_sub1 = log4cpp::Category::getInstance( std::string("log_sub1") );
+	log4cpp::Category &log_sub2 = log4cpp::Category::getInstance( std::string("log_sub1.log_sub2") );
+
+	const char *file_log4cpp_init = "log4cpp.properties";
+
+	try
+	{
+		log4cpp::PropertyConfigurator::configure( file_log4cpp_init );
+	}
+	catch( log4cpp::ConfigureFailure &e )
+	{
+		std::cout 
+			<< e.what() 
+			<< " [log4cpp::ConfigureFailure catched] while reading " 
+			<< file_log4cpp_init 
+			<< std::endl;
+
+		exit(1);
+	}
+}
 	///**
 	//* @param store The store to use for the loader.
 	//* @param cache The root directory of the document cache.
@@ -113,10 +134,11 @@ namespace xbrlcapi
 	//*/
 	std::shared_ptr<Loader> Load::createLoader(Store& store, const std::string& cache) 
 	{
-		Logger logger;
+		initLogger();
+		log4cpp::Category &logger = log4cpp::Category::getInstance( std::string("log_sub1") );
 		XBRLXLinkHandlerImpl xlinkHandler;
-		CustomLinkRecogniser clr; 
-		XLinkProcessor xlinkProcessor(xlinkHandler,clr);
+		CustomLinkRecogniser customLinkRecogniser; 
+		XLinkProcessor xlinkProcessor(xlinkHandler,customLinkRecogniser);
 
 		CacheFile cacheFile(cache);
 
@@ -154,11 +176,11 @@ namespace xbrlcapi
 		}
 		catch (const XBRLException& e)
 		{
-			logger.root.error("Error initializing Loader " + e.getMessage());
+			logger.error("Error initializing Loader " + e.getMessage());
 		}
 		catch (...)
 		{
-			logger.root.error("Unknown error initializing Loader ");
+			logger.error("Unknown error initializing Loader ");
 		}
 		return loader;
 
@@ -204,7 +226,7 @@ namespace xbrlcapi
 int main(int argv, char * args[]) 
 { 
 
-	xbrlcapi::Logger logger;
+	log4cpp::Category& logger = log4cpp::Category::getInstance( std::string("log_sub1") );
 
 	try 
 	{
@@ -304,7 +326,7 @@ int main(int argv, char * args[])
 	}
 	catch (const xbrlcapi::XBRLException& e)
 	{
-		logger.root.info(e.getMessage());
+		logger.error(e.getMessage());
 	}
 	catch (std::exception& e) 
 	{

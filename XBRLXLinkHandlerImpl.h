@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 #include "XLinkHandlerDefaultImpl.h"
 
 namespace xbrlcapi
@@ -12,7 +11,7 @@ namespace xbrlcapi
 	/**
 	* XBRL XLink Handler
 	* This class provides a real world example of an XLink handler for XBRL.
-	
+
 	*/
 	class XBRLXLinkHandlerImpl :  public XLinkHandlerDefaultImpl //, Serializable 
 	{
@@ -451,8 +450,6 @@ namespace xbrlcapi
 		//       return true;
 		//   }
 		//   
-	private:
-		Logger logger;
 	};
 }
 

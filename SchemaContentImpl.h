@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 //#include "Schema.h"
 #include "SchemaContent.h"
@@ -11,7 +10,7 @@ namespace xbrlcapi
 {
 
 	/**
-	
+
 	*/
 
 	class SchemaContentImpl : public FragmentImpl, public SchemaContent 
@@ -58,9 +57,5 @@ namespace xbrlcapi
 		*  @see org.xbrlapi.SchemaDeclaration#getSchemaId()
 		*/
 		std::string getSchemaId();
-
-	
-private:
-Logger logger;
-};
+	};
 }

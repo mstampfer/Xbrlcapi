@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 /**
 * Commandline example showing:
@@ -97,14 +96,5 @@ namespace xbrlcapi
 		*  the XBRLAPI can be used to access information in instances.
 		* @author Geoff Shuetrim (geoff@galexy.net)
 		*/
-
-
-		void Load::reportInstance(Instance& instance);
-
-
-
-	
-private:
-Logger logger;
-};
+	};
 }

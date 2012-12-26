@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 
 #include "Fragment.h"
@@ -21,7 +20,7 @@ namespace xbrlcapi
 {
 	struct Item;
 	/**
-	
+
 	*/
 
 	class Tuple;
@@ -211,9 +210,5 @@ namespace xbrlcapi
 		* @throws XBRLException if the parameter is null.
 		*/
 		virtual std::vector<Fact&> getFacts(const Concept& concept);
-
-	
-private:
-Logger logger;
-};
+	};
 }

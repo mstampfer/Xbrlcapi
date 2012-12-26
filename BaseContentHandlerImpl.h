@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 #include <xercesc/sax/ErrorHandler.hpp>
 
 /**
@@ -135,7 +134,5 @@ namespace xbrlcapi
 		//		logger.warn(exception + "  Carrying on with parsing without doing validation.");
 		//	}
 		//   
-		private:
-Logger logger;
-};
+	};
 }

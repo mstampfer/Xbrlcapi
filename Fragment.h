@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 
 #include <string>
 #include <vector>
@@ -425,8 +424,8 @@ namespace xbrlcapi
 		* @return the fragment list of children fragments that match the specified fragment type
 		* @throws XBRLException
 		*/
-//		template <typename F>
-//		virtual std::vector<F> getChildren(const std::string& type);
+		//		template <typename F>
+		//		virtual std::vector<F> getChildren(const std::string& type);
 
 		/**
 		* Gets the child fragments with the specified fragment type.
@@ -437,8 +436,8 @@ namespace xbrlcapi
 		*         fragment type
 		* @throws XBRLException
 		*/
-//		template <typename F>
-//		virtual std::vector<F> getChildren(F requiredClass);
+		//		template <typename F>
+		//		virtual std::vector<F> getChildren(F requiredClass);
 
 		/**
 		* @param type
@@ -485,8 +484,5 @@ namespace xbrlcapi
 		*/
 		virtual std::string getLanguageName(std::vector<std::string> languageNameEncodings);
 
-	
-private:
-Logger logger;
-};
+	};
 }

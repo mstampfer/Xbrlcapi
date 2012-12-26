@@ -13,8 +13,8 @@ namespace xbrlcapi
 	private:
 		boost::filesystem::path path;
 		std::unique_ptr<boost::filesystem::fstream> os;
-		CacheFile(const CacheFile&);
-		CacheFile& operator=(const CacheFile&);
+//		CacheFile(const CacheFile&);
+//		CacheFile& operator=(const CacheFile&);
 
 	public:
 		CacheFile(const char* name = "c:\\temp\\default.cache") : path(name)

@@ -1,6 +1,5 @@
 #pragma once
 #include "PimplImpl.h"
-#include "Logger.h"
 #include <xercesc/sax/EntityResolver.hpp>
 #include <xercesc/util/XMLEntityResolver.hpp>
 #include <Poco/URI.h>
@@ -18,10 +17,9 @@ namespace xbrlcapi
 	{
 		struct Impl;
 		Pimpl<Impl> p;
-		Logger logger;
 	public:
 		EntityResolver();
-		EntityResolver(const EntityResolver&);
+//		EntityResolver(const EntityResolver&);
 		~EntityResolver();
 		EntityResolver(CacheFile&);
 		EntityResolver(Cache&);

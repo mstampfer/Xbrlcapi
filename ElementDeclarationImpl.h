@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 //#include "ComplexTypeDeclaration.h"
 #include "ElementDeclaration.h"
@@ -124,8 +123,5 @@ namespace xbrlcapi
 		* @see ElementDeclaration#getMinOccurs()
 		*/
 		std::string getMinOccurs();
-
-		private:
-Logger logger;
-};
+	};
 }

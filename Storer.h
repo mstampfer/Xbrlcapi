@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 #include <Poco/URI.h>
 #include <vector>
 //#include "Arc.h"
@@ -17,12 +16,12 @@
 */
 namespace xbrlcapi
 {
-class Networks;
-class Network;
-class Arcs;
-class Arc;
-class Relationship;
-struct Fragment;
+	class Networks;
+	class Network;
+	class Arcs;
+	class Arc;
+	class Relationship;
+	struct Fragment;
 	struct Storer {
 
 		/**
@@ -125,9 +124,5 @@ struct Fragment;
 		* @throws XBRLException
 		*/
 		void deleteInactiveRelationships();
-
-	
-private:
-Logger logger;
-};
+	};
 }

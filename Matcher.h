@@ -66,8 +66,5 @@ namespace xbrlcapi
 		* @throws XBRLException if the URI is null.
 		*/
 		virtual Poco::URI del(const Poco::URI&  uri) = 0;
-
-	private:
-Logger logger;
-};
+	};
 }

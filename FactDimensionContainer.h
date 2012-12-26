@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 
 
 #include "Fragment.h"
@@ -29,8 +28,6 @@ namespace xbrlcapi
 		*/
 		template <typename I>
 		std::vector<I> getReferencingItems();
-		private:
-Logger logger;
-};
+	};
 }
 

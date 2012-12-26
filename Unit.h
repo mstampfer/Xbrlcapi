@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 
 #include "FactDimensionContainer.h"
 /**
@@ -59,10 +58,5 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual std::vector<Measure> getResolvedDenominatorMeasures();
-
-
-	
-private:
-Logger logger;
-};
+	};
 }

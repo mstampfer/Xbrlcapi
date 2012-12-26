@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 
 #include <string>
 #include "Resource.h"
@@ -29,10 +28,6 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual std::string getContentAsXHTMLString();
-
-	
-private:
-Logger logger;
-};
+	};
 }
 

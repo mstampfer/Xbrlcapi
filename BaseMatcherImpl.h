@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 #include "Cache.h"
 #include "Signer.h"
 #include "Matcher.h"
@@ -11,7 +10,7 @@ namespace xbrlcapi
 {
 
 	/**
-	
+
 	*/
 
 
@@ -49,7 +48,7 @@ namespace xbrlcapi
 		//		bool equals(Object obj); 
 
 	public:
-		void setSigner(const Signer& signer);
+		void setSigner(Signer& signer);
 
 		/**
 		* @param cache The resource cache to be used by the matcher when accessing
@@ -57,13 +56,11 @@ namespace xbrlcapi
 		* @param signature The object used to generate resource signatures.
 		* @throws XBRLException if either parameter is null.
 		*/
-		BaseMatcherImpl(Cache& cache, const Signer& signature);
+		BaseMatcherImpl(Cache& cache, Signer& signature);
 
 		/**
 		* @see org.xbrlapi.data.resource.Matcher#getSignature(URI)
 		*/
 		//std::string getSignature(const Poco::URI& uri);
-		private:
-Logger logger;
-};
+	};
 }

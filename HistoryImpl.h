@@ -1,5 +1,4 @@
-
-#pragma once
+#include "History.h"
 #include "Logger.h"
 #include <string>
 #include <unordered_set>
@@ -8,32 +7,46 @@
 
 namespace xbrlcapi
 {
-	class HistoryImpl : public History 
+	struct History::Impl 
 	{
+		Logger logger;
+		Impl() {}
+		void addRecord(const Poco::URI& uri, const std::string& identifier)
+		{
+			logger.root.debug(uri.toString() + " has identifier: " + identifier);
+		}
+		std::string getIdentifier(const Poco::URI& uri)
+		{
+			return "";
+		}    
 
-	private:
+		std::unordered_set<Poco::URI> getURIs()
+		{
+			return std::unordered_set<Poco::URI>();
+		}
+	};
+	History::History() {}
+	History::~History() {} 
+	History::History(History&& rhs) 
+	{ 
+		p = std::move(rhs.p); 
+	}
 
+	History& History::operator=(History&& rhs)
+	{
+		if (p != rhs.p)
+			p = std::move(rhs.p);
+		return *this;
+	}
 
-		/**
-		* @see History#addRecord(URI, String)
-		*/
-	public:
-		void addRecord(const Poco::URI& uri, const std::string& identifier);
+	bool History::operator==(const History& rhs)
+	{
+		return (p == rhs.p);
+	}
 
-		/**
-		* @see History#getIdentifier(URI)
-		*/
-		std::string getIdentifier(const Poco::URI& uri);
+	bool History::operator!=(const History& rhs)
+	{
+		return !this->operator==(rhs);
+	}
 
-		std::unordered_set<Poco::URI> getURIs();
-
-		/**
-		* @see java.lang.Object#equals(java.lang.Object)
-		*/
-		//bool equals(Object obj);
-
-	
-private:
-Logger logger;
-};
 }

@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 #include "BaseContentHandlerImpl.h"
 
 /**
@@ -412,9 +411,5 @@ namespace xbrlcapi
 		//    if (xml == null) throw XBRLException("The string of XML to be parsed must not be null.");
 		//    this.xml = xml;
 		//}
-
-	
-private:
-Logger logger;
-};
+	};
 }

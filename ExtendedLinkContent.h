@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 
 //#include "ExtendedLink.h"
 #include "Xlink.h"
@@ -20,8 +19,5 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual ExtendedLink getExtendedLink();
-
-		private:
-Logger logger;
-};
+	};
 }

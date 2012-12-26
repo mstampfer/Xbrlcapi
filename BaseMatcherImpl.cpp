@@ -110,9 +110,9 @@ namespace xbrlcapi
 	return false;
 	return true;
 	}   */ 
-	void BaseMatcherImpl::setSigner(const Signer& signer) 
+	void BaseMatcherImpl::setSigner(Signer& signer) 
 	{
-		this->signer = signer;
+		this->signer = std::move(signer);
 	}
 
 	/**
@@ -121,7 +121,7 @@ namespace xbrlcapi
 	* @param signature The object used to generate resource signatures.
 	* @throws XBRLException if either parameter is null.
 	*/
-	BaseMatcherImpl::BaseMatcherImpl(Cache& cache, const Signer& signature) :  signer(signature) 
+	BaseMatcherImpl::BaseMatcherImpl(Cache& cache, Signer& signature) :  signer(std::move(signature)) 
 	{
 		setCache(cache);
 	}

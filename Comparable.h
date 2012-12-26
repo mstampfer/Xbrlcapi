@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 /**
 * This interface imposes a total ordering on the objects of each class that
@@ -116,6 +115,5 @@ namespace xbrlcapi
 		*/
 		int compareTo(T o);
 		private:
-Logger logger;
 };
 }

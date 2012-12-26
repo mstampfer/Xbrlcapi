@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 #include <string>
 #include <xercesc/sax2/Attributes.hpp>
 #include "Constants.h"
@@ -49,8 +48,6 @@ namespace xbrlcapi
 		//	const XMLCh* const schemaLocation = L"schemaLocation";
 		//	return attrs.getValue(schemaLocation);
 		//}
-	private:
-		Logger logger;
 	};
 }
 

@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 
 #include <string>
 #include <vector>
@@ -141,9 +140,5 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual std::unordered_map<std::string,std::string> getLocatorTargetIndices();
-
-
-		private:
-Logger logger;
-};
+	};
 }

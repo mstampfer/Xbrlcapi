@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 
 #include <string>
@@ -202,8 +201,5 @@ namespace xbrlcapi
 		//* @throws XBRLException
 		//*/
 		//virtual void updateInStore();
-
-	private:
-		Logger logger;
 	};
 }

@@ -10,7 +10,7 @@
 // * a DBConnection implementation.
 // 
 // */
-#include "DefaultMatcherImpl.h"
+#include "DefaultMatcher.h"
 #include "Fragment.h"
 #include "HashFunctions.h"
 #include <Poco/URI.h>
@@ -32,36 +32,35 @@ namespace xbrlcapi
 	class Loader;
 	class Stub;
 	class Loader;
-
 	class StoreImpl 
 	{
 
 	private:
-		    std::unique_ptr<xercesc::DOMImplementationLS>(domImplementationRegistry);
-			int loadingStatus;
-//			std::map<Poco::URI,Loader> loadingRights;
+		std::unique_ptr<xercesc::DOMImplementationLS>(domImplementationRegistry);
+		int loadingStatus;
+		//			std::map<Poco::URI,Loader> loadingRights;
 
-			std::unordered_set<Poco::URI> uris;
-		    protected:
-			std::shared_ptr<xercesc::DOMDocument> storedom;
-		    std::shared_ptr<xercesc::DOMImplementationLS> domimplementation;
-	    /**
-	     * This property is used to co-ordinate the document
-	     * loading activities of loaders that are operating in
-	     * parallel on the one data store.  It is used to 
-	     * prevent the same document from being simultaneously
-	     * loaded by several of the loaders.
-	     */
-	//    transient private 
-			std::unordered_map<Poco::URI,std::shared_ptr<Loader>> loadingRights;		    	    
-		    /**
-		     * resource matcher
-		     */
+		std::unordered_set<Poco::URI> uris;
+	protected:
+		std::shared_ptr<xercesc::DOMDocument> storedom;
+		std::shared_ptr<xercesc::DOMImplementationLS> domimplementation;
+		/**
+		* This property is used to co-ordinate the document
+		* loading activities of loaders that are operating in
+		* parallel on the one data store.  It is used to 
+		* prevent the same document from being simultaneously
+		* loaded by several of the loaders.
+		*/
+		//    transient private 
+		std::unordered_map<Poco::URI,std::shared_ptr<Loader>> loadingRights;		    	    
+		/**
+		* resource matcher
+		*/
 		DefaultMatcherImpl matcher;
-			    /**
-	     * Namespace bindings map from prefix to namespace.
-	     */
-	    std::unordered_map<std::string,std::string> namespaceBindings;   
+		/**
+		* Namespace bindings map from prefix to namespace.
+		*/
+		std::unordered_map<std::string,std::string> namespaceBindings;   
 		//
 	public:
 
@@ -99,16 +98,15 @@ namespace xbrlcapi
 		*/
 		int queryEvaluationType;
 		static const 	u_int32_t env_flags = DB_CREATE     |  // If the environment does not exist, create it.
-										  DB_INIT_LOCK  |  // Initialize locking
-					   				      DB_INIT_LOG   |  // Initialize logging
-										  DB_INIT_MPOOL |  // Initialize the cache
-										  DB_INIT_TXN	|  // Initialize transactions
-										  DB_THREAD;	   // 
+			DB_INIT_LOCK  |  // Initialize locking
+			DB_INIT_LOG   |  // Initialize logging
+			DB_INIT_MPOOL |  // Initialize the cache
+			DB_INIT_TXN	|  // Initialize transactions
+			DB_THREAD;	   // 
 		std::string getComputerName(); 
 		void initialize(const std::string& location, const std::string& container);
 		void initManager();
 		std::string StoreImpl::random();
-
 
 		/**
 		* Initialises the database container.
@@ -119,8 +117,8 @@ namespace xbrlcapi
 		void closeContainer();
 		void closeManager();
 
-	DbXml::XmlResults StoreImpl::runQuery(std::string& myQuery, 
-		const DbXml::XmlQueryContext::EvaluationType& evaluationType=DbXml::XmlQueryContext::Lazy);
+		DbXml::XmlResults StoreImpl::runQuery(std::string& myQuery, 
+			const DbXml::XmlQueryContext::EvaluationType& evaluationType=DbXml::XmlQueryContext::Lazy);
 
 		/**
 		* Performs a lazy query evaluation
@@ -129,8 +127,6 @@ namespace xbrlcapi
 		* @throws XBRLException if the query fails to execute.
 		*/
 		DbXml::XmlResults performLazyQuery(const std::string& myQuery);
-
-
 
 		/**
 		* @return a XQuery context, prepared with namespace declarations etc.
@@ -170,7 +166,7 @@ namespace xbrlcapi
 		* @param container The name of the container to hold the data in the store.
 		* @throws XBRLException
 		*/
-	StoreImpl(const std::string& location, const std::string& container) 
+		StoreImpl(const std::string& location, const std::string& container) 
 			: locationName(location), 
 			containerName(container),
 			cacheSize(1024 * 1024 * 1024),
@@ -266,7 +262,7 @@ namespace xbrlcapi
 		*/
 		//synchronized 
 		std::unordered_set<std::string> queryForIndices(const std::string& query) ;
-		
+
 		/**
 		* @see org.xbrlapi.data.Store#queryForStrings(String)
 		*/
@@ -310,12 +306,12 @@ namespace xbrlcapi
 		/**
 		* @see java.lang.Object#equals(java.lang.Object)
 		*/
-//		bool equals(Object obj);
+		//		bool equals(Object obj);
 
 
 		std::string toString();	
-private:
-Logger logger;
-};
+	private:
+		Logger logger;
+	};
 }
 

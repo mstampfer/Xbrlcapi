@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 #include "XLinkHandler.h"
 
 /**
@@ -191,10 +190,6 @@ namespace xbrlcapi
 		//			return false;
 		//		return true;
 		//}
-
-
-	private:
-		Logger logger;
 	};
 }
 

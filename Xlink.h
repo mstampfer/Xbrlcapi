@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 
 
 #include "Fragment.h"
@@ -12,7 +11,7 @@ namespace xbrlcapi
 {
 
 	/**
-	
+
 	*/
 	class Title;
 	struct Xlink : public Fragment {
@@ -67,9 +66,5 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual std::string getAttribute(const std::string& name);
-
-	
-private:
-Logger logger;
-};
+	};
 }

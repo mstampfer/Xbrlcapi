@@ -163,7 +163,6 @@ namespace xbrlcapi
 		* </ul>
 		*/
 
-		// protected static Logger logger;
 		static const std::string FEATURE_SECURE_PROCESSING;
 		static const std::string XMLPrefix;
 		static const std::string XLinkPrefix;

@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 
 /**
 
@@ -70,10 +69,6 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual std::string getSchemaId();
-
-	
-private:
-Logger logger;
-};
+	};
 }
 

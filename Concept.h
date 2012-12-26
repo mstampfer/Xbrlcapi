@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 /**
 
@@ -73,9 +72,5 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual std::vector<std::string> getPresentationNetworkLinkroles();
-
-
-		private:
-Logger logger;
-};  
+	};  
 }

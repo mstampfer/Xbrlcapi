@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 /**
 * Event handler for the XLink processor,
 * responsible for performing the user required responses
@@ -292,10 +291,6 @@ namespace xbrlcapi
 		//*/
 		//public void warning( std::string namespaceURI,  std::string lName,  std::string qName,
 		//	Attributes attrs, std::string message) throws XLinkException;
-
-
-	private:
-		Logger logger;
 	};
 }
 

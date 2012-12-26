@@ -1,10 +1,5 @@
-
-
 #pragma once
-#include "Logger.h"
-#include <memory>
-#include "XLinkProcessorImpl.h"
-#include "XBRLXLinkHandlerImpl.h"
+#include "PimplImpl.h"
 
 /**
 * The XLink processor is responsible for taking the input from a 
@@ -20,31 +15,21 @@
 */
 namespace xbrlcapi
 {
+	class XLinkHandler;
+	class CustomLinkRecogniser;
 	class XLinkProcessor //extends Serializable 
 	{
-		std::unique_ptr<XLinkProcessorImpl> pimpl;
-		XLinkProcessor& operator=(const XLinkProcessor& rhs);
-		XLinkProcessor(XLinkProcessor& rhs);
-
+		struct Impl;
+		Pimpl<Impl> p;
 	public:
-		XLinkProcessor(){}
-		XLinkProcessor(XBRLXLinkHandlerImpl& xlinkHandler) : 
-			pimpl(new XLinkProcessorImpl(xlinkHandler)) {}
-		XLinkProcessor(XBRLXLinkHandlerImpl& xlinkHandler, CustomLinkRecogniser& recogniser) : 
-			pimpl(new XLinkProcessorImpl(xlinkHandler, recogniser)) {}
-		XLinkProcessor& operator=(XLinkProcessor&& rhs)
-		{
-			if (pimpl != rhs.pimpl)
-			{
-				pimpl = std::move(rhs.pimpl);
-			}
-			return *this;
-		}
+		XLinkProcessor();
+		~XLinkProcessor();
+		XLinkProcessor(XLinkHandler& xlh, CustomLinkRecogniser& clr);
+		XLinkProcessor(XLinkProcessor&& rhs);
+		XLinkProcessor& operator=(XLinkProcessor&& rhs);
+		bool operator==(const XLinkProcessor& rhs);
+		bool operator!=(const XLinkProcessor& rhs);
 
-		XLinkProcessor(XLinkProcessor&& rhs)
-		{
-			pimpl = std::move(rhs.pimpl);
-		}
 
 		//
 		//   /**
@@ -109,8 +94,5 @@ namespace xbrlcapi
 		// * @return the XLink handler being used by the XLink processor.
 		// */
 		//public XLinkHandler getXLinkHandler();
-
-	private:
-		Logger logger;
 	};
 }

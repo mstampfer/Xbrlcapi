@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 #include <string>
 #include "XML.h"
@@ -195,9 +194,5 @@ namespace xbrlcapi
 		*/
 	private:
 		//		void readObject(ObjectInputStream in);
-
-	private:
-		Logger logger;
-
 	};
 }

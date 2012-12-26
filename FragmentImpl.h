@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 #include "Fragment.h"
 //#include "LabelResource.h"
@@ -41,7 +40,7 @@ namespace xbrlcapi
 		/**
 		* @see Fragment#getChildren(Class)
 		*/
-//		template <typename F> std::vector<F> getChildren(T requiredClass);
+		//		template <typename F> std::vector<F> getChildren(T requiredClass);
 
 		/**
 		* @see Fragment#getChildrenIndices(String)
@@ -71,7 +70,7 @@ namespace xbrlcapi
 		/**
 		* @see Fragment#getDataRootElement()
 		*/
-//		Element getDataRootElement();
+		//		Element getDataRootElement();
 
 		/**
 		* @see Fragment#isNewFragment()
@@ -292,39 +291,35 @@ namespace xbrlcapi
 		*/
 		Fragment getParent();
 
-	/**
-	* This method operates as follows:
-	* <ol>
-	*  <li>If the sequence to the parent element indicates that the 
-	*  data root element is the parent - use that.</li>
-	*  <li>Loop through the sequence to the parent element.</li>
-	* </ol>
-	* @see Fragment#getParentElement(Element)
-	*/
-//	Element getParentElement(Element parentDataRootElement);
+		/**
+		* This method operates as follows:
+		* <ol>
+		*  <li>If the sequence to the parent element indicates that the 
+		*  data root element is the parent - use that.</li>
+		*  <li>Loop through the sequence to the parent element.</li>
+		* </ol>
+		* @see Fragment#getParentElement(Element)
+		*/
+		//	Element getParentElement(Element parentDataRootElement);
 
-	/**
-	* @see Fragment#getLocalnameFromQName(String)
-	*/
-	std::string getLocalnameFromQName(const std::string& qname);
+		/**
+		* @see Fragment#getLocalnameFromQName(String)
+		*/
+		std::string getLocalnameFromQName(const std::string& qname);
 
-	/**
-	* @see Fragment#getXPointerExpression()
-	*/
-	std::string getXPointerExpression();
+		/**
+		* @see Fragment#getXPointerExpression()
+		*/
+		std::string getXPointerExpression();
 
-	/**
-	* @see Fragment#getElementSchemeXPointerExpression()
-	*/
-	std::string getElementSchemeXPointerExpression();
+		/**
+		* @see Fragment#getElementSchemeXPointerExpression()
+		*/
+		std::string getElementSchemeXPointerExpression();
 
-	/**
-	* @see Fragment#getIDXPointerExpression()
-	*/
-	std::string getIDXPointerExpression();
-
-
-private:
-Logger logger;
-};
+		/**
+		* @see Fragment#getIDXPointerExpression()
+		*/
+		std::string getIDXPointerExpression();
+	};
 }

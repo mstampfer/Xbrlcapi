@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 
 #include "SchemaContent.h"
 #include <string>
@@ -65,9 +64,5 @@ namespace xbrlcapi
 		* @throws XBRLException if the fragment cannot be found in the data store.
 		*/
 		// virtual <F extends SchemaDeclaration> F getReferencedSchemaDeclaration();
-
-	
-private:
-Logger logger;
-};
+	};
 }

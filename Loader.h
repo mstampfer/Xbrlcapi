@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 #include "PimplImpl.h"
 #include <Poco/URI.h>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -32,11 +31,10 @@ namespace xbrlcapi
 	{
 		struct Impl;
 		Pimpl<Impl> p;
-		Logger logger;
 	public:
 		Loader();
-		Loader(const Loader& loader);
 		~Loader();
+		Loader(Loader&);
 		Loader(Store& store);
 		Loader(Store& store, XLinkProcessor& xlinkProcessor, EntityResolver& entityResolver);
 		Loader(Store& store, XLinkProcessor& xlinkProcessor, EntityResolver& entityResolver, std::vector<Poco::URI>& uris);
@@ -255,7 +253,7 @@ namespace xbrlcapi
 		* Return the entity resolver being used by the loader.
 		* @return the entity resolver being used by the loader.
 		*/
-		EntityResolver getEntityResolver();
+//		EntityResolver getEntityResolver();
 
 		/**
 		* The default behaviour is to ignore the content of XML Schema 
@@ -298,13 +296,13 @@ namespace xbrlcapi
 		* naive history that just logs the historic 
 		* information.
 		*/
-		void setHistory(const History& history);
+		void setHistory(History& history);
 
 		/**
 		* @return the history recording system being used
 		* to record the documents being loaded.
 		*/
-		std::shared_ptr<History> getHistory();
+		//History getHistory();
 
 		/**
 		* @return true if the loader is using a history recording system

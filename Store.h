@@ -1,18 +1,7 @@
-
 #pragma once
-#include "Logger.h"
-
-#include <vector>
-#include <memory>
+#include "PimplImpl.h"
 #include <unordered_set>
-#include <set>
-#include <unordered_map>
-
-
 #include <Poco/URI.h>
-#include <xercesc/dom/DOMDocument.hpp>
-
-#include "StoreImpl.h"
 
 namespace xbrlcapi
 {
@@ -40,7 +29,7 @@ namespace xbrlcapi
 	struct XML;
 	struct Fact;
 	struct Item;
-	class DefaultMatcherImpl;
+	class DefaultMatcher;
 	class Loader;
 
 
@@ -57,61 +46,32 @@ namespace xbrlcapi
 	* steps would be taken if XML data binding to Java objects were
 	* being used to handle the underlying data.
 	*
-	
+
 	*/
 	//template <typename F>
 	class Store// extends Serializable 
 	{
-		std::unique_ptr<StoreImpl> pimpl;
-		void swap(Store& rhs)
-		{
-			if (pimpl)
-				pimpl = std::move(rhs.pimpl);
-			else
-				pimpl.swap(rhs.pimpl);
-		}
-
+		struct Impl;
+		Pimpl<Impl> p;
 	public:
-		Store() : pimpl(new StoreImpl()) {}
-		Store(const std::string& database, const std::string& container, const int size)
-			:pimpl(new StoreImpl(database,container,size))
-		{}
+		Store();
+		~Store();
+//		Store(Store& rhs); 
+		Store(Store&& rhs);
+//		Store& operator=(Store& rhs);
+		Store& operator=(Store&& rhs);
+		bool operator==(const Store& rhs);
+		bool operator!=(const Store& rhs);
+		Store(const std::string& database, const std::string& container);
+		Store(const std::string& database, const std::string& container, const int size); 
 
-		Store(const std::string& database, const std::string& container)
-			:pimpl(new StoreImpl(database,container))
-		{}
-
-		Store& operator=(Store& rhs)
-		{
-			swap(rhs);
-			return *this;
-		}
-
-		Store& operator=(Store&& rhs) 
-		{
-			swap(rhs);
-			return *this;
-		}
-
-		Store(Store& rhs)
-		{
-			swap(rhs);
-		}
-
-		Store(Store&& rhs)
-		{
-			swap(rhs);
-		}
 
 		/**
 		* Close the data store.
 		* This method must be synchronized.
 		* Throws XBRLException if the data store cannot be closed. 
 		*/
-				void close()
-				{
-					pimpl->close();
-				}
+		void close();
 		//
 		//		/**
 		//		* Store a fragment.
@@ -119,10 +79,7 @@ namespace xbrlcapi
 		//		* @param xml The fragment to be added to the store.
 		//		* @throws XBRLException if the fragment cannot be added to the store.
 		//		*/
-		//		void persist(const XML& xml)
-		//		{
-		//			pimpl->persist(xml);
-		//		}    
+		//		void persist(const XML& xml);
 		//
 		//		/**
 		//		* Test if a store contains a specific fragment, as identified by
@@ -133,10 +90,7 @@ namespace xbrlcapi
 		//		* fragment index.
 		//		* @throws XBRLException If the test cannot be conducted.
 		//		*/
-		//		bool hasXMLResource(const std::string& index)
-		//		{
-		//			pimpl->hasXMLResource(index);
-		//		}
+		//		bool hasXMLResource(const std::string& index);
 		//
 		//		/**
 		//		* Retrieves an XML Resource from a data store.
@@ -145,10 +99,7 @@ namespace xbrlcapi
 		//		* @return The XML resource corresponding to the specified index.
 		//		* @throws XBRLException if the XML resource cannot be retrieved.
 		//		*/
-		//		//F getXMLResource(const std::string& index)
-		//		//{
-		//		//	pimpl->getXMLResource(index);
-		//		//}
+		//		//F getXMLResource(const std::string& index);
 		//
 		//		/**
 		//		* Remove a fragment from the underlying data structure.
@@ -158,10 +109,7 @@ namespace xbrlcapi
 		//		* @param index The index of the fragment to be removed from the DTS store.
 		//		* @throws XBRLException if the fragment cannot be removed from the store.
 		//		*/
-		//		void remove(const std::string& index)
-		//		{
-		//			pimpl->remove(index);
-		//		}
+		//		void remove(const std::string& index);
 		//
 		//		/**
 		//		* Remove a XML resource from the underlying data structure.
@@ -170,20 +118,14 @@ namespace xbrlcapi
 		//		* @param xml The XML resource to remove.
 		//		* @throws XBRLException if the XML resource cannot be removed from the store.
 		//		*/
-		//		void remove(const XML& xml)
-		//		{
-		//			pimpl->remove(xml);
-		//		}	
+		//		void remove(const XML& xml);
 		//
 		//		/**
 		//		* @param namespace The namespace to bind a prefix to for querying
 		//		* @param prefix The prefix to bind to the namespace for querying
 		//		* @throws XBRLException if either argument is null.
 		//		*/
-		//		void setNamespaceBinding(const std::string& Namespace, const std::string& prefix)
-		//		{
-		//			pimpl->setNamespaceBinding(Namespace,prefix);
-		//		}
+		//		void setNamespaceBinding(const std::string& Namespace, const std::string& prefix);
 		//
 		//		/**
 		//		* This should not need to be called but is available if the number of mappings
@@ -191,10 +133,7 @@ namespace xbrlcapi
 		//		* @param prefix the prefix to remove the namespace binding for
 		//		* @throws XBRLException
 		//		*/
-		//		void removeNamespaceBinding(const std::string& prefix)
-		//		{
-		//			pimpl->removeNamespaceBinding(prefix);
-		//		}
+		//		void removeNamespaceBinding(const std::string& prefix);
 		//
 		//		/**
 		//		* This deletion method does not ensure that all other documents that
@@ -203,10 +142,7 @@ namespace xbrlcapi
 		//		* @param uri The URI of the document to delete from the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		void deleteDocument(const Poco::URI& uri)
-		//		{
-		//			pimpl->deleteDocument(uri);
-		//		}
+		//		void deleteDocument(const Poco::URI& uri);
 		//
 		//		/**
 		//		* This deletion method ensures that all related documents
@@ -223,10 +159,7 @@ namespace xbrlcapi
 		//		* @param uri The URI of the document to delete.
 		//		* @throws XBRLException
 		//		*/
-		//		void deleteRelatedDocuments (const Poco::URI&  uri)
-		//		{
-		//			pimpl->deleteRelatedDocuments(uri);
-		//		}
+		//		void deleteRelatedDocuments (const Poco::URI&  uri);
 		//
 		//		/**
 		//		* Run a query against the collection of all fragments in the store.
@@ -240,10 +173,7 @@ namespace xbrlcapi
 		//		* exist.
 		//		* @throws XBRLException if the query cannot be executed.
 		//		*/
-		//		//std::vector<F> queryForXMLResources(const std::string& query)
-		//		//{
-		//		//	pimpl->queryForXMLResources(query);
-		//		//}
+		//		//std::vector<F> queryForXMLResources(const std::string& query);
 		//
 		//		/**
 		//		* Run a query against the collection of all fragments in the store.
@@ -259,10 +189,7 @@ namespace xbrlcapi
 		//		* the query.
 		//		* @throws XBRLException if the query cannot be executed.
 		//		*/
-		//		std::unordered_set<std::string>  queryForIndices(const std::string& query)
-		//		{
-		//			pimpl->queryForIndices(query);
-		//		}
+		//		std::unordered_set<std::string>  queryForIndices(const std::string& query);
 		//
 		//		/**
 		//		* This method must be synchronised
@@ -274,27 +201,21 @@ namespace xbrlcapi
 		//		* @return a count of the number of results returned by the query.
 		//		* @throws XBRLException if the query cannot be executed.
 		//		*/
-		//		long queryCount(const std::string& query)
-		//		{
-		//			pimpl->queryCount(query);
-		//		}    
-		
-				/**
-				* Run a query that is required to return a sequence of strings.
-				* Implementations of this method must be synchronized.
-				* @param query The XQuery query to run against the set of fragments.
-				* Any occurrences of the string #roots# in a query will be deemed to 
-				* be a marker for the root elements of the fragments in an XML database collection 
-				* and it will be substituted with the necessary
-				* expression to identify those roots in the data store.
-				* @return a list of strings, each of which is a query result.
-				* @throws XBRLException if the query cannot be executed or if the
-				* query results are not strings.
-				*/
-				std::unordered_set<std::string>  queryForStrings(std::string& query)
-				{
-					pimpl->queryForStrings(query);
-				}
+		//		long queryCount(const std::string& query);
+
+		/**
+		* Run a query that is required to return a sequence of strings.
+		* Implementations of this method must be synchronized.
+		* @param query The XQuery query to run against the set of fragments.
+		* Any occurrences of the string #roots# in a query will be deemed to 
+		* be a marker for the root elements of the fragments in an XML database collection 
+		* and it will be substituted with the necessary
+		* expression to identify those roots in the data store.
+		* @return a list of strings, each of which is a query result.
+		* @throws XBRLException if the query cannot be executed or if the
+		* query results are not strings.
+		*/
+		std::unordered_set<std::string>  queryForStrings(std::string& query);
 		//
 		//		/**
 		//		* Run a query that is required to return a single string.
@@ -309,10 +230,7 @@ namespace xbrlcapi
 		//		* @throws XBRLException if the query cannot be executed or if the
 		//		* query result is not a single string.
 		//		*/
-		//		std::string queryForString(const std::string& query)
-		//		{
-		//			pimpl->(query);
-		//		}
+		//		std::string queryForString(const std::string& query);
 		//
 		//		/**
 		//		* Serialize the specified XML DOM to the specified destination.
@@ -322,10 +240,7 @@ namespace xbrlcapi
 		//		* because the destination cannot be written to or some other
 		//		* different problem occurs during serialisation.
 		//		*/
-		//		void serialize(const Element& what, OutputStream destination)
-		//		{
-		//			pimpl->serialize(destination);
-		//		}
+		//		void serialize(const Element& what, OutputStream destination);
 		//
 		//		/**
 		//		* Serialize the specified XML DOM to the specified destination.
@@ -335,10 +250,7 @@ namespace xbrlcapi
 		//		* because the destination cannot be written to or some other
 		//		* different problem occurs during serialisation.
 		//		*/
-		//		//void serialize(const Element& what, const File& destination)
-		//		//{
-		//		//	pimpl->serialize(destination);
-		//		//}
+		//		//void serialize(const Element& what, const File& destination);
 		//
 		//		/**
 		//		* Serialize the specified XML DOM node.
@@ -346,10 +258,7 @@ namespace xbrlcapi
 		//		* @return a string containing the serialized XML.
 		//		* @throws XBRLException
 		//		*/
-		//		std::string serialize(const Element& what)
-		//		{
-		//			pimpl->serialize(what);
-		//		}    
+		//		std::string serialize(const Element& what);
 		//
 		//		/**
 		//		* Get a single document in the store as a DOM.
@@ -359,10 +268,7 @@ namespace xbrlcapi
 		//		* contain a document with the given URI.
 		//		* @throws XBRLException if the document cannot be constructed as a DOM.
 		//		*/
-		//		//Element getDocumentAsDOM(const Poco::URI& uri)
-		//		//{
-		//		//	pimpl->getDocumentAsDOM(uri);
-		//		//}
+		//		//Element getDocumentAsDOM(const Poco::URI& uri);
 		//
 		//		/**
 		//		* Serializes the individual documents in the data store, 
@@ -378,10 +284,7 @@ namespace xbrlcapi
 		//		* is not a directory or if the documents in the store cannot 
 		//		* be saved to the local file system.
 		//		*/
-		//		void saveDocuments(const File& destination)
-		//		{
-		//			pimpl->saveDocuments(destination);
-		//		}
+		//		void saveDocuments(const File& destination);
 		//
 		//		/**
 		//		* Serializes those documents in the data store with a URI that
@@ -397,10 +300,7 @@ namespace xbrlcapi
 		//		* is not a directory or if the documents in the store cannot 
 		//		* be saved to the local file system.
 		//		*/
-		//		void saveDocuments(const File& destination, const std::string& uriPrefix)
-		//		{
-		//			pimpl->saveDocuments(destination, uriPrefix);
-		//		}
+		//		void saveDocuments(const File& destination, const std::string& uriPrefix);
 		//
 		//		/**
 		//		* Creates a single DOM structure from all documents in the 
@@ -410,10 +310,7 @@ namespace xbrlcapi
 		//		* @throws XBRLException if the documents in the store cannot be
 		//		* saved to the single file.
 		//		*/
-		//		void saveStoreAsSingleDocument(const File& file)
-		//		{
-		//			pimpl->saveStoreAsSingleDocument(file);
-		//		}
+		//		void saveStoreAsSingleDocument(const File& file);
 		//
 		//		/**
 		//		* Returns the root element of the subtree starting with the
@@ -425,10 +322,7 @@ namespace xbrlcapi
 		//		* with the specified index.
 		//		* @throws XBRLException if the subtree cannot be constructed.
 		//		*/
-		//		//Element getSubtree(const Fragment& f)
-		//		//{
-		//		//	pimpl->getSubtree(f);
-		//		//}
+		//		//Element getSubtree(const Fragment& f);
 		//
 		//		/**
 		//		* Get all data in the store as a single XML DOM object.
@@ -436,10 +330,7 @@ namespace xbrlcapi
 		//		* data store.
 		//		* @throws XBRLException if the DOM cannot be constructed.
 		//		*/
-		//		std::shared_ptr<xercesc::DOMDocument> getStoreAsDOM()
-		//		{
-		//			pimpl->getStoreAsDOM();
-		//		}
+		//		std::shared_ptr<xercesc::DOMDocument> getStoreAsDOM();
 		//
 		//		/**
 		//		* Get all data in the store as a single XML DOM object including
@@ -448,31 +339,22 @@ namespace xbrlcapi
 		//		* @return the composed data store as a DOM object.
 		//		* @throws XBRLException if the composed data store cannot be constructed.
 		//		*/
-		//		std::shared_ptr<xercesc::DOMDocument> getCompositeDocument()
-		//		{
-		//			pimpl->getCompositeDocument();
-		//		}
+		//		std::shared_ptr<xercesc::DOMDocument> getCompositeDocument();
 		//
 		//		/**
 		//		* Get a list of the URIs that have been stored.
 		//		* @return a list of the URIs in the data store.
 		//		* @throws XBRLException if the list cannot be constructed.
 		//		*/
-		//		std::unordered_set<Poco::URI> getDocumentURIs()
-		//		{
-		//			pimpl->getDocumentURIs();
-		//		}
-		
-				/**
-				* Test if a particular URI is already in the data store.
-				* @param uri the string representation of the URI to be tested for.
-				* @return true if the document is in the store and false otherwise.
-				* @throws XBRLException.
-				*/
-				bool hasDocument(const Poco::URI& uri)
-				{
-					return pimpl->hasDocument(uri);
-				}
+		//		std::unordered_set<Poco::URI> getDocumentURIs();
+
+		/**
+		* Test if a particular URI is already in the data store.
+		* @param uri the string representation of the URI to be tested for.
+		* @return true if the document is in the store and false otherwise.
+		* @throws XBRLException.
+		*/
+		bool hasDocument(const Poco::URI& uri);
 		//
 		//		/**
 		//		* Stores the state of the document discovery process.
@@ -481,66 +363,45 @@ namespace xbrlcapi
 		//		* the document has not yet been discovered.
 		//		* @throws XBRLException
 		//		*/
-		//		void persistLoaderState(std::unordered_map<Poco::URI,std::string> documents)
-		//		{
-		//			pimpl->persistLoaderState(documents);
-		//		}    
+		//		void persistLoaderState(std::unordered_map<Poco::URI,std::string> documents);
 		//
 		//		/**
 		//		* @return the number of fragments in the data store.
 		//		* @throws XBRLException if the number of fragments cannot be determined.
 		//		*/
-		//		int getSize()
-		//		{
-		//			pimpl->getSize();
-		//		}
+		//		int getSize();
 
 		/**
 		* @return the list of URIs of the documents remaining to be analysed.
 		* @throws XBRLException if any of the document URIs are malformed.
 		*/
-		std::vector<Poco::URI> getDocumentsToDiscover()
-		{
-			return pimpl->getDocumentsToDiscover();
-		}
+		std::vector<Poco::URI> getDocumentsToDiscover();
 		//
 		//		/**
 		//		* @return a list of stub fragments (Those fragments indicating a 
 		//		* document that needs to be added to the data store).
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<Stub> getStubs()
-		//		{
-		//			pimpl->getStubs();
-		//		}
+		//		std::vector<Stub> getStubs();
 		//
 		//		/**
 		//		* @param uri The string value of the URI of the document to get the stub for.
 		//		* @return the list of stub fragments for the given URI.
 		//		*/
-		//		std::vector<Stub> getStubs(const Poco::URI& uri)
-		//		{
-		//			pimpl->getStubs(uri);
-		//		}
+		//		std::vector<Stub> getStubs(const Poco::URI& uri);
 		//
 		//		/**
 		//		* @param document The document to store a stub for.
 		//		* @param reason The reason the document has not been stored.
 		//		* @throws XBRLException
 		//		*/
-		//		void persistStub(const Poco::URI& document, const std::string& reason)
-		//		{
-		//			pimpl->persistStub(document, reason);
-		//		}    
+		//		void persistStub(const Poco::URI& document, const std::string& reason);
 		//
 		//		/**
 		//		* @param stub The stub to be removed from the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		void removeStub(const Stub& stub)
-		//		{
-		//			pimpl->removeStub(stub);
-		//		}
+		//		void removeStub(const Stub& stub);
 		//
 		//		/**
 		//		* Return a list of XML resources in a data store
@@ -556,10 +417,7 @@ namespace xbrlcapi
 		//		* @throws XBRLException
 		//		*/
 		//		template <typename F>
-		//		std::vector<F> getXMLResources(const std::string& interfaceName)
-		//		{
-		//			pimpl->getXMLResources(interfaceName);
-		//		}
+		//		std::vector<F> getXMLResources(const std::string& interfaceName);
 		//
 		//		/**
 		//		* Return a list of XML resources in a data store
@@ -568,20 +426,14 @@ namespace xbrlcapi
 		//		* @return a list of XML resources with the given fragment type.
 		//		* @throws XBRLException
 		//		*/
-		//		//std::vector<F> getXMLResources(F specifiedClass)
-		//		//{
-		//		//	pimpl->getXMLResources(specifiedClass);
-		//		//}
+		//		//std::vector<F> getXMLResources(F specifiedClass);
 		//
 		//		/**
 		//		* @param specifiedClass The class of XML resource to count.
 		//		* @return The number of XML resources of the given class type in the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		//long getNumberOfXMLResources(F specifiedClass)
-		//		//{
-		//		//	pimpl->getNumberOfXMLResources(specifiedClass);
-		//		//}
+		//		//long getNumberOfXMLResources(F specifiedClass);
 		//
 		//		/**
 		//		* @deprecated
@@ -597,10 +449,7 @@ namespace xbrlcapi
 		//		* are not child fragments.
 		//		* @throws XBRLException
 		//		*/
-		//		//std::vector<F> getChildFragments(const std::string& interfaceName, const std::string& parentIndex)
-		//		//{
-		//		//	pimpl->getChildFragments(interfaceName, parentIndex);
-		//		//}
+		//		//std::vector<F> getChildFragments(const std::string& interfaceName, const std::string& parentIndex);
 		//
 		//		/**
 		//		* @param linkRole The linkrole of the networks.
@@ -609,10 +458,7 @@ namespace xbrlcapi
 		//		* linkrole and arcrole.
 		//		* @throws XBRLException
 		//		*/
-		//		//Networks getNetworks(const std::string& linkRole, const std::string& arcrole)
-		//		//{
-		//		//	pimpl->getNetworks(linkRole, arcrole);
-		//		//}
+		//		//Networks getNetworks(const std::string& linkRole, const std::string& arcrole);
 		//
 		//		/**
 		//		* @param arcrole The XLink arcrole value.
@@ -620,10 +466,7 @@ namespace xbrlcapi
 		//		* that involve this arc role.
 		//		* @throws XBRLException
 		//		*/
-		//		//Networks getNetworks(const std::string& arcrole)
-		//		//{
-		//		//	pimpl->getNetworks(arcrole);
-		//		//}
+		//		//Networks getNetworks(const std::string& arcrole);
 		//
 		//		/**
 		//		* Note that this can massively overload resources if the 
@@ -633,10 +476,7 @@ namespace xbrlcapi
 		//		* @return the collection of all networks in the store.
 		//		* @throws XBRLException
 		//		*/
-		///*		Networks getNetworks()
-		//		{
-		//			pimpl->getNetworks();
-		//		}   */ 
+		///*		Networks getNetworks();
 		//
 		//		/**
 		//		* @param <F> The type of fragment.
@@ -650,10 +490,7 @@ namespace xbrlcapi
 		//		* @throws XBRLException
 		//		*/
 		//		template <typename F>
-		//		std::vector<F> getTargets(const std::string& sourceIndex, const std::string& linkRole, const std::string& arcrole)
-		//		{
-		//			pimpl->getTargets(sourceIndex, linkRole, arcrole);
-		//		}
+		//		std::vector<F> getTargets(const std::string& sourceIndex, const std::string& linkRole, const std::string& arcrole);
 		//
 		//		/**
 		//		* @param <F> The type of fragment.
@@ -666,10 +503,7 @@ namespace xbrlcapi
 		//		* arcrole is null then sources of relationships with any arcrole are returned.
 		//		* @throws XBRLException
 		//		*/
-		//		//std::vector<F> getSources(const std::string& targetIndex, const std::string& linkRole, const std::string& arcrole)
-		//		//{
-		//		//	pimpl->getSources(targetIndex, linkRole, arcrole);
-		//		//}
+		//		//std::vector<F> getSources(const std::string& targetIndex, const std::string& linkRole, const std::string& arcrole);
 		//
 		//		/**
 		//		* @param targetIndex The index of the target fragment.
@@ -681,10 +515,7 @@ namespace xbrlcapi
 		//		* arcrole is null then indices of sources of relationships with any arcrole are returned.
 		//		* @throws XBRLException
 		//		*/
-		//		std::unordered_set<std::string>  getSourceIndices(const std::string& targetIndex, const std::string& linkRole, const std::string& arcrole)
-		//		{
-		//			pimpl->getSourceIndices(targetIndex, linkRole, arcrole);
-		//		}    
+		//		std::unordered_set<std::string>  getSourceIndices(const std::string& targetIndex, const std::string& linkRole, const std::string& arcrole);
 		//
 		//		/**
 		//		* @param analyser The persisted network analyser
@@ -692,19 +523,13 @@ namespace xbrlcapi
 		//		* aspect model.  Set to null if you do not want to 
 		//		* build the aspect model using persisted network information.
 		//		*/
-		//		void setAnalyser(Analyser analyser)
-		//		{
-		//			pimpl->setAnalyser(analyser);
-		//		}
+		//		void setAnalyser(Analyser analyser);
 		//
 		//		/**
 		//		* @return the persisted network analyser if one is being used
 		//		* and null otherwise.
 		//		*/
-		//		//Analyser getAnalyser()
-		//		//{
-		//		//	pimpl->getAnalyser();
-		//		//} 
+		//		//Analyser getAnalyser();
 		//
 		//		/**
 		//		* @return true if the store is using
@@ -713,10 +538,7 @@ namespace xbrlcapi
 		//		* false otherwise.
 		//		* @see org.xbrlapi.networks.Analyser
 		//		*/
-		//		bool isPersistingRelationships()
-		//		{
-		//			pimpl->isPersistingRelationships();
-		//		}    
+		//		bool isPersistingRelationships();
 		//
 		//		/**
 		//		* Utility method to return a list of fragments in a data store
@@ -732,10 +554,7 @@ namespace xbrlcapi
 		//		* @return a list of fragments with the given fragment type and in the given document.
 		//		* @throws XBRLException
 		//		*/
-		//		//std::vector<F> getFragmentsFromDocument (const Poco::URI&  uri, const std::string& interfaceName)
-		//		//{
-		//		//	pimpl->getFragmentsFromDocument(uri, interfaceName);
-		//		//}
+		//		//std::vector<F> getFragmentsFromDocument (const Poco::URI&  uri, const std::string& interfaceName);
 		//
 		//		/**
 		//		* @param uri The URI of the document to get the fragments from.
@@ -744,10 +563,7 @@ namespace xbrlcapi
 		//		* @throws XBRLException
 		//		* @see Store#getFragmentsFromDocument(URI, String)
 		//		*/
-		///*		std::vector<F> getFragmentsFromDocument (const Poco::URI&  uri, F fragmentClass)
-		//		{
-		//			pimpl->getFragmentsFromDocument(uri, fragmentClass);
-		//		}*/    
+		///*		std::vector<F> getFragmentsFromDocument (const Poco::URI&  uri, F fragmentClass);
 		//
 		//
 		//		/**
@@ -759,10 +575,7 @@ namespace xbrlcapi
 		//		* @return a list of fragment indices with the given fragment type.
 		//		* @throws XBRLException
 		//		*/    
-		//		std::unordered_set<std::string>  getFragmentIndices(const std::string& interfaceName)
-		//		{
-		//			pimpl->getFragmentIndices(interfaceName);
-		//		}
+		//		std::unordered_set<std::string>  getFragmentIndices(const std::string& interfaceName);
 		//
 		//		/**
 		//		* @param interfaceName The name of the interface.  EG: If a list of
@@ -773,10 +586,7 @@ namespace xbrlcapi
 		//		* @return a list of root fragment indices with the given fragment type.
 		//		* @throws XBRLException
 		//		*/    
-		//		std::unordered_set<std::string>  getRootFragmentIndices(const std::string& interfaceName)
-		//		{
-		//			pimpl->getRootFragmentIndices(interfaceName);
-		//		}    
+		//		std::unordered_set<std::string>  getRootFragmentIndices(const std::string& interfaceName);
 		//
 		//		/**
 		//		* @param uri The URI of the document to get the fragments from.
@@ -789,20 +599,14 @@ namespace xbrlcapi
 		//		* @return a list of fragment indices with the given fragment type and in the given document.
 		//		* @throws XBRLException
 		//		*/
-		//		std::unordered_set<std::string>  getFragmentIndicesFromDocument(const Poco::URI& uri, const std::string& interfaceName)
-		//		{
-		//			pimpl->getFragmentIndicesFromDocument(uri, interfaceName);
-		//		}
+		//		std::unordered_set<std::string>  getFragmentIndicesFromDocument(const Poco::URI& uri, const std::string& interfaceName);
 		//
 		//		/**
 		//		* @param uri The URI of the document to get the fragments from.
 		//		* @return a list of indices for fragments in the given document.
 		//		* @throws XBRLException
 		//		*/
-		//		std::unordered_set<std::string>  getFragmentIndicesFromDocument(const Poco::URI& uri)
-		//		{
-		//			pimpl->getFragmentIndicesFromDocument(uri);
-		//		}    
+		//		std::unordered_set<std::string>  getFragmentIndicesFromDocument(const Poco::URI& uri);
 		//
 		//		/**
 		//		* @param <F> The fragment extension class
@@ -811,20 +615,14 @@ namespace xbrlcapi
 		//		* root fragment is available for the given URI.
 		//		* @throws XBRLException if more than one root fragment is found in the data store.
 		//		*/
-		//		//F getRootFragmentForDocument (const Poco::URI&  uri)
-		//		//{
-		//		//	pimpl->getRootFragmentForDocument(uri);
-		//		//}
+		//		//F getRootFragmentForDocument (const Poco::URI&  uri);
 		//
 		//		/**
 		//		* @param <F> The fragment extension class
 		//		* @return the list of root fragments of the documents in the store.
 		//		* @throws XBRLException if more than one root fragment is found in the data store.
 		//		*/
-		//		//std::vector<F> getRootFragments()
-		//		//{
-		//		//	pimpl->getRootFragments();
-		//		//}
+		//		//std::vector<F> getRootFragments();
 		//
 		//		/**
 		//		* @param type The type of fragment to select by.
@@ -835,20 +633,14 @@ namespace xbrlcapi
 		//		* are of the specified type.
 		//		* @throws XBRLException
 		//		*/
-		///*		std::vector<F> getRootFragments(const std::string& type)
-		//		{
-		//			pimpl->getRootFragments(type);
-		//		}*/    
+		///*		std::vector<F> getRootFragments(const std::string& type);
 		//
 		//		/**
 		//		* Close and then delete the data store.
 		//		* This method must be synchronized.
 		//		* @throws XBRLException if the data store cannot be deleted.
 		//		*/
-		//		void Delete()
-		//		{
-		//			pimpl->Delete();
-		//		}    
+		//		void Delete();
 		//
 		/**
 		* @param input The string that may be used to generate the id.
@@ -859,10 +651,7 @@ namespace xbrlcapi
 		* of XML resources stored in the data store.
 		* @throws XBRLException
 		*/
-		std::string getId(const std::string& input)
-		{
-			return pimpl->getId(input);
-		}
+		std::string getId(const std::string& input);
 		//
 		//		/**
 		//		* @param encoding The code identifying the language that the name of the
@@ -875,10 +664,7 @@ namespace xbrlcapi
 		//		* processing.
 		//		* @throws XBRLException if either parameter equals null.
 		//		*/
-		//		//Language getLanguage(const std::string& encoding, const std::string& code)
-		//		//{
-		//		//	pimpl->getLanguage(encoding, code);
-		//		//}
+		//		//Language getLanguage(const std::string& encoding, const std::string& code);
 		//
 		//		/**
 		//		* @param code The language code to get the language fragments for.  The code
@@ -887,10 +673,7 @@ namespace xbrlcapi
 		//		* associated with the specified language code.
 		//		* @throws XBRLException if the language code is null.
 		//		*/
-		//		std::vector<Language> getLanguages(const std::string& code)
-		//		{
-		//			pimpl->getLanguages(code);
-		//		}
+		//		std::vector<Language> getLanguages(const std::string& code);
 		//
 		//		/**
 		//		* @param code The language code to get a map of language fragments for.  
@@ -899,10 +682,7 @@ namespace xbrlcapi
 		//		* the encoding for the language identified by the code.
 		//		* @throws XBRLException
 		//		*/
-		//		std::unordered_map<std::string,Language> getLanguageMap(const std::string& code)
-		//		{
-		//			pimpl->getLanguageMap(code);
-		//		}
+		//		std::unordered_map<std::string,Language> getLanguageMap(const std::string& code);
 		//
 		//		/**
 		//		* Sets the matcher for the store to use.  Care should be taken to ensure
@@ -910,18 +690,12 @@ namespace xbrlcapi
 		//		* @param matcher the matcher to use to identify identical resources.
 		//		* @throws XBRLException if the matcher is null;
 		//		*/
-		//		void setMatcher(const Matcher& matcher)
-		//		{
-		//			pimpl->setMatcher(matcher);
-		//		}
+		//		void setMatcher(const Matcher& matcher);
 		//
 		//		/**
 		//		* @return the matcher used by the store to identify identical resources.
 		//		*/
-		//		DefaultMatcherImpl getMatcher()
-		//		{
-		//			pimpl->getMatcher();
-		//		}
+		//		DefaultMatcher getMatcher();
 		//
 		//		/**
 		//		* @param uri The URI of the referenced document.
@@ -929,10 +703,7 @@ namespace xbrlcapi
 		//		* the specified document as targets of their XLinks (custom or otherwise).
 		//		* @throws XBRLException if the list of referencing documents cannot be populated.
 		//		*/
-		//		std::vector<Poco::URI> getReferencingDocuments(const Poco::URI& uri)
-		//		{
-		//			pimpl->getReferencingDocuments(uri);
-		//		}
+		//		std::vector<Poco::URI> getReferencingDocuments(const Poco::URI& uri);
 		//
 		//		/**
 		//		* @param uri The URI of the referenced document.
@@ -942,10 +713,7 @@ namespace xbrlcapi
 		//		* the target URI of their link.
 		//		* @throws XBRLException.
 		//		*/
-		//		std::vector<Fragment> getReferencingFragments(const Poco::URI& uri)
-		//		{
-		//			pimpl->getReferencingFragments(uri);
-		//		}    
+		//		std::vector<Fragment> getReferencingFragments(const Poco::URI& uri);
 		//
 		//		/**
 		//		* Override this method in a data store implementation if the data store 
@@ -955,55 +723,37 @@ namespace xbrlcapi
 		//		* @return a set of the documents directly referenced by this document.
 		//		* @throws XBRLException if the set of referenced documents cannot be populated.
 		//		*/
-		//		std::unordered_set<Poco::URI> getReferencedDocuments(const Poco::URI& uri)
-		//		{
-		//			pimpl->getReferencedDocuments(uri);
-		//		}    
+		//		std::unordered_set<Poco::URI> getReferencedDocuments(const Poco::URI& uri);
 		//
 		//		/**
 		//		* @param uris The set of URIs to restrict query results to coming from.
 		//		* The set of URIs is set to the empty set if this parameter is null.
 		//		*/
-		//		void setFilteringURIs(std::unordered_set<Poco::URI> uris)
-		//		{
-		//			pimpl->setFilteringURIs(uris);
-		//		}
+		//		void setFilteringURIs(std::unordered_set<Poco::URI> uris);
 		//
-				/**
-				* @return the set of URIs to filter query results.  Empty set
-				* if no URIs are being used to filter query results.
-				*/
-				std::unordered_set<Poco::URI> getFilteringURIs()
-				{
-					pimpl->getFilteringURIs();
-				}
+		/**
+		* @return the set of URIs to filter query results.  Empty set
+		* if no URIs are being used to filter query results.
+		*/
+		std::unordered_set<Poco::URI> getFilteringURIs();
 		//
 		//		/**
 		//		* Specify that the data store is not to filter query results to only come
 		//		* from a specified set of URIs.
 		//		*/
-		//		void clearFilteringURIs()
-		//		{
-		//			pimpl->clearFilteringURIs();
-		//		}
+		//		void clearFilteringURIs();
 		//
 		//		/**
 		//		* @return true if the data store is restricting query results to come 
 		//		* from a specific set of documents and false otherwise.
 		//		*/
-				bool  isFilteringByURIs()
-				{
-					pimpl->isFilteringByURIs();
-				}
-		
-				/**
-				* Flush all database updates to the data store. 
-				* @throws XBRLException if the sync operation fails.
-				*/
-				void sync()
-				{
-					pimpl->sync();
-				}
+		bool  isFilteringByURIs();
+
+		/**
+		* Flush all database updates to the data store. 
+		* @throws XBRLException if the sync operation fails.
+		*/
+		void sync();
 		//
 		//
 		//		/**
@@ -1014,10 +764,7 @@ namespace xbrlcapi
 		//		* @see Store#getFacts()
 		//		* @see Store#getAllFacts()
 		//		*/
-		//		std::vector<Fact&> getFacts()
-		//		{
-		//			pimpl->getFacts();
-		//		}
+		//		std::vector<Fact&> getFacts();
 		//
 		//		/**
 		//		* @return a set of the indices of all root-level facts (those facts
@@ -1025,10 +772,7 @@ namespace xbrlcapi
 		//		* if no such facts are found in the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		std::unordered_set<std::string>  getFactIndices()
-		//		{
-		//			pimpl->getFactIndices();
-		//		}
+		//		std::unordered_set<std::string>  getFactIndices();
 		//
 		//		/**
 		//		* @return a set of the indices of all facts (including those facts
@@ -1036,28 +780,19 @@ namespace xbrlcapi
 		//		* if no such facts are found in the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		std::unordered_set<std::string>  getAllFactIndices()
-		//		{
-		//			pimpl->getAllFactIndices();
-		//		}        
+		//		std::unordered_set<std::string>  getAllFactIndices();
 		//
 		//		/**
 		//		* @return a list of all of the items in the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<Item> getItems()
-		//		{
-		//			pimpl->getItems();
-		//		}
+		//		std::vector<Item> getItems();
 		//
 		//		/**
 		//		* @return a list of all of the tuples in the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<std::tuple<std::string>> getTuples()
-		//		{
-		//			pimpl->getTuples();
-		//		}
+		//		std::vector<std::tuple<std::string>> getTuples();
 		//
 		//		/**
 		//		* @param targetNamespace The target namespace of the schema.
@@ -1066,20 +801,14 @@ namespace xbrlcapi
 		//		* @throws XBRLException if there is more than one schema with the
 		//		* given target namespace or if the target namespace is null.
 		//		*/
-		//		//Schema getSchema(const std::string& targetNamespace)
-		//		//{
-		//		//	pimpl->getSchema(targetNamespace);
-		//		//}
+		//		//Schema getSchema(const std::string& targetNamespace);
 		//
 		//		/**
 		//		* @param uri The URI of the document to get the facts from.
 		//		* @return a list of all of the root-level facts in the specified document.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<Fact&> getFacts (const Poco::URI&  uri)
-		//		{
-		//			pimpl->getFacts(uri);
-		//		}
+		//		std::vector<Fact&> getFacts (const Poco::URI&  uri);
 		//
 		//		/**
 		//		* @param uri The URI of the document to get the facts from.
@@ -1087,40 +816,28 @@ namespace xbrlcapi
 		//		* in the document with the specified URI.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<Fact&> getAllFacts (const Poco::URI&  uri)
-		//		{
-		//			pimpl->getAllFacts(uri);
-		//		}
+		//		std::vector<Fact&> getAllFacts (const Poco::URI&  uri);
 		//
 		//		/**
 		//		* @return a list of all of the facts (root level and those nested in tuples) 
 		//		* in the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<Fact&> getAllFacts()
-		//		{
-		//			pimpl->getAllFacts();
-		//		}
+		//		std::vector<Fact&> getAllFacts();
 		//
 		//		/**
 		//		* @param uri The URI of the document to get the items from.
 		//		* @return a list of all of the root-level items in the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<Item> getItems (const Poco::URI&  uri)
-		//		{
-		//			pimpl->getItems(uri);
-		//		}
+		//		std::vector<Item> getItems (const Poco::URI&  uri);
 		//
 		//		/**
 		//		* @param uri The URI of the document to get the facts from.
 		//		* @return a list of all of the root-level tuples in the specified document.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<std::tuple<std::string>> getTuples (const Poco::URI&  uri)
-		//		{
-		//			pimpl->getTuples(uri);
-		//		}
+		//		std::vector<std::tuple<std::string>> getTuples (const Poco::URI&  uri);
 		//
 		//		/**
 		//		* This implementation is not as strict as the XBRL 2.1 specification
@@ -1142,10 +859,7 @@ namespace xbrlcapi
 		//		* of any relationships in the network).
 		//		* @throws XBRLException
 		//		*/
-		//		//std::unordered_set<F> getNetworkRoots(const std::string& linkRole, const std::string& arcrole)
-		//		//{
-		//		//	pimpl->getNetworkRoots(linkRole, arcrole);
-		//		//}
+		//		//std::unordered_set<F> getNetworkRoots(const std::string& linkRole, const std::string& arcrole);
 		//
 		//		/**
 		//		* @param namespace The namespace for the concept.
@@ -1154,10 +868,7 @@ namespace xbrlcapi
 		//		* @throws XBRLException if more than one matching concept is found in the data store
 		//		* or if no matching concepts are found in the data store.
 		//		*/
-		//		//Concept getConcept(const std::string& Namespace, const std::string& name)
-		//		//{
-		//		//	pimpl->getConcept(Namespace, name);
-		//		//}
+		//		//Concept getConcept(const std::string& Namespace, const std::string& name);
 		//
 		//		/**
 		//		* @param namespace The target namespace for the schema containing the global declaration.
@@ -1167,55 +878,37 @@ namespace xbrlcapi
 		//		* or if no matching declarations are found in the data store.
 		//		*/
 		//		template <typename D>
-		//		D getGlobalDeclaration(const std::string& Namespace, const std::string& name)
-		//		{
-		//			pimpl->getGlobalDeclaration(Namespace, name);
-		//		}    
+		//		D getGlobalDeclaration(const std::string& Namespace, const std::string& name);
 		//
 		//		/**
 		//		* @return a list of arcroleType fragments
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<ArcroleType> getArcroleTypes()
-		//		{
-		//			pimpl->getArcroleTypes();
-		//		}
+		//		std::vector<ArcroleType> getArcroleTypes();
 		//
 		//		/**
 		//		* @return a list of arcroleType fragments with a given arcrole
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<ArcroleType> getArcroleTypes(const std::string& uri)
-		//		{
-		//			pimpl->getArcroleTypes(uri);
-		//		}
+		//		std::vector<ArcroleType> getArcroleTypes(const std::string& uri);
 		//
 		//		/**
 		//		* @return a list of roleType fragments
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<RoleType> getRoleTypes()
-		//		{
-		//			pimpl->getRoleTypes();
-		//		}
+		//		std::vector<RoleType> getRoleTypes();
 		//
 		//		/**
 		//		* @return a list of RoleType fragments with a given role
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<RoleType> getRoleTypes(const std::string& uri)
-		//		{
-		//			pimpl->getRoleTypes(uri);
-		//		}    
+		//		std::vector<RoleType> getRoleTypes(const std::string& uri);
 		//
 		//		/**
 		//		* @return a hash map indexed by resource roles that are used in extended links in the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<std::string> getResourceRoles()
-		//		{
-		//			pimpl->getResourceRoles();
-		//		}    
+		//		std::vector<std::string> getResourceRoles();
 		//
 		//		/**
 		//		* @param starters The collection of URIs of the documents to use as 
@@ -1226,10 +919,7 @@ namespace xbrlcapi
 		//		* @throws XBRLException if some of the referenced documents are not in
 		//		* the data store.
 		//		*/
-		//		//std::unordered_set<Poco::URI> getMinimumDocumentSet(Collection<Poco::URI> starters)
-		//		//{
-		//		//	pimpl->getMinimumDocumentSet(starters);
-		//		//}
+		//		//std::unordered_set<Poco::URI> getMinimumDocumentSet(Collection<Poco::URI> starters);
 		//
 		//
 		//		/**
@@ -1242,30 +932,21 @@ namespace xbrlcapi
 		//		* @throws XBRLException if some of the referenced documents are not in
 		//		* the data store.
 		//		*/
-		//		std::unordered_set<Poco::URI> getMinimumDocumentSet (const Poco::URI&  uri)
-		//		{
-		//			pimpl->getMinimumDocumentSet(uri);
-		//		}
+		//		std::unordered_set<Poco::URI> getMinimumDocumentSet (const Poco::URI&  uri);
 		//
 		//		/**
 		//		* @param linkrole The required linkrole value.
 		//		* @return the list of extended links with the specified linkrole.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<ExtendedLink> getExtendedLinks(const std::string& linkrole)
-		//		{
-		//			pimpl->getExtendedLinks(linkrole);
-		//		}
+		//		std::vector<ExtendedLink> getExtendedLinks(const std::string& linkrole);
 		//
 		//		/**
 		//		* @param linkRole The link role to use to identify the extended links to retrieve.
 		//		* @return the list of indices of extended links with the given link role value.
 		//		* @throws XBRLException
 		//		*/
-		//		std::unordered_set<std::string>  getExtendedLinkIndices(const std::string& linkRole)
-		//		{
-		//			pimpl->getExtendedLinkIndices(linkrole);
-		//		}
+		//		std::unordered_set<std::string>  getExtendedLinkIndices(const std::string& linkRole);
 		//
 		//		/**
 		//		* @param arcrole The arcrole to use to identify the arcs to retrieve.
@@ -1275,30 +956,21 @@ namespace xbrlcapi
 		//		* @return the list of arc fragments matching the selection criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<Arc> getArcs (const Poco::URI&  arcrole, const std::string& linkIndex)
-		//		{
-		//			pimpl->getArcs(arcrole, linkIndex);
-		//		}
+		//		std::vector<Arc> getArcs (const Poco::URI&  arcrole, const std::string& linkIndex);
 		//
 		//		/**
 		//		* @param linkIndex The index of the extended link containing the arcs to retrieve.
 		//		* @return the list of indices of arcs matching the selection criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::unordered_set<std::string>  getArcIndicesWithLinkIndex(const std::string& linkIndex)
-		//		{
-		//			pimpl->getArcIndicesWithLinkIndex(linkIndex);
-		//		}
+		//		std::unordered_set<std::string>  getArcIndicesWithLinkIndex(const std::string& linkIndex);
 		//
 		//		/**
 		//		* @param arcrole The arcrole to use to identify the arcs to retrieve.
 		//		* @return the list of indices of arcs with a given arc role value.
 		//		* @throws XBRLException
 		//		*/
-		//		std::unordered_set<std::string>  getArcIndicesWithArcrole(const std::string& arcrole)
-		//		{
-		//			pimpl->getArcIndicesWithArcrole(arcrole);
-		//		}    
+		//		std::unordered_set<std::string>  getArcIndicesWithArcrole(const std::string& arcrole);
 		//
 		//
 		//		/**
@@ -1308,10 +980,7 @@ namespace xbrlcapi
 		//		* @return the list of arc fragments matching the selection criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<Arc> getArcs(const std::string& linkIndex)
-		//		{
-		//			pimpl->getArcs(linkIndex);
-		//		}    
+		//		std::vector<Arc> getArcs(const std::string& linkIndex);
 		//
 		//
 		//		/**
@@ -1327,19 +996,13 @@ namespace xbrlcapi
 		//		* @return The networks containing the relationships.
 		//		* @throws XBRLException
 		//		*/
-		//		//Networks getMinimalNetworksWithArcrole(std::unordered_set<Fragment> fragments, const std::string& arcrole)
-		//		//{
-		//		//	pimpl->getMinimalNetworksWithArcrole(fragments, arcrole);
-		//		//}
+		//		//Networks getMinimalNetworksWithArcrole(std::unordered_set<Fragment> fragments, const std::string& arcrole);
 		//
 		//		/**
 		//		* Convenience method for a single fragment.
 		//		* @see Store#getMinimalNetworksWithArcrole(Set,String)
 		//		*/
-		//		//Networks getMinimalNetworksWithArcrole(const Fragment& fragment, const std::string& arcrole)
-		//		//{
-		//		//	pimpl->getMinimalNetworksWithArcrole(fragment, arcrole);
-		//		//}
+		//		//Networks getMinimalNetworksWithArcrole(const Fragment& fragment, const std::string& arcrole);
 		//
 		//		/**
 		//		* @param fragments The set of target node fragments in the network.
@@ -1350,10 +1013,7 @@ namespace xbrlcapi
 		//		* fragments are not included in the returned network.
 		//		* @throws XBRLException
 		//		*/
-		//		//Network getMinimalNetwork(std::unordered_set<Fragment> fragments, const std::string& linkRole, const std::string& arcrole)
-		//		//{
-		//		//	pimpl->getMinimalNetwork(fragments, linkRole, arcrole);
-		//		//}
+		//		//Network getMinimalNetwork(std::unordered_set<Fragment> fragments, const std::string& linkRole, const std::string& arcrole);
 		//
 		//		/**
 		//		* This method is recursive.
@@ -1361,10 +1021,7 @@ namespace xbrlcapi
 		//		* @param network The network that is to be augmented.
 		//		* @throws XBRLException
 		//		*/
-		//		void augmentNetworkForFragment(const Fragment& fragment, const Network& network)
-		//		{
-		//			pimpl->augmentNetworkForFragment(fragment, network);
-		//		}
+		//		void augmentNetworkForFragment(const Fragment& fragment, const Network& network);
 		//
 		//		/**
 		//		* This method is recursive.
@@ -1373,19 +1030,13 @@ namespace xbrlcapi
 		//		* @param networks The networks to augment.
 		//		* @throws XBRLException
 		//		*/
-		//		void augmentNetworksForFragment(const Fragment& fragment, const std::string& arcrole, Networks networks)
-		//		{
-		//			pimpl->augmentNetworksForFragment(fragment, arcrole, networks);
-		//		}
+		//		void augmentNetworksForFragment(const Fragment& fragment, const std::string& arcrole, Networks networks);
 		//
 		//		/**
 		//		* @return a list of arc roles that are used in extended links in the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		std::unordered_set<std::string>  getArcroles()
-		//		{
-		//			pimpl->getArcroles();
-		//		}
+		//		std::unordered_set<std::string>  getArcroles();
 		//
 		//		/**
 		//		* @param linkRole the specified linkrole to use in selecting arcroles.
@@ -1393,19 +1044,13 @@ namespace xbrlcapi
 		//		* with the given link role.
 		//		* @throws XBRLException if any of the arcroles is not a valid URI.
 		//		*/
-		//		std::unordered_set<std::string>  getArcroles(const std::string& linkRole)
-		//		{
-		//			pimpl->getArcroles(linkRole);
-		//		}    
+		//		std::unordered_set<std::string>  getArcroles(const std::string& linkRole);
 		//
 		//		/**
 		//		* @return a hash map indexed by link roles that are used in extended links in the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		std::unordered_set<std::string>  getLinkRoles()
-		//		{
-		//			pimpl->getLinkRoles();
-		//		}
+		//		std::unordered_set<std::string>  getLinkRoles();
 		//
 		//		/**
 		//		* @param arcrole The arcrole determining the extended links that are to be examined for
@@ -1414,10 +1059,7 @@ namespace xbrlcapi
 		//		* extended link that contains an arc with the required arcrole.
 		//		* @throws XBRLException
 		//		*/
-		//		std::unordered_set<std::string>  getLinkRoles(const std::string& arcrole)
-		//		{
-		//			pimpl->getLinkRoles(arcrole);
-		//		}    
+		//		std::unordered_set<std::string>  getLinkRoles(const std::string& arcrole);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getNetworksFrom(const std::string&,std::string,String)}.
@@ -1427,10 +1069,7 @@ namespace xbrlcapi
 		//		* from the source fragment with the given arcrole.
 		//		* @throws XBRLException
 		//		*/
-		//		//Networks getNetworksFrom(const std::string& sourceIndex, const std::string& arcrole)
-		//		//{
-		//		//	pimpl->getNetworksFrom(sourceIndex, arcrole);
-		//		//}
+		//		//Networks getNetworksFrom(const std::string& sourceIndex, const std::string& arcrole);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getNetworksFrom(const std::string&,std::string,String)}.
@@ -1439,10 +1078,7 @@ namespace xbrlcapi
 		//		* from the source fragment.
 		//		* @throws XBRLException
 		//		*/
-		///*		Networks getNetworksFrom(const std::string& sourceIndex)
-		//		{
-		//			pimpl->getNetworksFrom(sourceIndex);
-		//		}  */  
+		///*		Networks getNetworksFrom(const std::string& sourceIndex);
 		//
 		//		/**
 		//		* @param sourceIndex The source fragment index
@@ -1452,10 +1088,7 @@ namespace xbrlcapi
 		//		* from the source fragment with the given link role and arcrole.
 		//		* @throws XBRLException
 		//		*/
-		///*		Networks getNetworksFrom(const std::string& sourceIndex, const std::string& linkRole, const std::string& arcrole)
-		//		{
-		//			pimpl->getNetworksFrom(sourceIndex, linkRole, arcrole);
-		//		}   */ 
+		///*		Networks getNetworksFrom(const std::string& sourceIndex, const std::string& linkRole, const std::string& arcrole);
 		//
 		//		/**
 		//		* If using persisted relationships then the set of relationships used to 
@@ -1471,10 +1104,7 @@ namespace xbrlcapi
 		//		* to the target fragment meeting the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		//Networks getNetworksTo(const std::string& targetIndex, const std::string& linkRole, const std::string& arcrole)
-		//		//{
-		//		//	pimpl->getNetworksTo(targetIndex, linkRole, arcrole);
-		//		//}
+		//		//Networks getNetworksTo(const std::string& targetIndex, const std::string& linkRole, const std::string& arcrole);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getNetworksTo(const std::string&,std::string,String)}.
@@ -1484,10 +1114,7 @@ namespace xbrlcapi
 		//		* to the target fragment with the given arcrole.
 		//		* @throws XBRLException
 		//		*/
-		//		//Networks getNetworksTo(const std::string& targetIndex, const std::string& arcrole)
-		//		//{
-		//		//	pimpl->getNetworksTo(targetIndex, arcrole);
-		//		//}
+		//		//Networks getNetworksTo(const std::string& targetIndex, const std::string& arcrole);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getNetworksTo(const std::string&,std::string,String)}.
@@ -1496,10 +1123,7 @@ namespace xbrlcapi
 		//		* to the target fragment.
 		//		* @throws XBRLException
 		//		*/
-		///*		Networks getNetworksTo(const std::string& targetIndex)
-		//		{
-		//			pimpl->getNetworksTo(targetIndex);
-		//		}  */  
+		///*		Networks getNetworksTo(const std::string& targetIndex);
 		//
 		//		/**
 		//		* If using persisted relationships then the set of relationships used to 
@@ -1515,10 +1139,7 @@ namespace xbrlcapi
 		//		* attributes on the arcs expressing the relationships.
 		//		* @throws XBRLException
 		//		*/
-		//		std::set<Relationship> getRelationshipsFrom(const std::string& sourceIndex, const std::string& linkRole, const std::string& arcrole)
-		//		{
-		//			pimpl->getRelationshipsFrom(sourceIndex, linkRole, arcrole);
-		//		}
+		//		std::set<Relationship> getRelationshipsFrom(const std::string& sourceIndex, const std::string& linkRole, const std::string& arcrole);
 		//
 		//		/**
 		//		* @param document The document URI.
@@ -1527,10 +1148,7 @@ namespace xbrlcapi
 		//		* specified document and false otherwise.
 		//		* @throws XBRLException
 		//		*/
-		//		bool  hasAllRelationships (const Poco::URI&  document)
-		//		{
-		//			pimpl->hasAllRelationships(document);
-		//		}    
+		//		bool  hasAllRelationships (const Poco::URI&  document);
 		//
 		//		/**
 		//		* @param targetIndex The target fragment index
@@ -1544,10 +1162,7 @@ namespace xbrlcapi
 		//		* if they are null.
 		//		* @throws XBRLException
 		//		*/
-		//		std::set<Relationship> getRelationshipsTo(const std::string& targetIndex, const std::string& linkRole, const std::string& arcrole)
-		//		{
-		//			pimpl->getRelationshipsTo(targetIndex, linkRole, arcrole);
-		//		}    
+		//		std::set<Relationship> getRelationshipsTo(const std::string& targetIndex, const std::string& linkRole, const std::string& arcrole);
 		//
 		//		/**
 		//		* If using persisted relationships then the set of relationships used to 
@@ -1561,10 +1176,7 @@ namespace xbrlcapi
 		//		* @return the set of labels matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& linkRole, const std::string& resourceRole, const std::string& language)
-		//		{
-		//			pimpl->getLabels(fragment, linkRole, resourceRole, language);
-		//		}
+		//		std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& linkRole, const std::string& resourceRole, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getLabels(const std::string&,std::string,std::string,String)}.
@@ -1574,10 +1186,7 @@ namespace xbrlcapi
 		//		* @return the set of labels matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& resourceRole, const std::string& language)
-		//		{
-		//			pimpl->getLabels(fragment, resourceRole, language);
-		//		}
+		//		std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& resourceRole, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getLabels(const std::string&,std::string,std::string,String)}.
@@ -1586,10 +1195,7 @@ namespace xbrlcapi
 		//		* @return the set of labels matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<LabelResource> getLabelsWithLanguage(const std::string& fragment, const std::string& language)
-		//		{
-		//			pimpl->getLabelsWithLanguage(fragment, language);
-		//		}
+		//		std::vector<LabelResource> getLabelsWithLanguage(const std::string& fragment, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getLabels(const std::string&,std::string,std::string,String)}.
@@ -1597,10 +1203,7 @@ namespace xbrlcapi
 		//		* @return the set of labels matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<LabelResource> getLabels(const std::string& fragment)
-		//		{
-		//			pimpl->getLabels(fragment);
-		//		}    
+		//		std::vector<LabelResource> getLabels(const std::string& fragment);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getLabels(const std::string&,std::string,std::string,String)}.
@@ -1609,10 +1212,7 @@ namespace xbrlcapi
 		//		* @return the set of labels matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<LabelResource> getLabelsWithResourceRole(const std::string& fragment, const std::string& resourceRole)
-		//		{
-		//			pimpl->getLabelsWithResourceRole(fragment, resourceRole);
-		//		}
+		//		std::vector<LabelResource> getLabelsWithResourceRole(const std::string& fragment, const std::string& resourceRole);
 		//
 		//		/**
 		//		* If using persisted relationships then the set of relationships used to 
@@ -1626,10 +1226,7 @@ namespace xbrlcapi
 		//		* @return the set of references matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<ReferenceResource> getReferences(const std::string& fragment, const std::string& linkRole, const std::string& resourceRole, const std::string& language)
-		//		{
-		//			pimpl->getReferences(fragment, linkRole, resourceRole, language);
-		//		}
+		//		std::vector<ReferenceResource> getReferences(const std::string& fragment, const std::string& linkRole, const std::string& resourceRole, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getReferences(const std::string&,std::string,std::string,String)}.
@@ -1639,10 +1236,7 @@ namespace xbrlcapi
 		//		* @return the set of references matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<ReferenceResource> getReferences(const std::string& fragment, const std::string& resourceRole, const std::string& language)
-		//		{
-		//			pimpl->getReferences(fragment, resourceRole, language);
-		//		}
+		//		std::vector<ReferenceResource> getReferences(const std::string& fragment, const std::string& resourceRole, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getReferences(const std::string&,std::string,std::string,String)}.
@@ -1651,10 +1245,7 @@ namespace xbrlcapi
 		//		* @return the set of references matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<ReferenceResource> getReferencesWithLanguage(const std::string& fragment, const std::string& language)
-		//		{
-		//			pimpl->getReferencesWithLanguage(fragment, language);
-		//		}
+		//		std::vector<ReferenceResource> getReferencesWithLanguage(const std::string& fragment, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getReferences(const std::string&,std::string,std::string,String)}.
@@ -1662,10 +1253,7 @@ namespace xbrlcapi
 		//		* @return the set of references matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<ReferenceResource> getReferences(const std::string& fragment)
-		//		{
-		//			pimpl->getReferences(fragment);
-		//		}    
+		//		std::vector<ReferenceResource> getReferences(const std::string& fragment);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getReferences(const std::string&,std::string,std::string,String)}.
@@ -1674,78 +1262,57 @@ namespace xbrlcapi
 		//		* @return the set of references matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<ReferenceResource> getReferencesWithResourceRole(const std::string& fragment, const std::string& resourceRole)
-		//		{
-		//			pimpl->(fragment, resourceRole);
-		//		}    
+		//		std::vector<ReferenceResource> getReferencesWithResourceRole(const std::string& fragment, const std::string& resourceRole);
 		//
 		//		/**
 		//		* @return a list of the URIs of documents that are discoverable given the 
 		//		* content of the data store but that are not themselves in the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		std::unordered_set<Poco::URI> getMissingDocumentURIs()
-		//		{
-		//			pimpl->getReferencesWithResourceRole();
-		//		}
+		//		std::unordered_set<Poco::URI> getMissingDocumentURIs();
 		//
-				/**
-				* Loaders need to call this method to indicate that they are going to take 
-				* responsibility for loading the document.
-				* This can be used to prevent the same document from being loaded by several
-				* loaders operating in parallel.
-				* @param loader The loader claiming loading rights.
-				* @param document The URI of the document that a loader is about
-				* to start loading.
-				* @return false if the document is already claimed by a different loader and true otherwise.  
-				* Only start loading if this function returns true.
-				* @throws XBRLException
-				*/
-				bool  requestLoadingRightsFor(const Poco::URI& document, const Loader& loader)
-				{
-					return pimpl->requestLoadingRightsFor(document, loader);
-				}
-		
-				/**
-				* Loaders need to call this method to indicate that they are recinding 
-				* responsibility for loading the document.
-				* This can be used to prevent the same document from being loaded by several
-				* loaders operating in parallel.
-				* @param loader The loader recinding loading rights.
-				* @param document The URI of the document whose loading rights are being recinded.
-				* @link Store#loadingAboutToStart(URI)
-				*/
-				void recindLoadingRightsFor(const Poco::URI& document, const Loader& loader)
-				{
-					pimpl->recindLoadingRightsFor(document, loader);
-				}
-		
-				/**
-				* @param loader The loader that has started to use
-				* this store for data loading.
-				*/
-				void startLoading()
-				{
-					pimpl->startLoading();
-				}
-		
+		/**
+		* Loaders need to call this method to indicate that they are going to take 
+		* responsibility for loading the document.
+		* This can be used to prevent the same document from being loaded by several
+		* loaders operating in parallel.
+		* @param loader The loader claiming loading rights.
+		* @param document The URI of the document that a loader is about
+		* to start loading.
+		* @return false if the document is already claimed by a different loader and true otherwise.  
+		* Only start loading if this function returns true.
+		* @throws XBRLException
+		*/
+		bool  requestLoadingRightsFor(const Poco::URI& document, Loader& loader);
+
+		/**
+		* Loaders need to call this method to indicate that they are recinding 
+		* responsibility for loading the document.
+		* This can be used to prevent the same document from being loaded by several
+		* loaders operating in parallel.
+		* @param loader The loader recinding loading rights.
+		* @param document The URI of the document whose loading rights are being recinded.
+		* @link Store#loadingAboutToStart(URI)
+		*/
+		void recindLoadingRightsFor(const Poco::URI& document, Loader& loader);
+
+		/**
+		* @param loader The loader that has started to use
+		* this store for data loading.
+		*/
+		void startLoading();
+
 		//		/**
 		//		* @param loader The loader that has stopped using
 		//		* this store for data loading.
 		//		*/
-		//		void stopLoading(const Loader& loader)
-		//		{
-		//			pimpl->stopLoading(loader);
-		//		}
+		//		void stopLoading(const Loader& loader);
 		//
 		//		/**
 		//		* @return true if the store is currently being 
 		//		* used by any loader for loading data.
 		//		*/
-		//		bool  isLoading()
-		//		{
-		//			pimpl->isLoading();
-		//		}    
+		//		bool  isLoading();
 		//
 		//		/**
 		//		* @param namespace The target namespace of the schema with the desired content.
@@ -1754,10 +1321,7 @@ namespace xbrlcapi
 		//		* XML Schema component or null if no such fragment is in the data store.
 		//		* @throws XBRLException
 		//		*/
-		//		//F getSchemaContent(const std::string& Namespace, const std::string& name)
-		//		//{
-		//		//	pimpl->getSchemaContent(Namespace, name);
-		//		//}
+		//		//F getSchemaContent(const std::string& Namespace, const std::string& name);
 		//
 		//		/**
 		//		* @param childClass The class of child fragment.
@@ -1767,10 +1331,7 @@ namespace xbrlcapi
 		//		* are no child fragments.
 		//		* @throws XBRLException
 		//		*/
-		//		//std::vector<F> getChildFragments(F childClass, const std::string& parentIndex)
-		//		//{
-		//		//	pimpl->getChildFragments(childClass, parentIndex);
-		//		//}
+		//		//std::vector<F> getChildFragments(F childClass, const std::string& parentIndex);
 		//
 		//		/**
 		//		* @param namespace The namespace of the facts to select.
@@ -1778,10 +1339,7 @@ namespace xbrlcapi
 		//		* @return the list of facts with the given namespace and local name in the data store.
 		//		* @throws XBRLException if either parameter is null.
 		//		*/
-		//		std::vector<Fact&> getFacts(const std::string& Namespace, const std::string& localname)
-		//		{
-		//			pimpl->getFacts(Namespace, localname);
-		//		}    
+		//		std::vector<Fact&> getFacts(const std::string& Namespace, const std::string& localname);
 		//
 		//		/**
 		//		* @param concept The concept to get the facts for.
@@ -1789,9 +1347,6 @@ namespace xbrlcapi
 		//		* reporting values for the specified concept.
 		//		* @throws XBRLException if the parameter is null.
 		//		*/
-		//		std::vector<Fact&> getFacts(const Concept& concept)
-		//		{
-		//			pimpl->getFacts(concept);
-		//		}    
+		//		std::vector<Fact&> getFacts(const Concept& concept);
 	} ;
 }

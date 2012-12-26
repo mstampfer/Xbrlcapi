@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 #include <string>
 #include <Poco/URI.h>
 #include "StubImpl.h"
@@ -56,6 +55,5 @@ namespace xbrlcapi
 		}
 
 private:
-Logger logger;
 };
 }

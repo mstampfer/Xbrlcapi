@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 #include "SchemaDeclaration.h"
 #include "SchemaContentImpl.h"
 #include <string>
@@ -52,7 +51,6 @@ public:
 	 template <typename F> F getReferencedSchemaDeclaration();
     
 private:
-Logger logger;
 };
     
 }

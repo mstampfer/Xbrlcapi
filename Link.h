@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 
 #include "Xlink.h"
 
@@ -11,7 +10,7 @@
 namespace xbrlcapi
 {
 	/**
-	
+
 	*/
 
 	struct Link : public Xlink {
@@ -21,10 +20,6 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual std::string getLinkRole();
-
-	
-private:
-Logger logger;
-};
+	};
 }
 

@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 #include "SchemaContentDeclaration.h"
 #include "SchemaDeclarationImpl.h"
@@ -90,10 +89,7 @@ namespace xbrlcapi
 		/**
 		* @see org.xbrlapi.SchemaContentDeclaration#getLocalType()
 		*/
-//		TypeDeclaration getLocalType();
+		//		TypeDeclaration getLocalType();
 
-	
-private:
-Logger logger;
-};
+	};
 }

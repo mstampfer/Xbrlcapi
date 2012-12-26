@@ -1,10 +1,10 @@
 
 #pragma once
-#include "Logger.h"
 #include "Storer.h"
 #include <Poco/URI.h>
 #include <set>
 #include "Store.h"
+#include <unordered_map>
 
 /**
 * @author Geoff Shuetrim (geoff@galexy.net)
@@ -140,10 +140,5 @@ namespace xbrlcapi
 		* @param arcrole the arcrole  of the relationships to mark.
 		* @throws XBRLException
 		*/
-
-
-	
-private:
-Logger logger;
-};
+	};
 }

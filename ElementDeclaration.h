@@ -1,7 +1,6 @@
 
 
 #pragma once
-#include "Logger.h"
 
 
 #include <string>
@@ -16,7 +15,7 @@ namespace xbrlcapi
 	* Used for top level element declarations (where the elements are
 	* given a name and occur as children of XML Schema schema elements.
 	* Other element declarations are not used as roots for fragments.
-	
+
 	*/
 
 	struct ElementDeclaration : public SchemaContentDeclaration {
@@ -156,7 +155,5 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual bool substitutesFor(ElementDeclaration candidate);     
-		private:
-Logger logger;
-};
+	};
 }

@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 #include <string>
 #include <vector>
@@ -11,7 +10,7 @@
 namespace xbrlcapi
 {
 	/**
-		
+
 	*/
 
 	class ConceptImpl : public ElementDeclarationImpl, Concept 
@@ -74,7 +73,5 @@ namespace xbrlcapi
 		* @see Concept#isNumeric()
 		*/
 		bool isNumeric();
-		private:
-Logger logger;
-};
+	};
 }

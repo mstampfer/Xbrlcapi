@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 #include <Poco/URI.h>
 #include <string>

@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 
 #include <string>
@@ -69,8 +68,6 @@ namespace xbrlcapi
 		*/
 		virtual std::vector<Arc> getArcsToWithArcrole(const std::string& arcrole);
 
-		private:
-Logger logger;
-};
+	};
 }
 

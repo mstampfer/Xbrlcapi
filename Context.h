@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 
 
 
@@ -48,10 +47,6 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual bool equals(Context context);    
-
-	
-private:
-Logger logger;
-};
+	};
 }
 

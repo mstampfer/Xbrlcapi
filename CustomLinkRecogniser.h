@@ -1,6 +1,5 @@
 
 #pragma once
-#include "Logger.h"
 #include <xercesc/sax2/Attributes.hpp>
 #include "XBRLCustomLinkRecogniserImpl.h"
 
@@ -32,8 +31,8 @@ namespace xbrlcapi
 		*/
 	private:
 		std::unique_ptr<XBRLCustomLinkRecogniserImpl> pimpl;
-		CustomLinkRecogniser& operator=(const CustomLinkRecogniser&);
-		CustomLinkRecogniser(const CustomLinkRecogniser&);
+		//CustomLinkRecogniser& operator=(const CustomLinkRecogniser&);
+		//CustomLinkRecogniser(const CustomLinkRecogniser&);
 		std::string deleteMe; //TODO
 
 	public:
@@ -201,7 +200,5 @@ namespace xbrlcapi
 		//       return true;
 		//   }
 		//
-		private:
-Logger logger;
-};
+	};
 }
