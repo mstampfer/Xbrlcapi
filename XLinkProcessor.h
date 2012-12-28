@@ -20,11 +20,13 @@ namespace xbrlcapi
 	class XLinkProcessor //extends Serializable 
 	{
 		struct Impl;
-		Pimpl<Impl> p;
+		Pimpl<Impl> pImpl;
 	public:
 		XLinkProcessor();
 		~XLinkProcessor();
 		XLinkProcessor(XLinkHandler& xlh, CustomLinkRecogniser& clr);
+		XLinkProcessor(const XLinkProcessor& rhs);
+		XLinkProcessor& operator=(const XLinkProcessor& rhs);
 		XLinkProcessor(XLinkProcessor&& rhs);
 		XLinkProcessor& operator=(XLinkProcessor&& rhs);
 		bool operator==(const XLinkProcessor& rhs);
@@ -88,11 +90,11 @@ namespace xbrlcapi
 		// * @throws XLinkException
 		// */
 		//public void titleCharacters(char buf[], int offset, int len) throws XLinkException;
-		//  
-		///**
-		// * Provides access to the XLink handler being used by the XLink processor.
-		// * @return the XLink handler being used by the XLink processor.
-		// */
-		//public XLinkHandler getXLinkHandler();
+		  
+		/**
+		 * Provides access to the XLink handler being used by the XLink processor.
+		 * @return the XLink handler being used by the XLink processor.
+		 */
+		XLinkHandler getXLinkHandler();
 	};
 }

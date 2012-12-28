@@ -8,10 +8,12 @@ namespace xbrlcapi
 	class Signer // extends Serializable 
 	{
 		struct Impl;
-		Pimpl<Impl> p;
+		Pimpl<Impl> pImpl;
 	public:
 		Signer();
 		~Signer();
+		Signer(const Signer& rhs);
+		Signer& operator=(const Signer& rhs);
 		Signer(Signer&& rhs);
 		Signer& operator=(Signer&& rhs);
 		bool operator==(const Signer& rhs);

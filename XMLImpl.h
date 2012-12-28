@@ -7,33 +7,15 @@
 namespace xbrlcapi
 {
 	class Store;
-	class XMLImpl : public XML 
+	struct XMLImpl 
 	{
+
 
 	private:
 		XMLImpl();
 
 	protected:
 		void finalize();
-
-		/**
-		* The Fragment builder - used when building fragments during DTS discovery.
-		*/
-	private:
-		//	Builder builder;
-
-		/**
-		* The data store that manages this fragment.
-		*/
-	private:
-		//std::unique_ptr<Store> store;
-
-		/**
-		* The DOM instantiation of the fragment's root element or null
-		* if the fragment has not been built.
-		*/
-	private:
-		//	Element rootElement = null;
 
 		/**
 		* @see org.xbrlapi.XML#isa(const std::string& )

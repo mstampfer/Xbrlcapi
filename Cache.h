@@ -9,14 +9,15 @@ namespace xbrlcapi
 	class Cache //extends Serializable 
 	{
 		struct Impl;
-		Pimpl<Impl> p;
+		Pimpl<Impl> pImpl;
 	public:
 		/**
 		* Constructs a URI translator for usage with a local cache location.
 		*/
 		Cache();
 		~Cache();
-
+		Cache(const Cache& rhs);
+		Cache& operator=(const Cache& rhs);
 		Cache(Cache&& rhs);
 		/**
 		* Constructs a URI translator for usage with a local cache location.
@@ -46,7 +47,7 @@ namespace xbrlcapi
 		// * local cache.
 		// * @throws XBRLException if the URI status as a cache URI cannot be determined.
 		// */
-		//public abstract bool isCacheURI(URI uri);
+		bool isCacheURI(const Poco::URI& uri);
 
 		/**
 		* TODO Modify to use the java.net.URIEncoder and java.net.URIDecoder classes.
@@ -82,7 +83,7 @@ namespace xbrlcapi
 		// * @throws XBRLException if the URI cannot be translated into
 		// * a location in the local cache.
 		// */
-		//public abstract File getCacheFile(URI uri);
+		boost::filesystem::path getCacheFile(const Poco::URI& uri);
 
 		///**
 		// * Copy the original resource into the local cache if the resource exists and is

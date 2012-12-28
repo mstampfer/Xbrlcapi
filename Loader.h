@@ -30,14 +30,15 @@ namespace xbrlcapi
 	class Loader // Serializable 
 	{
 		struct Impl;
-		Pimpl<Impl> p;
+		Pimpl<Impl> pImpl;
 	public:
 		Loader();
 		~Loader();
-		Loader(Loader&);
 		Loader(Store& store);
 		Loader(Store& store, XLinkProcessor& xlinkProcessor, EntityResolver& entityResolver);
 		Loader(Store& store, XLinkProcessor& xlinkProcessor, EntityResolver& entityResolver, std::vector<Poco::URI>& uris);
+		Loader(const Loader& rhs);
+		Loader& operator=(const Loader& rhs);
 		Loader(Loader&& rhs);
 		Loader& operator=(Loader&& rhs);
 		bool operator==(const Loader& rhs);

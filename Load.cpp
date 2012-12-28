@@ -171,7 +171,7 @@ void initLogger()
 		{
 			Cache cache(cacheFile);
 			loader->setCache(cache);
-			loader->setEntityResolver(entityResolver);
+			//loader->setEntityResolver(entityResolver);
 			xlinkHandler.setLoader(loader);
 		}
 		catch (const XBRLException& e)

@@ -34,33 +34,28 @@ namespace xbrlcapi
 			std::cout << "warning(const xercesc::SAXParseException &exc)" << std::endl;
 		}
 
-	//   /**
-	//    * On starting to parse a document the Base URI resolver is 
-	//    * set up with the documents absolute URI.  The fragment identifiers
-	//    * are also instantiated and initialised.  
-	//    */
-	//   public void startDocument() throws SAXException 
-	//   {
-	//       // Set up the base URI resolver for the content handler and the XLink handler.
-	//       if (getURI() == null) {
-	//           throw new SAXException("The document URI must not be null when setting up the base URI resolver.");
-	//       }
-	//       setBaseURISAXResolver(new BaseURISAXResolverImpl(this.getURI()));
-	//       getXLinkHandler().setBaseURISAXResolver(this.getBaseURISAXResolver());
+	   void startDocument() throws SAXException 
+	   {
+	       // Set up the base URI resolver for the content handler and the XLink handler.
+	       if (getURI() == null) {
+	           throw new SAXException("The document URI must not be null when setting up the base URI resolver.");
+	       }
+	       setBaseURISAXResolver(new BaseURISAXResolverImpl(this.getURI()));
+	       getXLinkHandler().setBaseURISAXResolver(this.getBaseURISAXResolver());
 
-	//       // Instantiate the fragment identifiers
-	//       try {
-	//           addIdentifier(new XBRLXLinkIdentifier(this));
-	//           addIdentifier(new SchemaIdentifier(this));
-	//           addIdentifier(new XBRLIdentifier(this));
-	//           addIdentifier(new LanguageIdentifier(this));
-	//           addIdentifier(new ReferencePartIdentifier(this));
-	//           addIdentifier(new GenericDocumentRootIdentifier(this));
-	//       } catch (XBRLException e) {
-	//           throw new SAXException("One of the fragment identifiers could not be instantiated.",e);
-	//       }
-	//       
-	//   }
+	       // Instantiate the fragment identifiers
+	       try {
+	           addIdentifier(new XBRLXLinkIdentifier(this));
+	           addIdentifier(new SchemaIdentifier(this));
+	           addIdentifier(new XBRLIdentifier(this));
+	           addIdentifier(new LanguageIdentifier(this));
+	           addIdentifier(new ReferencePartIdentifier(this));
+	           addIdentifier(new GenericDocumentRootIdentifier(this));
+	       } catch (XBRLException e) {
+	           throw new SAXException("One of the fragment identifiers could not be instantiated.",e);
+	       }
+	       
+	   }
 	//       
 	//   /**
 	//    * Sets the element state.
@@ -156,52 +151,46 @@ namespace xbrlcapi
 	//       
 	//   }
 	//   
-	//   /**
-	//    * The end of an element triggers processing of an extended link
-	//    * if we have reached the end of an extended link.
-	//    * Otherwise, we step up to the parent element 
-	//    * unless the element that is ending did not ever become the current element.
-	//    */
-	//   public void endElement(
-	//           String namespaceURI, 
-	//           String lName, 
-	//           String qName) throws SAXException {
+	   void endElement(
+	           String namespaceURI, 
+	           String lName, 
+	           String qName) throws SAXException {
 
-	//       // Get the attributes of the element being ended.
-	//       Attributes attrs = getElementState().getAttributes();
+	       // Get the attributes of the element being ended.
+	       Attributes attrs = getElementState().getAttributes();
 
-	//       // Handle the ending of an element in the fragment builder
-	//       try {
-	//           getLoader().getFragment().getBuilder().endElement(namespaceURI, lName, qName);
-	//       } catch (XBRLException e) {
-	//           throw new SAXException("The XBRLAPI fragment endElement failed.",e);
-	//       }
+	       // Handle the ending of an element in the fragment builder
+	       try {
+	           getLoader().getFragment().getBuilder().endElement(namespaceURI, lName, qName);
+	       } catch (XBRLException e) {
+	           throw new SAXException("The XBRLAPI fragment endElement failed.",e);
+	       }
 
-	//       // Handle the ending of an element in the XLink processor
-	//       try {
-	//           getLoader().getXlinkProcessor().endElement(namespaceURI, lName, qName, attrs);
-	//       } catch (XLinkException e) {
-	//           throw new SAXException("The XLink processor endElement failed.",e);
-	//       }
+	       // Handle the ending of an element in the XLink processor
+	       try {
+	           getLoader().getXlinkProcessor().endElement(namespaceURI, lName, qName, attrs);
+	       } catch (XLinkException e) {
+	           throw new SAXException("The XLink processor endElement failed.",e);
+	       }
 
-	//       // Update the states of the fragment identifiers
-	//       for (Identifier identifier: this.getIdentifiers()) {
-	//           try {
-	//               identifier.endElement(namespaceURI,lName,qName,attrs);
-	//           } catch (XBRLException e) {
-	//               throw new SAXException("Fragment identifier state update failed at the end of an element failed.",e);
-	//           }
-	//       }
+	       // Update the states of the fragment identifiers
+	       for (Identifier identifier: this.getIdentifiers()) {
+	           try {
+	               identifier.endElement(namespaceURI,lName,qName,attrs);
+	           } catch (XBRLException e) {
+	               throw new SAXException("Fragment identifier state update failed at the end of an element failed.",e);
+	           }
+	       }
 
-	//       // Update the state of the loader.
-	//       try {
-	//           getLoader().updateState(getElementState());
-	//       } catch (XBRLException e) {
-	//           throw new SAXException("The state of the loader could not be updated at the end of element " + namespaceURI + ":" + lName + "." + e.getMessage(),e);
-	//       }
-	//               
-	//       // Update the information about the state of the current element
-	//       setElementState(getElementState().getParent());
+	       // Update the state of the loader.
+	       try {
+	           getLoader().updateState(getElementState());
+	       } catch (XBRLException e) {
+	           throw new SAXException("The state of the loader could not be updated at the end of element " + namespaceURI + ":" + lName + "." + e.getMessage(),e);
+	       }
+	               
+	       // Update the information about the state of the current element
+	       setElementState(getElementState().getParent());
 
 	//   }    
 	//   
@@ -339,13 +328,13 @@ namespace xbrlcapi
 	//	setXML(xml);
 	//}	
 	//   
-	//   private XBRLXLinkHandlerImpl getXLinkHandler() throws SAXException {
-	//   	try {
-	//   		return (XBRLXLinkHandlerImpl) this.getLoader().getXlinkProcessor().getXLinkHandler();
-	//   	} catch (ClassCastException e) {
-	//   		throw new SAXException("The XBRL API is not using the XBRL XLink Handler implementation.");
-	//   	}
-	//   }
+	    XBRLXLinkHandlerImpl getXLinkHandler() throws SAXException {
+	   	try {
+	   		return (XBRLXLinkHandlerImpl) this.getLoader().getXlinkProcessor().getXLinkHandler();
+	   	} catch (ClassCastException e) {
+	   		throw new SAXException("The XBRL API is not using the XBRL XLink Handler implementation.");
+	   	}
+	   }
 	//   
 	//   /**
 	//    * The  resolver that is used to resolve URIs against
@@ -353,22 +342,20 @@ namespace xbrlcapi
 	//    */
 	//   private BaseURISAXResolver baseURISAXResolver = null;
 	//   
-	//   /**
-	//    * @param resolver The base URI resolver to use in the SAX parsing.
-	//    * @throws SAXException if the resolver is null.
-	//    */
-	//   private void setBaseURISAXResolver(BaseURISAXResolver resolver) throws SAXException {
-	//       if (resolver == null) throw new SAXException("The base URI SAX resolver must not be null.");
-	//       this.baseURISAXResolver = resolver;
-	//   }
+void setBaseURISAXResolver(BaseURISAXResolver resolver) throws SAXException 
+{
+	       if (resolver == null) throw new SAXException("The base URI SAX resolver must not be null.");
+	       this.baseURISAXResolver = resolver;
+	   }
 	//   
 	//   /**
 	//    * @return the base URI resolver for SAX parsing.
 	//    */
-	//   protected BaseURISAXResolver getBaseURISAXResolver() {
-	//       return baseURISAXResolver;
-	//   }
-	//   
+	 BaseURISAXResolver getBaseURISAXResolver() 
+	{
+	       return baseURISAXResolver;
+	   }
+	   
 	//   /**
 	//    * String representation of the XML document - for documents supplied as such.
 	//    */
@@ -387,17 +374,9 @@ namespace xbrlcapi
 	//       identifiers.add(identifier);
 	//   }
 	//   
-	//   
-	//   /**
-	//    * @param index The index of the position at which
-	//    * the new identifier is to be inserted in the list of
-	//    * fragment identifiers.
-	//    * @param identifier The identifier to add to the list of
-	//    * fragment identifiers used by the content handler.
-	//    */
-	//   protected void addIdentifier(int index, Identifier identifier) {
-	//       identifiers.add(index,identifier);
-	//   }
+		   void addIdentifier(int index, Identifier identifier) {
+	       identifiers.add(index,identifier);
+	   }
 	//   
 	//   /**
 	//    * @param index The index of the identifier to remove from the list of

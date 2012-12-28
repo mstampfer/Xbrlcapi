@@ -10,6 +10,30 @@
 */
 namespace std
 {
+	template <> struct hash<const Poco::URI>
+	{
+		typedef size_t result_type;
+		typedef Poco::URI argument_type;
+
+		size_t operator()(const Poco::URI& uri) const;
+	};
+
+	template <> struct equal_to<const Poco::URI>
+	{
+		typedef size_t result_type;
+		typedef Poco::URI argument_type;
+
+		bool operator()( const Poco::URI& lhs, const Poco::URI& rhs ) const;
+	};
+
+	template <> struct less<const Poco::URI>
+	{
+		typedef size_t result_type;
+		typedef Poco::URI argument_type;
+
+		bool operator()(const Poco::URI& lhs, const Poco::URI& rhs ) const;
+	};
+
 	template <> struct hash<Poco::URI>
 	{
 		typedef size_t result_type;

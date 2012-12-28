@@ -16,13 +16,13 @@ namespace xbrlcapi
 		: public xercesc::EntityResolver, public xercesc::XMLEntityResolver //, Serializable 
 	{
 		struct Impl;
-		Pimpl<Impl> p;
+		Pimpl<Impl> pImpl;
 	public:
 		EntityResolver();
-//		EntityResolver(const EntityResolver&);
+		//		EntityResolver(const EntityResolver&);
 		~EntityResolver();
-		EntityResolver(CacheFile&);
-		EntityResolver(Cache&);
+		EntityResolver(const EntityResolver& rhs);
+		EntityResolver& operator=(const EntityResolver& rhs);
 		EntityResolver(EntityResolver&& );
 		EntityResolver(CacheFile&, std::unordered_map<Poco::URI,Poco::URI>&);
 		EntityResolver& operator=(EntityResolver&& rhs);
@@ -32,5 +32,6 @@ namespace xbrlcapi
 		xercesc::InputSource* resolveEntity(const wchar_t *const publicId, const wchar_t *const systemId)  override;
 		xercesc::InputSource* resolveEntity(xercesc::XMLResourceIdentifier* resourceIdentifier) override;
 		//xercesc::InputSource* resolveSchemaURI(const Poco::URI& uri);
+		bool hasCache();
 	};
 }

@@ -16,11 +16,13 @@ namespace xbrlcapi
 	class History // extends Serializable 
 	{
 		struct Impl;
-		Pimpl<Impl> p;
+		Pimpl<Impl> pImpl;
 	public:
 		int get_it(); 
 		History();
 		~History();
+		History(const History& rhs);
+		History& operator=(const History& rhs);
 		History(History&& rhs);
 		History& operator=(History&& rhs);
 		bool operator==(const History& rhs);

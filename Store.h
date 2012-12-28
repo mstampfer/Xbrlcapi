@@ -52,13 +52,13 @@ namespace xbrlcapi
 	class Store// extends Serializable 
 	{
 		struct Impl;
-		Pimpl<Impl> p;
+		Pimpl<Impl> pImpl;
 	public:
 		Store();
 		~Store();
-//		Store(Store& rhs); 
+		Store(const Store& rhs);
+		Store& operator=(const Store& rhs);
 		Store(Store&& rhs);
-//		Store& operator=(Store& rhs);
 		Store& operator=(Store&& rhs);
 		bool operator==(const Store& rhs);
 		bool operator!=(const Store& rhs);
@@ -72,14 +72,14 @@ namespace xbrlcapi
 		* Throws XBRLException if the data store cannot be closed. 
 		*/
 		void close();
-		//
-		//		/**
-		//		* Store a fragment.
-		//		* Implementations of this method must always be synchronized. 
-		//		* @param xml The fragment to be added to the store.
-		//		* @throws XBRLException if the fragment cannot be added to the store.
-		//		*/
-		//		void persist(const XML& xml);
+		
+				/**
+				* Store a fragment.
+				* Implementations of this method must always be synchronized. 
+				* @param xml The fragment to be added to the store.
+				* @throws XBRLException if the fragment cannot be added to the store.
+				*/
+				void persist(const XML& xml);
 		//
 		//		/**
 		//		* Test if a store contains a specific fragment, as identified by
@@ -1283,7 +1283,7 @@ namespace xbrlcapi
 		* Only start loading if this function returns true.
 		* @throws XBRLException
 		*/
-		bool  requestLoadingRightsFor(const Poco::URI& document, Loader& loader);
+		bool  requestLoadingRightsFor(const Poco::URI& document);
 
 		/**
 		* Loaders need to call this method to indicate that they are recinding 
@@ -1294,7 +1294,7 @@ namespace xbrlcapi
 		* @param document The URI of the document whose loading rights are being recinded.
 		* @link Store#loadingAboutToStart(URI)
 		*/
-		void recindLoadingRightsFor(const Poco::URI& document, Loader& loader);
+		void recindLoadingRightsFor(const Poco::URI& document);
 
 		/**
 		* @param loader The loader that has started to use

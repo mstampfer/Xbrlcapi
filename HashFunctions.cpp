@@ -3,6 +3,21 @@
 namespace std
 {
 
+	size_t hash<const Poco::URI>::operator()(const Poco::URI& uri) const
+	{
+		return hash<string>()(uri.toString());
+	}
+
+	bool equal_to<const Poco::URI>::operator()( const Poco::URI& lhs, const Poco::URI& rhs ) const
+	{
+		return equal_to<string>()(lhs.toString(), rhs.toString());
+	}
+
+	bool less<const Poco::URI>::operator()(const Poco::URI& lhs, const Poco::URI& rhs ) const
+	{
+		return less<string>()(lhs.toString(), rhs.toString());
+	}
+
 	size_t hash<Poco::URI>::operator()(const Poco::URI& uri) const
 	{
 		return hash<string>()(uri.toString());
