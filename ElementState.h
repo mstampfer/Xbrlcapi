@@ -31,8 +31,8 @@ namespace xbrlcapi
 
 		ElementState();
 		~ElementState();
-		ElementState(ElementState& rhs);
-		ElementState& operator=(ElementState& rhs);
+		ElementState(const ElementState& rhs);
+		ElementState& operator=(const ElementState& rhs);
 		ElementState(ElementState&& rhs);
 		ElementState& operator=(ElementState&& rhs);
 		bool operator==(const ElementState& rhs);

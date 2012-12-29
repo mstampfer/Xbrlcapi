@@ -3,11 +3,11 @@
 #include "Fragment.h"
 namespace xbrlcapi
 {
-	struct BaseIdentifier::Impl
+	struct BaseIdentifier::Impl 
 	{
 		Impl() {}
 
-		BaseIdentifier(const ContentHandler& contentHandler)
+		Impl(const ContentHandler& contentHandler)
 		{
 			setContentHandler(contentHandler);
 		}
@@ -124,7 +124,7 @@ namespace xbrlcapi
 	/**
 	* @see Identifier#setContentHandler(ContentHandler)
 	*/
-	void BaseIdentifier::setContentHandler(ContentHandler contentHandler)
+	void BaseIdentifier::setContentHandler(const ContentHandler& contentHandler)
 	{
 		pImpl->setContentHandler();
 	}

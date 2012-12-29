@@ -6,7 +6,7 @@
 namespace xbrlcapi
 {
 
-	class LanguageIdentifier : BaseIdentifier 
+	class LanguageIdentifier : public BaseIdentifier 
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;

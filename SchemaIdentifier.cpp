@@ -5,7 +5,7 @@
 
 namespace xbrlcapi
 {
-	class SchemaIdentifier::Impl : public BaseIdentifier, public Identifier 
+	class SchemaIdentifier::Impl : public BaseIdentifier
 	{
 
 		//	XSModel model;    

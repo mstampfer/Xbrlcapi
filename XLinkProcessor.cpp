@@ -439,41 +439,42 @@ namespace xbrlcapi
 		//		return true;
 		//}
 
-		///**
-		//* @see org.xbrlapi.xlink.XLinkProcessor#endElement(String, String, String, Attributes)
-		//*/
-		//public void endElement( std::string namespaceURI,  std::string lName,  std::string qName, Attributes attrs) throws XLinkException {
+		void endElement(
+			const std::string& namespaceURI, 
+			const std::string& lName, 
+			const std::string& qName,
+			const xercesc::Attributes& attrs);
+		{
+			//xlinkHandler.xmlBaseEnd();
+			//Integer parentType = ancestorTypes.pop();
 
-		//	xlinkHandler.xmlBaseEnd();
-		//	Integer parentType = ancestorTypes.pop();
+			//// Handle any custom links
+			//if (! (customLinkRecogniser == null))
+			//	if (customLinkRecogniser.isLink(namespaceURI, lName, qName, attrs)) {
+			//		xlinkHandler.endSimpleLink(namespaceURI, lName, qName);
+			//		return;
+			//	}
 
-		//	// Handle any custom links
-		//	if (! (customLinkRecogniser == null))
-		//		if (customLinkRecogniser.isLink(namespaceURI, lName, qName, attrs)) {
-		//			xlinkHandler.endSimpleLink(namespaceURI, lName, qName);
-		//			return;
-		//		}
+			//	// If not an XLink Type element then we are done.
+			//	if (parentType.equals(NOT_XLINK))
+			//		return;
 
-		//		// If not an XLink Type element then we are done.
-		//		if (parentType.equals(NOT_XLINK))
-		//			return;
-
-		//		// We have an XLink element so find which one
-		//		if (parentType.equals(SIMPLE_LINK)) {
-		//			xlinkHandler.endSimpleLink(namespaceURI, lName, qName);
-		//		} else if (parentType.equals(EXTENDED_LINK)) {
-		//			xlinkHandler.endExtendedLink(namespaceURI, lName, qName);
-		//			insideAnExtendedLink = false;
-		//		} else if (parentType.equals(RESOURCE)) {
-		//			xlinkHandler.endResource(namespaceURI, lName, qName);
-		//		} else if (parentType.equals(LOCATOR)) {
-		//			xlinkHandler.endLocator(namespaceURI, lName, qName);
-		//		} else if (parentType.equals(ARC)) {
-		//			xlinkHandler.endArc(namespaceURI, lName, qName);
-		//		} else if (parentType.equals(TITLE)) {
-		//			xlinkHandler.endTitle(namespaceURI, lName, qName);
-		//		}       
-		//}   
+			//	// We have an XLink element so find which one
+			//	if (parentType.equals(SIMPLE_LINK)) {
+			//		xlinkHandler.endSimpleLink(namespaceURI, lName, qName);
+			//	} else if (parentType.equals(EXTENDED_LINK)) {
+			//		xlinkHandler.endExtendedLink(namespaceURI, lName, qName);
+			//		insideAnExtendedLink = false;
+			//	} else if (parentType.equals(RESOURCE)) {
+			//		xlinkHandler.endResource(namespaceURI, lName, qName);
+			//	} else if (parentType.equals(LOCATOR)) {
+			//		xlinkHandler.endLocator(namespaceURI, lName, qName);
+			//	} else if (parentType.equals(ARC)) {
+			//		xlinkHandler.endArc(namespaceURI, lName, qName);
+			//	} else if (parentType.equals(TITLE)) {
+			//		xlinkHandler.endTitle(namespaceURI, lName, qName);
+			//	}       
+		}   
 
 		///**
 		//* @see org.xbrlapi.xlink.XLinkProcessor#titleCharacters(char[], int, int)
@@ -546,20 +547,20 @@ namespace xbrlcapi
 
 	XLinkProcessor::XLinkProcessor() {}
 	XLinkProcessor::~XLinkProcessor() {} 
-XLinkProcessor::XLinkProcessor(const XLinkProcessor& rhs) 
-{ 
-	pImpl = rhs.pImpl; 
-}
-
-XLinkProcessor& XLinkProcessor::operator=(const XLinkProcessor& rhs)
-{
-	if (pImpl != rhs.pImpl)
-	{
-		pImpl->~Impl();
-		pImpl = rhs.pImpl;
+	XLinkProcessor::XLinkProcessor(const XLinkProcessor& rhs) 
+	{ 
+		pImpl = rhs.pImpl; 
 	}
-	return *this;
-}
+
+	XLinkProcessor& XLinkProcessor::operator=(const XLinkProcessor& rhs)
+	{
+		if (pImpl != rhs.pImpl)
+		{
+			pImpl->~Impl();
+			pImpl = rhs.pImpl;
+		}
+		return *this;
+	}
 	XLinkProcessor::XLinkProcessor(XLinkProcessor&& rhs) 
 	{ 
 		pImpl = std::move(rhs.pImpl); 
@@ -585,20 +586,20 @@ XLinkProcessor& XLinkProcessor::operator=(const XLinkProcessor& rhs)
 		return !this->operator==(rhs);
 	}
 
-		//   public void setCustomLinkRecogniser(CustomLinkRecogniser customLinkRecogniser);
-		//public void startElement(
-		//		 std::string namespaceURI, 
-		//		 std::string lName, 
-		//		 std::string qName, 
-		//		Attributes attrs) throws XLinkException;
-		//public void endElement(
-		//		 std::string namespaceURI, 
-		//		 std::string lName, 
-		//		 std::string qName,
-		//		Attributes attrs) throws XLinkException;
-		//public void titleCharacters(char buf[], int offset, int len) throws XLinkException;
-		XLinkHandler XLinkProcessor::getXLinkHandler()
-		{
-			pImpl->getXLinkHandler();
-		}
+	//   public void setCustomLinkRecogniser(CustomLinkRecogniser customLinkRecogniser);
+	//public void startElement(
+	//		 std::string namespaceURI, 
+	//		 std::string lName, 
+	//		 std::string qName, 
+	//		Attributes attrs) throws XLinkException;
+	void endElement(
+		const std::string& namespaceURI, 
+		const std::string& lName, 
+		const std::string& qName,
+		const xercesc::Attributes& attrs);
+	//public void titleCharacters(char buf[], int offset, int len) throws XLinkException;
+	XLinkHandler XLinkProcessor::getXLinkHandler()
+	{
+		pImpl->getXLinkHandler();
+	}
 }

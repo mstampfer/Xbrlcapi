@@ -33,7 +33,7 @@ namespace xbrlcapi
 {
 	class Identifier 
 	{
-
+	public:
 		/**
 		* Determines if the element starts a new fragment and if so:
 		* 
@@ -79,7 +79,7 @@ namespace xbrlcapi
 		* @param attrs The attributes of the root element of the fragment.
 		* @throws XBRLException
 		*/
-		virtual void processFragment(Fragment fragment, const xercesc::Attributes& attrs) = 0;
+		virtual void processFragment(const Fragment& fragment, const xercesc::Attributes& attrs) = 0;
 
 		/**
 		* @return the SAX content handler using 

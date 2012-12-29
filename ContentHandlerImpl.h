@@ -246,12 +246,12 @@ namespace xbrlcapi
 		// * SAX parsing locator - provides information for use in
 		// * error reporting.
 		// */
-		//private Locator locator = null;
+		//private xercesc::Locator locator = null;
 
 		///**
 		// * @return the locator of the current document position.
 		// */
-		//private Locator getLocator() {
+		//private xercesc::Locator getLocator() {
 		//    return this.locator;
 		//}
 
@@ -259,7 +259,7 @@ namespace xbrlcapi
 		// * The locator for a document is stored to facilitate resolution
 		// * of CacheURIImpl's relative to that location.
 		// */
-		//public void setDocumentLocator(Locator locator) {
+		//public void setDocumentLocator(xercesc::Locator locator) {
 		//    this.locator = locator;
 		//}
 

@@ -1,5 +1,21 @@
 
-#include "ContentHandlerImpl.h"
+#include "ContentHandler.h"
+#include <xercesc/sax2/Attributes.hpp>
+#include "Identifier.h"
+//#include "BaseURISAXResolver.h"
+#include "XBRLXLinkIdentifier.h"
+#include "BaseURISAXResolver.h"
+#include "SchemaIdentifier.h"
+#include "XBRLIdentifier.h"
+#include "LanguageIdentifier.h"
+#include "ReferencePartIdentifier.h"
+#include "GenericDocumentRootIdentifier.h"
+#include <xercesc/sax2/Attributes.hpp>
+#include "Constants.h"
+#include "XBRLException.h"
+#include <xercesc/sax/SAXException.hpp>
+#include "XLinkException.h"
+#include "Fragment.h"
 #include <iostream>
 /**
 * SAX content handler used to parse a document into an XBRL API data store.
@@ -17,28 +33,30 @@
 */
 namespace xbrlcapi
 {
-			void ContentHandlerImpl::error(const xercesc::SAXParseException &exc)
+	struct ContentHandler::Impl
+	{
+			void ContentHandler::error(const xercesc::SAXParseException &exc)
 		{
 			std::cout << "error(const xercesc::SAXParseException &exc)" << std::endl;
 		}
-		void ContentHandlerImpl::fatalError(const xercesc::SAXParseException &exc)
+		void ContentHandler::fatalError(const xercesc::SAXParseException &exc)
 		{
 			std::cout << "fatalError(const xercesc::SAXParseException &exc)" << std::endl;
 		}
-		void ContentHandlerImpl::resetErrors()
+		void ContentHandler::resetErrors()
 		{
 			std::cout << "resetErrors()" << std::endl;
 		}
-		void ContentHandlerImpl::warning(const xercesc::SAXParseException &exc)
+		void ContentHandler::warning(const xercesc::SAXParseException &exc)
 		{
 			std::cout << "warning(const xercesc::SAXParseException &exc)" << std::endl;
 		}
 
-	   void startDocument() throws SAXException 
+	   void startDocument()
 	   {
 	       // Set up the base URI resolver for the content handler and the XLink handler.
-	       if (getURI() == null) {
-	           throw new SAXException("The document URI must not be null when setting up the base URI resolver.");
+	       if (getURI().empty()) {
+	           throw SAXException("The document URI must not be null when setting up the base URI resolver.");
 	       }
 	       setBaseURISAXResolver(new BaseURISAXResolverImpl(this.getURI()));
 	       getXLinkHandler().setBaseURISAXResolver(this.getBaseURISAXResolver());
@@ -52,7 +70,7 @@ namespace xbrlcapi
 	           addIdentifier(new ReferencePartIdentifier(this));
 	           addIdentifier(new GenericDocumentRootIdentifier(this));
 	       } catch (XBRLException e) {
-	           throw new SAXException("One of the fragment identifiers could not be instantiated.",e);
+	           throw SAXException("One of the fragment identifiers could not be instantiated.",e);
 	       }
 	       
 	   }
@@ -72,7 +90,7 @@ namespace xbrlcapi
 	//           String namespaceURI, 
 	//           String lName, 
 	//           String qName, 
-	//           Attributes attrs) throws SAXException {    
+	//           Attributes attrs)
 	//       
 	//       Loader loader = getLoader();
 	//       
@@ -112,20 +130,20 @@ namespace xbrlcapi
 	//               }
 	//           } catch (XBRLException e) {
 	//               logger.error(this.getURI() + " : " + e.getMessage());
-	//               throw new SAXException("Fragment identification failed.",e);
+	//               throw SAXException("Fragment identification failed.",e);
 	//           }
 	//       }
 
 	//       if (! loader.isBuildingAFragment()) {
-	//           throw new SAXException("Some element has not been placed in a fragment.");
+	//           throw SAXException("Some element has not been placed in a fragment.");
 	//       }      
 	//       
 	//       // Insert the current element into the fragment being built
 	//       try {
 	//           Fragment fragment = getLoader().getFragment();
-	//           if (fragment == null) throw new SAXException("A fragment should be being built.");
+	//           if (fragment == null) throw SAXException("A fragment should be being built.");
 	//           Builder builder = fragment.getBuilder();
-	//           if (builder == null) throw new SAXException("A fragment that is being built needs a builder.");
+	//           if (builder == null) throw SAXException("A fragment that is being built needs a builder.");
 	//           builder.appendElement(namespaceURI, lName, qName, attrs);
 	//           
 	//           // Hardwire XLink resource language code inheritance to
@@ -146,7 +164,7 @@ namespace xbrlcapi
 	//           
 	//       } catch (XBRLException e) {
 	//           logger.error(this.getURI() + " : " + e.getMessage());
-	//           throw new SAXException("The element could not be appended to the fragment.",e);
+	//           throw SAXException("The element could not be appended to the fragment.",e);
 	//       }
 	//       
 	//   }
@@ -154,7 +172,7 @@ namespace xbrlcapi
 	   void endElement(
 	           String namespaceURI, 
 	           String lName, 
-	           String qName) throws SAXException {
+	           String qName)
 
 	       // Get the attributes of the element being ended.
 	       Attributes attrs = getElementState().getAttributes();
@@ -163,14 +181,14 @@ namespace xbrlcapi
 	       try {
 	           getLoader().getFragment().getBuilder().endElement(namespaceURI, lName, qName);
 	       } catch (XBRLException e) {
-	           throw new SAXException("The XBRLAPI fragment endElement failed.",e);
+	           throw SAXException("The XBRLAPI fragment endElement failed.",e);
 	       }
 
 	       // Handle the ending of an element in the XLink processor
 	       try {
 	           getLoader().getXlinkProcessor().endElement(namespaceURI, lName, qName, attrs);
 	       } catch (XLinkException e) {
-	           throw new SAXException("The XLink processor endElement failed.",e);
+	           throw SAXException("The XLink processor endElement failed.",e);
 	       }
 
 	       // Update the states of the fragment identifiers
@@ -178,7 +196,7 @@ namespace xbrlcapi
 	           try {
 	               identifier.endElement(namespaceURI,lName,qName,attrs);
 	           } catch (XBRLException e) {
-	               throw new SAXException("Fragment identifier state update failed at the end of an element failed.",e);
+	               throw SAXException("Fragment identifier state update failed at the end of an element failed.",e);
 	           }
 	       }
 
@@ -186,7 +204,7 @@ namespace xbrlcapi
 	       try {
 	           getLoader().updateState(getElementState());
 	       } catch (XBRLException e) {
-	           throw new SAXException("The state of the loader could not be updated at the end of element " + namespaceURI + ":" + lName + "." + e.getMessage(),e);
+	           throw SAXException("The state of the loader could not be updated at the end of element " + namespaceURI + ":" + lName + "." + e.getMessage(),e);
 	       }
 	               
 	       // Update the information about the state of the current element
@@ -198,13 +216,13 @@ namespace xbrlcapi
 	//    * Ignore ignorable whitespace
 	//    */
 	//   public void ignorableWhitespace(char buf[], int offset, int len)
-	//   throws SAXException {
+	//  
 	//       try {
-	//           String s = new String(buf, offset, len);
+	//           String s = String(buf, offset, len);
 	//           if (!s.trim().equals(""))
 	//               getLoader().getFragment().getBuilder().appendText(s);
 	//       } catch (XBRLException e) {
-	//           throw new SAXException("Failed to handle ignorable white space." + getInputErrorInformation());
+	//           throw SAXException("Failed to handle ignorable white space." + getInputErrorInformation());
 	//       }
 	//   }    
 
@@ -212,7 +230,7 @@ namespace xbrlcapi
 	//    * Copy across processing instructions to the DTSImpl
 	//    */
 	//   public void processingInstruction(String target, String data)
-	//   throws SAXException
+	//  
 	//   {
 	//       try {
 	//           Fragment fragment = getLoader().getFragment();
@@ -228,13 +246,13 @@ namespace xbrlcapi
 	//    * Copy characters (trimming white space as required) to the DTSImpl.
 	//    */
 	//   public void characters(char buf[], int offset, int len) 
-	//       throws SAXException 
+	//      
 	//   {
 	//       try {
-	//           String s = new String(buf, offset, len);
+	//           String s = String(buf, offset, len);
 	//           getLoader().getFragment().getBuilder().appendText(s);
 	//       } catch (XBRLException e) {
-	//           throw new SAXException("The characters could not be appended to the fragment." + getInputErrorInformation());
+	//           throw SAXException("The characters could not be appended to the fragment." + getInputErrorInformation());
 	//       }
 	//   }    
 	//   
@@ -242,12 +260,12 @@ namespace xbrlcapi
 	//    * SAX parsing locator - provides information for use in
 	//    * error reporting.
 	//    */
-	//   private Locator locator = null;
+	//   private xercesc::Locator locator = null;
 
 	//   /**
 	//    * @return the locator of the current document position.
 	//    */
-	//   private Locator getLocator() {
+	//   private xercesc::Locator getLocator() {
 	//       return this.locator;
 	//   }
 	//   
@@ -255,7 +273,7 @@ namespace xbrlcapi
 	//    * The locator for a document is stored to facilitate resolution 
 	//    * of CacheURIImpl's relative to that location.
 	//    */
-	//   public void setDocumentLocator(Locator locator) {
+	//   public void setDocumentLocator(xercesc::Locator locator) {
 	//       this.locator = locator;
 	//   }
 	//   
@@ -291,7 +309,7 @@ namespace xbrlcapi
 	//    * @return the information about the input error.
 	//    */
 	//   private String getInputErrorInformation() {
-	//       StringBuffer s = new StringBuffer("  The problem occurred in ");
+	//       StringBuffer s = StringBuffer("  The problem occurred in ");
 	//       if (!(getSystemId() == null))
 	//           s.append(getSystemId() + ".  ");
 	//       else
@@ -309,7 +327,7 @@ namespace xbrlcapi
 	//    * @throws XBRLException if any of the parameters
 	//    * are null.
 	//    */
-	//public ContentHandlerImpl(Loader loader, URI uri) throws XBRLException {
+	//public ContentHandler(Loader loader, URI uri)
 	//	super(loader, uri);
 	//   }
 	//
@@ -323,16 +341,16 @@ namespace xbrlcapi
 	//    * @throws XBRLException if any of the parameters
 	//    * are null.
 	//    */
-	//public ContentHandlerImpl(Loader loader, URI uri, String xml) throws XBRLException {
+	//public ContentHandler(Loader loader, URI uri, String xml)
 	//	this(loader, uri);
 	//	setXML(xml);
 	//}	
 	//   
-	    XBRLXLinkHandlerImpl getXLinkHandler() throws SAXException {
+	    XBRLXLinkHandlerImpl getXLinkHandler()
 	   	try {
 	   		return (XBRLXLinkHandlerImpl) this.getLoader().getXlinkProcessor().getXLinkHandler();
 	   	} catch (ClassCastException e) {
-	   		throw new SAXException("The XBRL API is not using the XBRL XLink Handler implementation.");
+	   		throw SAXException("The XBRL API is not using the XBRL XLink Handler implementation.");
 	   	}
 	   }
 	//   
@@ -342,9 +360,9 @@ namespace xbrlcapi
 	//    */
 	//   private BaseURISAXResolver baseURISAXResolver = null;
 	//   
-void setBaseURISAXResolver(BaseURISAXResolver resolver) throws SAXException 
+void setBaseURISAXResolver(BaseURISAXResolver resolver)
 {
-	       if (resolver == null) throw new SAXException("The base URI SAX resolver must not be null.");
+	       if (resolver == null) throw SAXException("The base URI SAX resolver must not be null.");
 	       this.baseURISAXResolver = resolver;
 	   }
 	//   
@@ -382,7 +400,7 @@ void setBaseURISAXResolver(BaseURISAXResolver resolver) throws SAXException
 	//    * @param index The index of the identifier to remove from the list of
 	//    * fragment identifiers used by the content handler.
 	//    */
-	//   protected void removeIdentifier(int index) throws XBRLException {
+	//   protected void removeIdentifier(int index)
 	//       if (index > identifiers.size()-1) throw XBRLException("The identifier index was too large.");
 	//       if (index < 0) throw XBRLException("The identifier index was too low.");
 	//       if (identifiers.size() == 0) throw XBRLException("There are no identifiers to remove.");
@@ -393,7 +411,7 @@ void setBaseURISAXResolver(BaseURISAXResolver resolver) throws SAXException
 	//    * @param xml The XML stored as a string, that is to be parsed.
 	//    * @throws XBRLException if the XML string is null.
 	//    */
-	//   private void setXML(String xml) throws XBRLException {
+	//   private void setXML(String xml)
 	//       if (xml == null) throw XBRLException("The string of XML to be parsed must not be null.");  
 	//       this.xml = xml;    
 	//   }    

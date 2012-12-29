@@ -2,6 +2,10 @@
 #include "PimplImpl.h"
 #include <xercesc/sax/ErrorHandler.hpp>
 #include <xercesc/sax2/DefaultHandler.hpp>
+#include <xercesc/sax/SAXParseException.hpp>
+#include <list>
+#include <Poco/URI.h>
+
 /**
 * SAX content handler used in construction of an XBRL 
 * Discoverable Taxonomy Set (DTS).
@@ -15,12 +19,21 @@
 */
 namespace xbrlcapi
 {
+	class Identifier;
+	class ElementState;
+	class Loader;
 	class BaseContentHandler : public xercesc::DefaultHandler
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;
 	public:
 		BaseContentHandler();
+		/**
+		* @param loader The DTS loader that is using this content handler.
+		* @param uri The URI of the document being parsed.
+		* @throws XBRLException if any of the parameters are null.
+		*/
+		BaseContentHandler(const Loader& loader, const Poco::URI& uri);
 		~BaseContentHandler();
 		BaseContentHandler(const BaseContentHandler& rhs);
 		BaseContentHandler& operator=(const BaseContentHandler& rhs);
@@ -29,63 +42,56 @@ namespace xbrlcapi
 		bool operator==(const BaseContentHandler& rhs);
 		bool operator!=(const BaseContentHandler& rhs);
 
-		//    /**
-		//     * @see org.xbrlapi.sax.ContentHandler#getLoader()
-		//     */
-		//    public Loader getLoader();
+		/**
+		* @see org.xbrlapi.sax.ContentHandler#getLoader()
+		*/
+		Loader getLoader();
 
-		//    /**
-		//     * @see org.xbrlapi.sax.ContentHandler#setLoader(Loader)
-		//     */
-		//    public void setLoader(Loader loader) throws XBRLException;
+		/**
+		* @see org.xbrlapi.sax.ContentHandler#setLoader(Loader)
+		*/
+		void setLoader(const Loader& loader);
 
-		//    /**
-		//     * @see org.xbrlapi.sax.ContentHandler#getURI()
-		//     */
-		//    public URI getURI();
+		/**
+		* @see org.xbrlapi.sax.ContentHandler#getURI()
+		*/
+		Poco::URI getURI();
 
-		//    /**
-		//     * @see org.xbrlapi.sax.ContentHandler#setURI(URI)
-		//     */
-		//    public void setURI(URI uri) throws XBRLException;
+		/**
+		* @see org.xbrlapi.sax.ContentHandler#setURI(URI)
+		*/
+		void setURI(const Poco::URI& uri);
 
 
-		//    /**
-		//     * @param state The element state
-		//     */
-		//    public void setElementState(ElementState state);
+		/**
+		* @param state The element state
+		*/
+		void setElementState(const ElementState& state);
 
-		//    /**
-		//     * @return the state for the element currently being parsed.
-		//     */
-		//    public ElementState getElementState();
+		/**
+		* @return the state for the element currently being parsed.
+		*/
+		ElementState getElementState();
 
-		//    
-		//    /**
-		//     * @see ContentHandler#getIdentifiers()
-		//     */
-		//    public List<Identifier> getIdentifiers();
 
-		//    /**
-		//     * @param loader The DTS loader that is using this content handler.
-		//     * @param uri The URI of the document being parsed.
-		//     * @throws XBRLException if any of the parameters are null.
-		//     */
-		//	public BaseContentHandlerImpl(Loader loader, URI uri) throws XBRLException;
+		/**
+		* @see ContentHandler#getIdentifiers()
+		*/
+		std::list<std::shared_ptr<Identifier>> getIdentifiers();
 
-		//	/**
-		//	 * @see org.xbrlapi.sax.ContentHandler#error(SAXParseException)
-		//	 */
-		//    public void error(SAXParseException exception) override;
+		/**
+		* @see org.xbrlapi.sax.ContentHandler#error(SAXParseException)
+		*/
+		void error(const xercesc::SAXParseException& exception) override;
 
-		//    /**
-		//     * @see org.xbrlapi.sax.ContentHandler#fatalError(SAXParseException)
-		//     */
-		//	public void fatalError(SAXParseException exception) override;
+		/**
+		* @see org.xbrlapi.sax.ContentHandler#fatalError(SAXParseException)
+		*/
+		void fatalError(const xercesc::SAXParseException& exception) override;
 
-		//    /**
-		//     * @see org.xbrlapi.sax.ContentHandler#warning(SAXParseException)
-		//     */
-		//	public void warning(SAXParseException exception) override;
+		/**
+		* @see org.xbrlapi.sax.ContentHandler#warning(SAXParseException)
+		*/
+		void warning(const xercesc::SAXParseException& exception) override;
 	};
 }

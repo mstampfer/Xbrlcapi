@@ -18,7 +18,6 @@ namespace xbrlcapi
 		struct Impl;
 		Pimpl<Impl> pImpl;
 	public:
-		int get_it(); 
 		History();
 		~History();
 		History(const History& rhs);

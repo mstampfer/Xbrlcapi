@@ -10,7 +10,7 @@ namespace xbrlcapi
 	* Identifies XML Schema fragments.
 	* @author Geoffrey Shuetrim (geoff@galexy.net)
 	*/
-	class SchemaIdentifier : public BaseIdentifier, public Identifier 
+	class SchemaIdentifier : public BaseIdentifier
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;
@@ -37,7 +37,7 @@ namespace xbrlcapi
 			const std::string& namespaceURI, 
 			const std::string& lName, 
 			const std::string& qName,
-			xercesc::Attributes attrs);
+			const xercesc::Attributes& attrs);
 
 		/**
 		* The implementation assumes that XML schemas do not nest XML schemas.
@@ -50,19 +50,19 @@ namespace xbrlcapi
 			const std::string& namespaceURI, 
 			const std::string& lName, 
 			const std::string& qName,
-			xercesc::Attributes attrs);
+			const xercesc::Attributes& attrs);
 
 	protected:
 		/**
 		* @return the XML Schema grammar model.
 		*/
-		XSModel getXSModel();
+//		XSModel getXSModel();
 
 		/**
 		* @param model The XML Schema grammar model.
 		* @throws XBRLException if the model is null.
 		*/
-		void setXSModel(XSModel model);
+//		void setXSModel(XSModel model);
 
 		/**
 		* @return the target namespace.
@@ -80,7 +80,7 @@ namespace xbrlcapi
 		* @return the XML Schema grammar model for the XML Schema being parsed.
 		* @throws XBRLException
 		*/
-		XSModel constructXSModel();
+		//XSModel constructXSModel();
 
 	};
 }

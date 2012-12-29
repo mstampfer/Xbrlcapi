@@ -2,32 +2,16 @@
 #include <unordered_map>
 #include "Store.h"
 #include "XBRLException.h"
+#include "Builder.h"
 #include "xercesc/dom/DOMElement.hpp"
 
 namespace xbrlcapi
-
 {    
 	struct XML::Impl
 	{
-
-		/**
-		* The Fragment builder - used when building fragments during DTS discovery.
-		*/
 		Builder builder;
-
-		/**
-		* The data store that manages this fragment.
-		*/
-		std::unique_ptr<Store> store;
-
-		/**
-		* The DOM instantiation of the fragment's root DOMElement or null
-		* if the fragment has not been built.
-		*/
-
+		Store store;
 		std::shared_ptr<xercesc::DOMElement> rootElement;
-
-
 		Impl() {}
 
 		Impl& operator=(Impl&& rhs)
@@ -64,9 +48,6 @@ namespace xbrlcapi
 			return false;
 		}
 
-		/**
-		* @see org.xbrlapi.XML#isa(Class)
-		*/
 		//bool isa(Class<?> targetClass) 
 		//{
 		//	//Class<?> candidateClass = this->getClass();
@@ -78,22 +59,12 @@ namespace xbrlcapi
 		//	return false;
 		//}    
 
-		/**
-		* @see java.lang.Object#hashCode()
-		*/
-
 		int hashCode() 
 		{
 			//final int prime = 31;
 			int result = 1;
-			//result = prime * result + ((rootElement == null) ? 0 : getIndex().hashCode());
-			//result = prime * result + ((store == null) ? 0 : store.hashCode());
 			return result;
 		}
-
-		/**
-		* @see java.lang.Object#equals(java.lang.Object)
-		*/
 
 		//bool xmlimpl::equals(object obj) 
 		//{
@@ -121,81 +92,66 @@ namespace xbrlcapi
 		//	return true;
 		//}
 
-		/**
-		* Comparison is based upon the fragment index.
-		* @see java.lang.Comparable#compareTo(Object o)
-		*/
 		//int compareTo(const XML& other) 
 		//{
 		//	//		return this->getIndex().compareTo(other.getIndex());
 		//	return 0;
 		//}
 
-		//void setResource(const std::shared_ptr<xercesc::DOMElement>& rootElement)
-		//{
-		//	if (rootElement == null) throw new XBRLException("The XML resource is null.");
-		//	this->rootElement = rootElement;
-		//	setBuilder(null);
-		//}    
+		void setResource(const std::shared_ptr<xercesc::DOMElement>& rootElement)
+		{
+			//if (rootElement == null) throw new XBRLException("The XML resource is null.");
+			//this->rootElement = rootElement;
+			//setBuilder(null);
+		}    
 
-		/**
-		* @see org.xbrlapi.XML#getDocumentNode()
-		*/
 		//Document getDocumentNode() 
 		//{
 		//	//if (builder != null) return getBuilder().getMetadata().getOwnerDocument();
 		//	//return getResource().getOwnerDocument();
 		//}   
 
-		void setStore(Store store)
+		void setStore(const Store& store)
 		{
-			if (this->store != null) 
-			{
-				throw XBRLException("The data store has already been specified for this fragment.");
-			}
+			//if (this->store != null) 
+			//{
+			//	throw XBRLException("The data store has already been specified for this fragment.");
+			//}
 			this->store = store;
 		}
 
 		void setBuilder(Builder builder) 
 		{
-			if (builder == null) 
-			{
-				this->builder = null;
-				return;
-			}
-			builder.setMetaAttribute("type",getType());
-			this->builder = builder;
+			//if (builder == null) 
+			//{
+			//	this->builder = null;
+			//	return;
+			//}
+			//builder.setMetaAttribute("type",getType());
+			//this->builder = builder;
 		}
 
-		std::unique_ptr<Store> getStore() 
+		Store getStore() 
 		{
 			return store;
 		}
-
-
 
 		Builder getBuilder() 
 		{
 			return builder;
 		}
 
-		//std::shared_ptr<xercesc::DOMElement> getMetadataRootElement() const
-		//{
-		//	if (builder != null) return builder.getMetadata();
-		//	return getResource();
-		//}
+		std::shared_ptr<xercesc::DOMElement> getMetadataRootElement()
+		{
+			if (builder.getMetadata().get() != nullptr) return builder.getMetadata();
+			return getResource();
+		}
 
-		/**
-		* @see org.xbrlapi.XML#getIndex()
-		*/
-		std::string getIndex() 
+		std::string getIndex()
 		{
 			return this->getMetaAttribute("index");
 		}
 
-		/**
-		* @see org.xbrlapi.XML#setIndex(const std::string&)
-		*/
 		void setIndex(const std::string& index)
 		{
 			//if (index == null) throw new XBRLException("The index must not be null.");
@@ -203,18 +159,12 @@ namespace xbrlcapi
 			//setMetaAttribute("index",index);
 		}
 
-		/**
-		* @see org.xbrlapi.XML#getType()
-		*/
 		std::string getType() 
 		{
 			//	return this->getClass().getName();
 			return std::string();
 		}
 
-		/**
-		* @see org.xbrlapi.XML#setMetaAttribute(std::string, std::string)
-		*/
 		void setMetaAttribute(const std::string& name, const std::string& value)
 		{
 			//if (getBuilder() != null) 
@@ -228,9 +178,6 @@ namespace xbrlcapi
 			//updateStore();
 		}
 
-		/**
-		* @see org.xbrlapi.XML#removeMetaAttribute(std::string)
-		*/
 		void removeMetaAttribute(const std::string& name)
 		{
 			//if (getBuilder() != null) 
@@ -245,9 +192,6 @@ namespace xbrlcapi
 			//updateStore();
 		}
 
-		/**
-		* @see org.xbrlapi.XML#getMetaAttribute(std::string)
-		*/
 		std::string getMetaAttribute(const std::string& name) 
 		{
 			//if (getBuilder() != null) 
@@ -261,9 +205,6 @@ namespace xbrlcapi
 			return std::string();
 		}
 
-		/**
-		* @see org.xbrlapi.XML#getMetaAttribute(std::string)
-		*/
 		bool hasMetaAttribute(const std::string& name) 
 		{
 			//Builder builder = getBuilder();
@@ -275,9 +216,6 @@ namespace xbrlcapi
 			return false;
 		}
 
-		/**
-		* @see org.xbrlapi.XML#appendMetadataElement(std::string, Map)
-		*/
 		void appendMetadataElement(const std::string& eName, std::unordered_map<std::string,std::string> attributes)
 		{
 			//if (eName == null) throw new XBRLException("An DOMElement name must be specified.");
@@ -305,9 +243,6 @@ namespace xbrlcapi
 			//updateStore();
 		}
 
-		/**
-		* @see org.xbrlapi.XML#removeMetadataElement(std::string, HashMap)
-		*/
 		void removeMetadataElement(const std::string& eName, std::unordered_map<std::string,std::string> attributes)
 		{
 
@@ -352,36 +287,22 @@ namespace xbrlcapi
 
 		}
 
-
-
-		/**
-		* @see org.xbrlapi.XML#serialize(File)
-		*/
 		//void serialize(File file)
 		//{
 		//	//getStore().serialize(this->getMetadataRootElement(), file);
 		//}
 
-		/**
-		* @see org.xbrlapi.XML#serialize(OutputStream)
-		*/
 		//void serialize(OutputStream outputStream)
 		//{
 		//	//getStore().serialize(this->getMetadataRootElement(), outputStream);
 		//}
 
-		/**
-		* @see org.xbrlapi.XML#serialize()
-		*/
 		std::string serialize()
 		{
 			//return getStore().serialize(this->getMetadataRootElement());
 			return std::string();
 		}
 
-		/**
-		* @see org.xbrlapi.XML#updateInStore()
-		*/
 		void updateInStore()
 		{
 			//Store store = this->getStore();
@@ -393,20 +314,11 @@ namespace xbrlcapi
 			//store.persist(this);
 		}
 
-
-
 		void finalize()
 		{
 			//super.finalize(); 
 		}    
 
-
-		/**
-		* Handles object inflation.
-		* @param in The input object stream used to access the object's serialization.
-		* @throws IOException
-		* @throws ClassNotFoundException
-		*/
 		//void readObject(ObjectInputStream in)
 		//{
 
@@ -422,11 +334,6 @@ namespace xbrlcapi
 		//}
 		//}
 
-		/**
-		* Handles serialization for XML resources that have been fully built.
-		* @param out The input object stream used to store the serialization of the object.
-		* @throws IOException if the object is still being built.
-		*/
 		//void writeObject(java.io.ObjectOutputStream out) throws IOException 
 		//{
 		//if (this->getBuilder() != null) 
@@ -445,28 +352,19 @@ namespace xbrlcapi
 		//}
 		//}
 
-		/**
-		* Get the XML resource that is the fragment from the data store.
-		* @return the DOM root DOMElement of the fragment or null if the resource
-		* has not been initialised to a DOM root DOMElement.
-		*/
-		//std::shared_ptr<xercesc::DOMElement> getResource() 
-		//{
-		//	return rootElement;
-		//} 
+		std::shared_ptr<xercesc::DOMElement> getResource() 
+		{
+			return rootElement;
+		} 
 
-		/**
-		* Update this fragment in the data store by storing it again.
-		* @throws XBRLException if this fragment cannot be updated in the data store.
-		*/
 		void updateStore()
 		{
 			//		getStore().persist(this);
 		}
 	};
 
-
 	XML::XML() {}
+
 	XML::~XML() {} 
 
 	XML::XML(const XML& rhs) 
@@ -504,5 +402,35 @@ namespace xbrlcapi
 	bool XML::operator!=(const XML& rhs)
 	{
 		return !this->operator==(rhs);
+	}
+
+	void XML::setResource(const std::shared_ptr<xercesc::DOMElement>& rootElement)
+	{
+		pImpl->setResource(rootElement);
+	}
+
+	std::shared_ptr<xercesc::DOMElement> XML::getMetadataRootElement()
+	{
+		return pImpl->getMetadataRootElement();
+	}
+
+	void XML::setStore(const Store& store)
+	{
+		pImpl->setStore(store);
+	}
+
+	Store XML::getStore()
+	{
+		return pImpl->getStore();
+	}
+
+	Builder XML::getBuilder()
+	{
+		return pImpl->getBuilder();
+	}
+
+	std::string XML::getIndex()
+	{
+		return pImpl->getIndex();
 	}
 }

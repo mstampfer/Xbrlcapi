@@ -9,7 +9,7 @@ namespace xbrlcapi
 	* Identifies reference part fragments.
 	*/
 
-	class ReferencePartIdentifier : BaseIdentifier 
+	class ReferencePartIdentifier : public BaseIdentifier 
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;

@@ -136,12 +136,12 @@ namespace xbrlcapi
 	ElementState::ElementState() {}
 	ElementState::~ElementState() {} 
 
-	ElementState::ElementState(ElementState& rhs) 
+	ElementState::ElementState(const ElementState& rhs) 
 	{ 
 		pImpl = rhs.pImpl; 
 	}
 
-	ElementState& ElementState::operator=(ElementState& rhs)
+	ElementState& ElementState::operator=(const ElementState& rhs)
 	{
 		if (pImpl != rhs.pImpl)
 		{

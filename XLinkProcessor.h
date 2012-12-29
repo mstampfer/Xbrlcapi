@@ -57,30 +57,29 @@ namespace xbrlcapi
 		//		 std::string qName, 
 		//		Attributes attrs) throws XLinkException;
 		//
-		//   /**
-		//    * Respond to the end of an element, examining the element 
-		//    * for XLink features.
-		//    * 
-		//    * The SAX content handler that uses this XLink processor 
-		//    * will need to keep track of the attributes of the element being ended
-		//    * and will need to access these attributes from within the endElement
-		//    * method in the content handler that then calls the end element
-		//    * method in this XLink processor.
-		//    * 
-		//    * @see org.xbrlapi.xlink.ElementState#ElementState(ElementState, Attributes)
-		//    * 
-		//    * @param namespaceURI The namespace of the element being ended.
-		//    * @param lName The local name of the element being ended.
-		//    * @param qName The QName of the element being ended.
-		//    * @param attrs The attributes of the element being ended.
-		//    * @throws XLinkException
-		//    */
-		//public void endElement(
-		//		 std::string namespaceURI, 
-		//		 std::string lName, 
-		//		 std::string qName,
-		//		Attributes attrs) throws XLinkException;
-
+		/**
+		* Respond to the end of an element, examining the element 
+		* for XLink features.
+		* 
+		* The SAX content handler that uses this XLink processor 
+		* will need to keep track of the attributes of the element being ended
+		* and will need to access these attributes from within the endElement
+		* method in the content handler that then calls the end element
+		* method in this XLink processor.
+		* 
+		* @see org.xbrlapi.xlink.ElementState#ElementState(ElementState, Attributes)
+		* 
+		* @param namespaceURI The namespace of the element being ended.
+		* @param lName The local name of the element being ended.
+		* @param qName The QName of the element being ended.
+		* @param attrs The attributes of the element being ended.
+		* @throws XLinkException
+		*/
+		void endElement(
+			const std::string& namespaceURI, 
+			const std::string& lName, 
+			const std::string& qName,
+			const xercesc::Attributes& attrs);
 
 		///**
 		// * Handles the character content for a title element 
@@ -90,11 +89,11 @@ namespace xbrlcapi
 		// * @throws XLinkException
 		// */
 		//public void titleCharacters(char buf[], int offset, int len) throws XLinkException;
-		  
+
 		/**
-		 * Provides access to the XLink handler being used by the XLink processor.
-		 * @return the XLink handler being used by the XLink processor.
-		 */
+		* Provides access to the XLink handler being used by the XLink processor.
+		* @return the XLink handler being used by the XLink processor.
+		*/
 		XLinkHandler getXLinkHandler();
 	};
 }

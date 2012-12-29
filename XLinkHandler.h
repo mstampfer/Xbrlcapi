@@ -62,21 +62,20 @@ namespace xbrlcapi
 		//	 std::string qName
 		//	) throws XLinkException;
 
-		///**
-		//* Handles straight pass through of SAX event for 
-		//* XLink title elements
-		//* @param namespaceURI
-		//* @param lName
-		//* @param qName
-		//* @param attrs
-		//* @throws XLinkException
-		//*/
-		//public void startTitle(
-		//	 std::string namespaceURI, 
-		//	 std::string lName, 
-		//	 std::string qName, 
-		//	Attributes attrs
-		//	) throws XLinkException;
+		/**
+		* Handles straight pass through of SAX event for 
+		* XLink title elements
+		* @param namespaceURI
+		* @param lName
+		* @param qName
+		* @param attrs
+		* @throws XLinkException
+		*/
+		void startTitle(
+			 const std::string& namespaceURI, 
+			 const std::string& lName, 
+			 const std::string& qName, 
+			const xercesc::Attributes& attrs);
 
 		///**
 		//* Handles straight pass through of SAX event for 

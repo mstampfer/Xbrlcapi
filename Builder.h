@@ -1,6 +1,7 @@
 #pragma once
 #include "PimplImpl.h"
-
+#include <xercesc/dom/DOMElement.hpp>
+#include <string>
 /**
 * Class defining the SAX event handlers that
 * enable a fragment to be built up during 
@@ -71,21 +72,20 @@ namespace xbrlcapi
 		//     */
 		//    Element getInsertionPoint() ;
 		//    
-		//	/**
-		//	 * Append a text node.
-		//	 * @param text The node to be appended.
-		//	 * @throws XBRLException if the node cannot be appended.
-		//	 */
-		//	void appendText(const std::string& text)		//;
-		//	
-		//	/**
-		//	 * Append a processing instruction node
-		//	 * @param target The processing target application identifier.
-		//	 * @param data The data defining what is to be done.
-		//	 * @throws XBRLException if the node cannot be appended.
-		//	 */
-		//	void appendProcessingInstruction(const std::string& target, const std::string& data)		//;
-		//	
+			/**
+			 * Append a text node.
+			 * @param text The node to be appended.
+			 * @throws XBRLException if the node cannot be appended.
+			 */
+			void appendText(const std::string& text);
+			
+			/**
+			 * Append a processing instruction node
+			 * @param target The processing target application identifier.
+			 * @param data The data defining what is to be done.
+			 * @throws XBRLException if the node cannot be appended.
+			 */
+			void appendProcessingInstruction(const std::string& target, const std::string& data);		//	
 		//	/**
 		//	 * Append a comment node.
 		//	 * @param text The data constituting the content of the comment.
@@ -120,14 +120,11 @@ namespace xbrlcapi
 		//			const std::string& lName, 
 		//			const std::string& qName);
 		//
-		//	/**
-		//	 * @see Builder#endElement(String, String, String)
-		//	 */
-		//	void endElement(
-		//			const std::string& namespaceURI,
-		//			const std::string& lName,
-		//			const std::string& qName
-		//			);
+			void endElement(
+					const std::string& namespaceURI,
+					const std::string& lName,
+					const std::string& qName
+					);
 		//
 		//	/**
 		//	 * Append a notation declaration.

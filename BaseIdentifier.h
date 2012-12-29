@@ -16,13 +16,12 @@ namespace xbrlcapi
 {
 
 	class ContentHandler;
-	class BaseIdentifier : Identifier 
+	class BaseIdentifier : public Identifier 
 	{
 
 		struct Impl;
 		Pimpl<Impl> pImpl;
 	public:
-		int get_it(); 
 		BaseIdentifier();
 		~BaseIdentifier();
 		BaseIdentifier(const BaseIdentifier& rhs);
@@ -39,7 +38,7 @@ namespace xbrlcapi
 		/**
 		* @see Identifier#setContentHandler(ContentHandler)
 		*/
-		void BaseIdentifier::setContentHandler(ContentHandler contentHandler);
+		void BaseIdentifier::setContentHandler(const ContentHandler& contentHandler);
 
 		/**
 		* @see Identifier#getLoader()

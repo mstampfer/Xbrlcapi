@@ -5,24 +5,8 @@
 #include "ElementState.h"
 #include "Identifier.h"
 
-
-
-/**
-* SAX content handler used in construction of an XBRL 
-* Discoverable Taxonomy Set (DTS).
-* The content handler is responsible for building up the XBRL
-* XML fragments as they are parsed and then passing them over
-* to the underlying data representation for storage.
-* 
-* The content handler needs to be supplied with a variety of helpers
-* to assist with data storage and XLink processing. These are 
-* supplied by the loader.
-* 
-
-*/
 namespace xbrlcapi
 {
-
 	struct BaseContentHandler::Impl : public xercesc::DefaultHandler
 	{
 		Impl() {}
@@ -31,50 +15,24 @@ namespace xbrlcapi
 			setURI(uri);
 			setLoader(loader);		
 		}
-		/**
-		* The DTS loader that uses this content handler 
-		* to process discovered XML
-		*/
 		Loader loader;
 
-		/**
-		* Data required to track the element scheme XPointer 
-		* expressions that can be used to identify XBRL fragments.
-		*/
 		ElementState state;
 
-		/**
-		* List of the fragment identifiers to use in parsing the document.
-		* Load these in order of frequency of fragment occurrence for optimum performance.
-		*/
-		std::list<Identifier> identifiers;// = new LinkedList<Identifier>();
+		std::list<std::shared_ptr<Identifier>> identifiers;
 
-		/**
-		* The URI of the document being parsed.  This is used to
-		* recover the XML Schema model for the document if required.
-		*/
 		Poco::URI uri;
 
-
-		/**
-		* @see org.xbrlapi.sax.ContentHandler#getLoader()
-		*/
-		Loader getLoader() {
+		Loader getLoader() 
+		{
 			return loader;
 		}
 
-
-		void setLoader(Loader loader) 
+		void setLoader(const Loader& loader) 
 		{
 			this->loader = loader;
 		}
-		//
-		//    /**
-		//     * The URI of the document being parsed.  This is used to
-		//     * recover the XML Schema model for the document if required.
-		//     */
-		//    private URI uri = null;
-		//
+
 		Poco::URI getURI() 
 		{
 			return uri;
@@ -84,66 +42,52 @@ namespace xbrlcapi
 		{
 			this->uri = uri;
 		}
-		//    
-		//    /**
-		//     * Data required to track the element scheme XPointer 
-		//     * expressions that can be used to identify XBRL fragments.
-		//     */
-		//    private ElementState state = null;
 
 		void setElementState(const ElementState& state)
 		{
 			this->state = state;
 		}
 
-/*		ElementState getElementState() 
+		ElementState getElementState() 
 		{
 			return state;
-		}  */  
-		//    
-		//    /**
-		//     * List of the fragment identifiers to use in parsing the document.
-		//     * Load these in order of frequency of fragment occurrence for optimum performance.
-		//     */
-		//    private List<Identifier> identifiers = new LinkedList<Identifier>();
-		//    
-		std::list<Identifier> getIdentifiers() 
+		}    
+
+		std::list<std::shared_ptr<Identifier>> getIdentifiers() 
 		{
 			return identifiers;
 		}    
 
-		//    
-		//	/**
-		//	 * @see org.xbrlapi.sax.ContentHandler#error(SAXParseException)
-		//	 */
-		//	@Override
-		//    public void error(SAXParseException exception) throws SAXException {
-		///*        if (exception.getMessage().contains("Cannot find the declaration of element"))
-		//            if (exception.getMessage().contains("'schema'") || exception.getMessage().contains(":schema'"))
-		//                return;*/
-		//        logger.error(":" + exception.getMessage() + ": on line number " + exception.getLineNumber());
-		//	}
-		//
-		//    /**
-		//     * @see org.xbrlapi.sax.ContentHandler#fatalError(SAXParseException)
-		//     */
-		//   @Override
-		//	public void fatalError(SAXParseException exception) throws SAXException {
-		//        logger.error(exception.getMessage() + ": on line number " + exception.getLineNumber());
-		//	}
-		//
-		//    /**
-		//     * @see org.xbrlapi.sax.ContentHandler#warning(SAXParseException)
-		//     */
-		//   @Override
-		//	public void warning(SAXParseException exception) throws SAXException {
-		//		logger.warn(exception + "  Carrying on with parsing without doing validation.");
-		//	}
-		//   
+		void error(const xercesc::SAXParseException& exception)
+		{
+			/*if (exception.getMessage().contains("Cannot find the declaration of element"))
+			if (exception.getMessage().contains("'schema'") || exception.getMessage().contains(":schema'"))
+			return;*/
+	//		logger.error(":" + exception.getMessage() + ": on line number " + exception.getLineNumber());
+		}
+
+		void fatalError(const xercesc::SAXParseException& exception) 
+		{
+		//	logger.error(exception.getMessage() + ": on line number " + exception.getLineNumber());
+		}
+
+		void warning(const xercesc::SAXParseException& exception)
+		{
+			//logger.warn(exception + "  Carrying on with parsing without doing validation.");
+		}
+
 	};
 
-	BaseContentHandler::BaseContentHandler() {}
-	BaseContentHandler::~BaseContentHandler() {} 
+	BaseContentHandler::BaseContentHandler(const Loader& loader, const Poco::URI& uri)
+	{
+		Impl(loader,uri);
+	}
+	BaseContentHandler::BaseContentHandler() 
+	{
+		Impl();
+	}
+	BaseContentHandler::~BaseContentHandler() 
+	{} 
 
 	BaseContentHandler::BaseContentHandler(const BaseContentHandler& rhs) 
 	{ 
@@ -180,6 +124,58 @@ namespace xbrlcapi
 	bool BaseContentHandler::operator!=(const BaseContentHandler& rhs)
 	{
 		return !this->operator==(rhs);
+	}
+
+	Loader BaseContentHandler::getLoader()
+	{
+		return pImpl->getLoader();
+	}
+
+	void BaseContentHandler::setLoader(const Loader& loader)
+	{
+		pImpl->setLoader(loader);
+	}
+
+	Poco::URI BaseContentHandler::getURI()
+	{
+		return pImpl->getURI();
+	}
+
+	void BaseContentHandler::setURI(const Poco::URI& uri)
+	{
+		pImpl->setURI(uri);
+	}
+
+	void BaseContentHandler::setElementState(const ElementState& state)
+	{
+		pImpl->setElementState(state);
+	}
+
+	ElementState BaseContentHandler::getElementState()
+	{
+		return pImpl->getElementState();
+	}
+
+	std::list<std::shared_ptr<Identifier>> BaseContentHandler::getIdentifiers()
+	{
+		pImpl->getIdentifiers();
+	}
+
+	void BaseContentHandler::error(const xercesc::SAXParseException& exception) 
+	{
+		pImpl->error(exception);
+	}
+
+
+	void BaseContentHandler::fatalError(const xercesc::SAXParseException& exception) 
+	{
+		pImpl->fatalError(exception);
+	}
+
+
+	void BaseContentHandler::warning(const xercesc::SAXParseException& exception) 
+	{
+		pImpl->warning(exception);
 	}
 
 }

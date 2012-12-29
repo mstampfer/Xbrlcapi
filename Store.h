@@ -5,34 +5,6 @@
 
 namespace xbrlcapi
 {
-	class Analyser;
-	class Arc;
-	class ArcroleType;
-	class Collection;
-	class Concept;
-	class Element;
-	struct ExtendedLink;
-	class File;
-	struct Fragment;
-	class LabelResource;
-	class Language;
-	class Loader;
-	struct Matcher;
-	class Network;
-	class Networks;
-	class OutputStream;
-	class ReferenceResource;
-	class Relationship;
-	class RoleType;
-	class Schema;
-	class Stub;
-	struct XML;
-	struct Fact;
-	struct Item;
-	class DefaultMatcher;
-	class Loader;
-
-
 	/**
 	* The data store interface, defining all methods that need to be 
 	* implemented by a data store to support the XBRLAPI.
@@ -72,25 +44,25 @@ namespace xbrlcapi
 		* Throws XBRLException if the data store cannot be closed. 
 		*/
 		void close();
-		
-				/**
-				* Store a fragment.
-				* Implementations of this method must always be synchronized. 
-				* @param xml The fragment to be added to the store.
-				* @throws XBRLException if the fragment cannot be added to the store.
-				*/
-				void persist(const XML& xml);
-		//
-		//		/**
-		//		* Test if a store contains a specific fragment, as identified by
-		//		* its index.
-		//		* Implementations of this method must be synchronized.
-		//		* @param index The index of the fragment to test for.
-		//		* @return true iff the store contains a fragment with the specified 
-		//		* fragment index.
-		//		* @throws XBRLException If the test cannot be conducted.
-		//		*/
-		//		bool hasXMLResource(const std::string& index);
+
+		/**
+		* Store a fragment.
+		* Implementations of this method must always be synchronized. 
+		* @param xml The fragment to be added to the store.
+		* @throws XBRLException if the fragment cannot be added to the store.
+		*/
+		void persist(XML& xml);
+
+		/**
+		* Test if a store contains a specific fragment, as identified by
+		* its index.
+		* Implementations of this method must be synchronized.
+		* @param index The index of the fragment to test for.
+		* @return true iff the store contains a fragment with the specified 
+		* fragment index.
+		* @throws XBRLException If the test cannot be conducted.
+		*/
+		bool hasXMLResource(const std::string& index);
 		//
 		//		/**
 		//		* Retrieves an XML Resource from a data store.
@@ -231,35 +203,35 @@ namespace xbrlcapi
 		//		* query result is not a single string.
 		//		*/
 		//		std::string queryForString(const std::string& query);
-		//
-		//		/**
-		//		* Serialize the specified XML DOM to the specified destination.
-		//		* @param what the root element of the DOM to be serialised.
-		//		* @param destination The destination output stream to be serialised to.
-		//		* @throws XBRLException if the DOM cannot be serialised
-		//		* because the destination cannot be written to or some other
-		//		* different problem occurs during serialisation.
-		//		*/
-		//		void serialize(const Element& what, OutputStream destination);
-		//
-		//		/**
-		//		* Serialize the specified XML DOM to the specified destination.
-		//		* @param what the root element of the DOM to be serialised.
-		//		* @param destination The destination file to be serialised to.
-		//		* @throws XBRLException if the DOM cannot be serialised
-		//		* because the destination cannot be written to or some other
-		//		* different problem occurs during serialisation.
-		//		*/
-		//		//void serialize(const Element& what, const File& destination);
-		//
-		//		/**
-		//		* Serialize the specified XML DOM node.
-		//		* @param what the root element of the DOM to be serialised.
-		//		* @return a string containing the serialized XML.
-		//		* @throws XBRLException
-		//		*/
-		//		std::string serialize(const Element& what);
-		//
+		
+				/**
+				* Serialize the specified XML DOM to the specified destination.
+				* @param what the root element of the DOM to be serialised.
+				* @param destination The destination output stream to be serialised to.
+				* @throws XBRLException if the DOM cannot be serialised
+				* because the destination cannot be written to or some other
+				* different problem occurs during serialisation.
+				*/
+				void serialize(const Element& what, std::ofstream& destination);
+		
+				/**
+				* Serialize the specified XML DOM to the specified destination.
+				* @param what the root element of the DOM to be serialised.
+				* @param destination The destination file to be serialised to.
+				* @throws XBRLException if the DOM cannot be serialised
+				* because the destination cannot be written to or some other
+				* different problem occurs during serialisation.
+				*/
+				//void serialize(const Element& what, const File& destination);
+		
+				/**
+				* Serialize the specified XML DOM node.
+				* @param what the root element of the DOM to be serialised.
+				* @return a string containing the serialized XML.
+				* @throws XBRLException
+				*/
+				std::string serialize(const Element& what);
+		
 		//		/**
 		//		* Get a single document in the store as a DOM.
 		//		* @param uri The URI of the document to be retrieved.
@@ -742,12 +714,12 @@ namespace xbrlcapi
 		//		* from a specified set of URIs.
 		//		*/
 		//		void clearFilteringURIs();
-		//
-		//		/**
-		//		* @return true if the data store is restricting query results to come 
-		//		* from a specific set of documents and false otherwise.
-		//		*/
-		bool  isFilteringByURIs();
+
+		/**
+		* @return true if the data store is restricting query results to come 
+		* from a specific set of documents and false otherwise.
+		*/
+		bool isFilteringByURIs();
 
 		/**
 		* Flush all database updates to the data store. 

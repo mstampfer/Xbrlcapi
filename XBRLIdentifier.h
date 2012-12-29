@@ -9,7 +9,7 @@ namespace xbrlcapi
 	* @author Geoffrey Shuetrim (geoff@galexy.net)
 	*/
 
-	class XBRLIdentifier : BaseIdentifier 
+	class XBRLIdentifier : public BaseIdentifier 
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;
@@ -26,8 +26,7 @@ namespace xbrlcapi
 		/**
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#BaseIdentifier(ContentHandler)
 		*/
-		XBRLIdentifier(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler)
-		{}
+		XBRLIdentifier(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler){}
 
 		/**
 		* Finds fragments in the XBRL 2.1 namespace and keeps

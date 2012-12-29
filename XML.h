@@ -10,7 +10,9 @@
 
 namespace xbrlcapi
 {
-
+	class Element;
+	class Store;
+	class Builder;
 	class XML 
 	{
 		struct Impl;
@@ -61,7 +63,7 @@ namespace xbrlcapi
 		* @throws XBRLException If the builder cannot be shut down or if the 
 		* resource cannot be set or is null.
 		*/
-		virtual void setResource(Element rootElement);
+		virtual void setResource(const std::shared_ptr<xercesc::DOMElement>& rootElement);
 
 		///**
 		//* Get the XML DOM Document for the fragment data.
@@ -73,21 +75,21 @@ namespace xbrlcapi
 		* Get the root element of the fragment metadata.
 		* @return an XML Element that is the root of the fragment metadata.
 		*/
-		virtual xercesc::DOMElement getMetadataRootElement() const;
+		virtual std::shared_ptr<xercesc::DOMElement> getMetadataRootElement();
 
 		/**
 		* Set the data store that manages this fragment.
 		* @param store The data store.
 		* @throws XBRLException if the data store has already been set.
 		*/
-		//		virtual void setStore(Store store);
+		virtual void setStore(const Store& store);
 
 		/**
 		* Set the builder that constructs the fragment XML during parsing.
 		* @param builder The builder object used to construct the fragment XML.
 		* @throws XBRLException if the builder cannot be set or is null.
 		*/
-		virtual void setBuilder(Builder builder);  
+		//		virtual void setBuilder(const xercesc::Builder& builder);  
 
 		/**
 		* Get the data store that manages this fragment.
@@ -115,7 +117,7 @@ namespace xbrlcapi
 		//* Get the index of the XML resource.  This is the 
 		//* name used for the XML resource in the data store.
 		//*/
-		//virtual std::string getIndex();
+		virtual std::string getIndex();
 
 		///**
 		//* Set the fragment index.  Note that no checks are

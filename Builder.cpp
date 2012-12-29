@@ -4,6 +4,7 @@
 #include <xercesc/dom/DOMNode.hpp>
 #include "Constants.h"
 #include "XBRLException.h"
+#include "XercesStrings.h"
 
 
 namespace xbrlcapi
@@ -31,19 +32,15 @@ namespace xbrlcapi
 		*/
 		bool isNewFragment;
 
-
-
 		Impl(const xercesc::DOMDocument& dom)
 		{
-			this->dom = std::make_shared<xercesc::DOMDocument>(dom);
+	//		this->dom = std::make_shared<xercesc::DOMDocument>(dom);
 			setupBuilder();
 		}
 
-
-
 		void setupBuilder() 
 		{
-			metadata = dom->createElementNS(XMLConstants::XBRLAPINamespace,
+/*			metadata = dom->createElementNS(XMLConstants::XBRLAPINamespace,
 				XMLConstants::XBRLAPIPrefix + ":" + 
 				XMLConstants::FragmentRootElementName);
 
@@ -53,7 +50,7 @@ namespace xbrlcapi
 				XMLConstants::FragmentDataContainerElementName);
 
 			setInsertionPoint(container);
-			metadata->appendChild(container);		
+			metadata->appendChild(container);*/		
 		}
 
 
@@ -88,7 +85,7 @@ namespace xbrlcapi
 
 
 
-		std::shared_ptr<xercesc::DOMElement>  getMetadata() 
+		std::shared_ptr<xercesc::DOMElement>  getMetaData() 
 		{
 			return metadata;
 		}
@@ -117,42 +114,38 @@ namespace xbrlcapi
 
 		void appendChild(const xercesc::DOMNode& child)
 		{
-			if (isNewFragment) 
-			{
-				if (child.getNodeType() != xercesc::DOMElement::ELEMENT_NODE) 
-					throw XBRLException("The first child to be inserted must be an element node");
-				getInsertionPoint().appendChild(child);
-				isNewFragment = false;
-			} 
-			else 
-			{
-				getInsertionPoint().appendChild(child);
-			}
-			if (child.getNodeType() == Element.ELEMENT_NODE) setInsertionPoint((Element) child);
+			//if (isNewFragment) 
+			//{
+			//	if (child.getNodeType() != xercesc::DOMElement::ELEMENT_NODE) 
+			//		throw XBRLException("The first child to be inserted must be an element node");
+			//	getInsertionPoint().appendChild(child);
+			//	isNewFragment = false;
+			//} 
+			//else 
+			//{
+			//	getInsertionPoint().appendChild(child);
+			//}
+			//if (child.getNodeType() == Element.ELEMENT_NODE) setInsertionPoint((Element) child);
 		}
 
 
 
-		//public void appendText(String text) throws XBRLException
-		//{
-		//	appendChild(getDOM().createTextNode(text));
-		//}
-		//
+		void appendText(const std::string& text)
+		{
+//			appendChild(dom.createTextNode(text));
+		}
+		
 
 
-		//public void appendProcessingInstruction(String target, String data) throws XBRLException
-		//{
-		//	appendChild(getDOM().createProcessingInstruction(target,data));
-		//}
-		//
-
+		void appendProcessingInstruction(const std::string& target, const std::string& data)
+		{
+//			appendChild(dom->createProcessingInstruction(xerces_util::fromNative(target), xerces_util::fromNative(data)));
+		}
 
 		//public void appendComment(String text) throws XBRLException
 		//{
 		//	appendChild(getDOM().createComment(text));
 		//}
-
-
 
 		//public void appendElement(
 		//		String namespaceURI, 
@@ -187,7 +180,6 @@ namespace xbrlcapi
 		//       return localname;
 		//   }    
 		//   
-
 
 		//private std::shared_ptr<xercesc::DOMElement>  createElement(
 		//		String namespaceURI, 
@@ -235,7 +227,6 @@ namespace xbrlcapi
 		//}		
 		//
 
-
 		//public void appendElement(
 		//		String namespaceURI, 
 		//		String lName, 
@@ -246,7 +237,6 @@ namespace xbrlcapi
 
 		//
 		//
-
 
 		//public void endElement(
 		//		String namespaceURI,
@@ -269,8 +259,6 @@ namespace xbrlcapi
 		//}
 		//
 
-
-
 		//public void appendNotationDecl(
 		//		String name, 
 		//		String publicId, 
@@ -286,7 +274,6 @@ namespace xbrlcapi
 		//	// TODO How do I add a notation node to the DOM when fragment building
 		//}
 		//
-
 
 		//public void appendUnparsedEntityDecl(
 		//		String name, 
@@ -307,8 +294,6 @@ namespace xbrlcapi
 		//    throw new XBRLException("Not yet implemented.");
 		//}
 
-
-
 		//public void appendElementDecl(
 		//		String name, 
 		//		String model
@@ -328,7 +313,6 @@ namespace xbrlcapi
 		//}
 
 
-
 		//public void appendExternalEntityDecl(
 		//		String name, 
 		//		String publicId, 
@@ -337,8 +321,6 @@ namespace xbrlcapi
 		//	// TODO Determine how to add an external entity declaration
 		//    throw new XBRLException("Not yet implemented.");
 		//}
-
-
 
 		//public void appendAttributeDecl(
 		//		String eName, 
@@ -350,7 +332,6 @@ namespace xbrlcapi
 		//	// TODO How to add an attribute DTD declaration
 		//    throw new XBRLException("Not yet implemented.");
 		//}
-
 
 			//public void setMetaAttribute(String name, String value) {
 			//	getMetadata().setAttribute(name,value);		
@@ -367,12 +348,10 @@ namespace xbrlcapi
 			//       return getMetadata().hasAttribute(name); 
 			//   }	
 
-
 			//public void removeMetaAttribute(String name) {
 			//	getMetadata().removeAttribute(name);		
 			//}
 			//
-
 
 			//   public void appendMetadataElement(String eName, Map<String,String> attributes) throws XBRLException {
 
@@ -464,6 +443,11 @@ namespace xbrlcapi
 	std::shared_ptr<xercesc::DOMElement>  Builder::getMetadata()
 	{
 		pImpl->getMetaData();
+	}
+
+	void Builder::appendText(const std::string& text)
+	{
+		pImpl->appendText(text);
 	}
 
 }
