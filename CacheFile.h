@@ -1,9 +1,6 @@
-
 #pragma once
-#include "boost/filesystem/fstream.hpp"
+#include "PimplImpl.h"
 #include <string>
-#include <memory>
-#include "boost/filesystem/path.hpp"
 #include "boost/filesystem.hpp"
 
 namespace xbrlcapi
@@ -11,53 +8,24 @@ namespace xbrlcapi
 	class CacheFile
 	{
 	private:
-		boost::filesystem::path path;
-		std::unique_ptr<boost::filesystem::fstream> os;
-//		CacheFile(const CacheFile&);
-//		CacheFile& operator=(const CacheFile&);
+		struct Impl;
+		Pimpl<Impl> pImpl;
 
 	public:
-		CacheFile(const char* name = "c:\\temp\\default.cache") : path(name)
-		{
-			os = std::unique_ptr<boost::filesystem::fstream>(new boost::filesystem::fstream(path));
-		}
-		CacheFile(const std::string& name) : path(name)
-		{
-			os = std::unique_ptr<boost::filesystem::fstream>(new boost::filesystem::fstream(path));
-		}
+		~CacheFile();
+		CacheFile(const char* name = "c:\\temp\\default.cache");
+		CacheFile(const std::string& name);
 
-		CacheFile(CacheFile&& rhs)
-		{
-			os = std::move(rhs.os);
-			path = std::move(rhs.path);
-		}
+		CacheFile(const CacheFile& rhs);
+		CacheFile& operator=(const CacheFile& rhs);
+		CacheFile(CacheFile&& rhs);
+		CacheFile& operator=(CacheFile&& rhs);
+		bool operator==(const CacheFile& rhs);
+		bool operator!=(const CacheFile& rhs);
 
-		CacheFile& operator=(CacheFile&& rhs)
-		{
-			if (os != rhs.os)
-			{
-				os = std::move(rhs.os);
-				path = std::move(rhs.path);
-			}
-			return *this;
-		}
-
-		operator bool() const
-		{
-			if (exists(path) && os) 
-				return true;
-			else 
-				return false;
-		}
-
-		std::string getFilename()
-		{
-			return path.generic_string().data();
-		}
-
-		boost::filesystem::path& getPath()
-		{
-			return path;
-		}
+		operator bool() const;
+		std::string getFilename();
+		boost::filesystem::path& getPath();
+		operator bool();
 	};
 }

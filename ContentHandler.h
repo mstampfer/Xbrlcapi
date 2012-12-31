@@ -34,10 +34,10 @@ namespace xbrlcapi
 		* @throws XBRLException if any of the parameters
 		* are null.
 		*/
-		ContentHandler(const Loader& loader, const Poco::URI& uri) : BaseContentHandler(loader, uri)
-		{}
+		//ContentHandler(const Loader& loader, const Poco::URI& uri) : BaseContentHandler(loader, uri)
+		//{}
 		ContentHandler();
-		~ContentHandler();
+		~ContentHandler(); 
 		ContentHandler(const ContentHandler& rhs);
 		ContentHandler& operator=(const ContentHandler& rhs);
 		ContentHandler(ContentHandler&& rhs);
@@ -99,7 +99,7 @@ namespace xbrlcapi
 		* The locator for a document is stored to facilitate resolution
 		* of CacheURIImpl's relative to that location.
 		*/
-		void setDocumentLocator(const xercesc::Locator& locator);
+		void setDocumentLocator(const std::shared_ptr<xercesc::Locator>& locator);
 
 		/**
 		* Creates the content handler, starting out by
@@ -124,7 +124,7 @@ namespace xbrlcapi
 		* @param identifier The identifier to add to the list of
 		* fragment identifiers used by the content handler.
 		*/
-		void addIdentifier(const Identifier& identifier);
+		void addIdentifier(const std::shared_ptr<Identifier>& identifier);
 
 		/**
 		* @param index The index of the position at which
@@ -133,7 +133,7 @@ namespace xbrlcapi
 		* @param identifier The identifier to add to the list of
 		* fragment identifiers used by the content handler.
 		*/
-		void addIdentifier(int index, const Identifier& identifier);
+//		void addIdentifier(int index, const Identifier& identifier);
 
 		/**
 		* @param index The index of the identifier to remove from the list of

@@ -2,6 +2,7 @@
 #include "PimplImpl.h"
 #include <unordered_map>
 #include <Poco/URI.h>
+#include <boost/filesystem/path.hpp>
 
 namespace xbrlcapi
 {

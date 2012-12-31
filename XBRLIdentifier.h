@@ -26,7 +26,7 @@ namespace xbrlcapi
 		/**
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#BaseIdentifier(ContentHandler)
 		*/
-		XBRLIdentifier(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler){}
+		XBRLIdentifier(const ContentHandler& contentHandler);
 
 		/**
 		* Finds fragments in the XBRL 2.1 namespace and keeps

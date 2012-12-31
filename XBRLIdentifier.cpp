@@ -139,6 +139,8 @@ namespace xbrlcapi
 
 	XBRLIdentifier::XBRLIdentifier() {}
 	XBRLIdentifier::~XBRLIdentifier() {} 
+	XBRLIdentifier::XBRLIdentifier(const ContentHandler& contentHandler) : 
+		BaseIdentifier(contentHandler), pImpl(contentHandler) {}
 
 	XBRLIdentifier::XBRLIdentifier(const XBRLIdentifier& rhs) 
 	{ 
@@ -176,9 +178,6 @@ namespace xbrlcapi
 	{
 		return !this->operator==(rhs);
 	}
-
-	XBRLIdentifier::XBRLIdentifier(const ContentHandler& contentHandler) : Impl(contentHandler)
-	{}
 
 	void XBRLIdentifier::startElement(
 		const std::string& namespaceURI, 

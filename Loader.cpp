@@ -12,6 +12,7 @@
 #include "XBRLException.h"
 #include "XLinkProcessor.h"
 #include "XercesStrings.h"
+#include "ElementState.h"
 
 #include <algorithm>
 #include <chrono>
@@ -24,6 +25,7 @@
 #include <thread>
 #include <unordered_set>
 #include <utility>
+#include <stack>
 
 #include <Poco/Exception.h>
 #include <boost/lexical_cast.hpp>
@@ -62,25 +64,13 @@ namespace xbrlcapi
 		bool discovering;
 		bool interrupt;
 		std::shared_ptr<xercesc::DOMDocument> dom;
-		//static const std::string SYMBOL_TABLE;
-		//static const std::string GRAMMAR_POOL;
-		//static const int BIG_PRIME = 2039;
+		std::stack<ElementState> states;
+		std::stack<Fragment> fragments;
 
 		Impl() :
-			cache(Cache()),
 			discovering(false),
-			documentId(std::string()),
-			documentQueue(std::deque<Poco::URI>()),
-			documentURI(Poco::URI()),
-			dom(std::shared_ptr<xercesc::DOMDocument>()),
-			entityResolver(EntityResolver()),
-			failures(std::unordered_map<Poco::URI, std::string>()),
 			fragmentId(0),
-			history(History()),
 			interrupt(false),
-			store(Store()),
-			successes(std::deque<Poco::URI>()),
-			xlinkProcessor(XLinkProcessor()),
 			_useSchemaLocationAttributes(false)
 		{
 			initialize();
@@ -283,12 +273,12 @@ namespace xbrlcapi
 			return xlinkProcessor;
 		}
 
-		void updateState(ElementState state) 
+		void updateState(const ElementState& state) 
 		{
 
-			if (getStates().peek() == state) 
+			if (states.top() == state) 
 			{
-				this.removeFragment();
+				removeFragment();
 			}
 		}
 
@@ -297,10 +287,11 @@ namespace xbrlcapi
 		//    }        
 
 
-		//    public Fragment getFragment() {
-		//        if (fragments.isEmpty()) return null;
-		//        return fragments.peek();
-		//    }
+		Fragment getFragment() 
+		{
+			if (fragments.empty()) return Fragment();
+			return fragments.top();
+		}
 
 		//    public void replaceCurrentFragment(const Fragment& replacement) {
 		//        if (fragments.isEmpty()) throw XBRLException("There is no current fragment to replace.");
@@ -312,52 +303,52 @@ namespace xbrlcapi
 		//        return (!fragments.isEmpty());
 		//    }
 
-		//    public void add(const Fragment& fragment, ElementState state)
-		//            {
-		//
-		//        // Get the XPointer expressions that identify the root of this fragment
-		//        // TODO Should the following xpointer code be contingent on children != null?
-		//        Vector<std::string> pointers = state.getElementSchemePointers();
-		//        for (const std::string& pointer : pointers) {
-		//            fragment.appendElementSchemeXPointer(pointer);
-		//        }
-		//
-		//        // Set the document reconstruction metadata for the fragment
-		//        Fragment parent = getFragment();
-		//        if (parent != null) {
-		//            std::string parentIndex = parent.getIndex();
-		//            if (parentIndex == null) throw XBRLException("The parent index is null.");
-		//            fragment.setParentIndex(parentIndex);
-		//            fragment.setSequenceToParentElement(parent);
-		//        } else {
-		//            fragment.setParentIndex("");
-		//        }
-		//
-		//        fragment.setURI(getDocumentURI());
-		//
-		//        // Push the fragment onto the stack of fragments
-		//        fragments.add(fragment);
-		//
-		//        // Push the element state onto the stack of fragment root element states
-		//        getStates().add(state);
-		//
-		//    }
-		//    
-		//
-		//
+		void add(const Fragment& fragment, const ElementState& state)
+		{
+			//
+			//        // Get the XPointer expressions that identify the root of this fragment
+			//        // TODO Should the following xpointer code be contingent on children != null?
+			//        Vector<std::string> pointers = state.getElementSchemePointers();
+			//        for (const std::string& pointer : pointers) {
+			//            fragment.appendElementSchemeXPointer(pointer);
+			//        }
+			//
+			//        // Set the document reconstruction metadata for the fragment
+			//        Fragment parent = getFragment();
+			//        if (parent != null) {
+			//            std::string parentIndex = parent.getIndex();
+			//            if (parentIndex == null) throw XBRLException("The parent index is null.");
+			//            fragment.setParentIndex(parentIndex);
+			//            fragment.setSequenceToParentElement(parent);
+			//        } else {
+			//            fragment.setParentIndex("");
+			//        }
+			//
+			//        fragment.setURI(getDocumentURI());
+			//
+			//        // Push the fragment onto the stack of fragments
+			//        fragments.add(fragment);
+			//
+			//        // Push the element state onto the stack of fragment root element states
+			//        getStates().add(state);
+			//
+		}
+
+
+
 
 		Fragment removeFragment() 
 		{
-			try {
-
-				getStates().pop();
-				getChildrenStack().pop();
-				Fragment f = fragments.pop();
-				store.persist(f);
-				return f;
-			} catch (EmptyStackException e) {
-				throw XBRLException(this.getDocumentURI() + " There are no fragments being built.  The stack of fragments is empty.",e);
-			}
+			//try {
+			//	states.pop();
+			//	getChildrenStack().pop();
+			//	Fragment f = fragments.pop();
+			//	store.persist(f);
+			//	return f;
+			//} catch (EmptyStackException e) {
+			//	throw XBRLException(this.getDocumentURI() + " There are no fragments being built.  The stack of fragments is empty.",e);
+			//}
+			return Fragment();
 		}
 
 
@@ -1026,7 +1017,7 @@ namespace xbrlcapi
 
 	XLinkProcessor Loader::getXlinkProcessor()
 	{
-		pImpl->getXlinkProcessor();
+		return pImpl->getXlinkProcessor();
 	}
 
 	void Loader::setEntityResolver(EntityResolver& resolver)
@@ -1094,10 +1085,10 @@ namespace xbrlcapi
 		pImpl->stashURIs(uris);
 	}
 
-	//Fragment Loader::getFragment()
-	//{
-	//	pImpl-> getFragment();
-	//}
+	Fragment Loader::getFragment()
+	{
+		return pImpl-> getFragment();
+	}
 
 	//void Loader::replaceCurrentFragment(const Fragment& replacement)
 	//{
@@ -1116,7 +1107,7 @@ namespace xbrlcapi
 
 	void Loader::add(const Fragment& fragment, const ElementState& state)
 	{
-		//			pImpl->add(fragment, state);
+		pImpl->add(fragment, state);
 	}
 
 	/*	 bool addedAFragment()

@@ -3,7 +3,7 @@
 
 //#include "Schema.h"
 #include "SchemaContent.h"
-#include "FragmentImpl.h"
+#include "Fragment.h"
 #include <string>
 
 namespace xbrlcapi
@@ -13,7 +13,7 @@ namespace xbrlcapi
 
 	*/
 
-	class SchemaContentImpl : public FragmentImpl, public SchemaContent 
+	class SchemaContentImpl : public Fragment, public SchemaContent 
 	{
 
 		/**

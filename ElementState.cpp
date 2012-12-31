@@ -35,9 +35,9 @@ namespace xbrlcapi
 
 		Impl(){}
 
-		Impl(const ElementState& p, const xercesc::Attributes& attrs) :
+		Impl(const ElementState& p, const std::shared_ptr<xercesc::Attributes>& attrs) :
 			parent(std::make_shared<ElementState>(p)), 
-			attributes(std::make_shared<xercesc::Attributes>(attrs))
+			attributes(attrs)
 		{
 			if (hasParent()) 
 			{
@@ -114,8 +114,8 @@ namespace xbrlcapi
 			return pointers;
 		}
 
-		//std::wstring getLanguageCode()
-		//{
+		std::string getLanguageCode()
+		{
 		//	XMLCh * xch = xerces_util::fromNative(XMLConstants::XMLNamespace).c_str();
 		//	int index = attributes->getIndex(,L"lang");
 		//	if (index > -1) 
@@ -128,8 +128,9 @@ namespace xbrlcapi
 		//		return Null;
 		//	}
 
-		//	return parent->getLanguageCode();
-		//}
+		//	return xerces_util::to_native(parent->getLanguageCode());
+			return std::string();
+		}
 
 	};
 
@@ -175,21 +176,21 @@ namespace xbrlcapi
 
 	std::shared_ptr<xercesc::Attributes> ElementState::getAttributes() 
 	{
-		pImpl->getAttributes();
+		return pImpl->getAttributes();
 	}
 
-	ElementState::ElementState(const ElementState& parent, const xercesc::Attributes& attrs) :
-		pImpl(parent,attrs)
+	ElementState::ElementState(const ElementState& parent, 
+		const std::shared_ptr<xercesc::Attributes>& attrs) : pImpl(parent,attrs)
 	{}
 
 	bool ElementState::hasParent() 
 	{
-		pImpl->hasParent();
+		return pImpl->hasParent();
 	}
 
-	ElementState ElementState::getParent() 
+	std::shared_ptr<ElementState> ElementState::getParent() 
 	{
-		pImpl->getParent();
+		return pImpl->getParent();
 	}
 
 	void ElementState::addChild() 
@@ -199,12 +200,12 @@ namespace xbrlcapi
 
 	long ElementState::getChildrenSoFar() 
 	{
-		pImpl->getChildrenSoFar();
+		return pImpl->getChildrenSoFar();
 	}
 
 	std::string ElementState::getId() 
 	{
-		pImpl->getId();
+		return pImpl->getId();
 	}
 
 	void ElementState::setId(const std::string& id) 
@@ -214,17 +215,17 @@ namespace xbrlcapi
 
 	bool ElementState::hasId() 
 	{
-		pImpl->hasId();
+		return pImpl->hasId();
 	}
 
 	std::vector<std::string> ElementState::getElementSchemePointers() 
 	{
-		pImpl->getElementSchemePointers();
+		return pImpl->getElementSchemePointers();
 	}
 
 	std::string ElementState::getLanguageCode()
 	{
-	//	pImpl->getLanguageCode();
+		return pImpl->getLanguageCode();
 	}
 
 }

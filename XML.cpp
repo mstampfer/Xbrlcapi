@@ -216,7 +216,7 @@ namespace xbrlcapi
 			return false;
 		}
 
-		void appendMetadataElement(const std::string& eName, std::unordered_map<std::string,std::string> attributes)
+		void appendMetadataElement(const std::string& eName, const std::unordered_map<std::string,std::string>& attributes)
 		{
 			//if (eName == null) throw new XBRLException("An DOMElement name must be specified.");
 
@@ -433,4 +433,20 @@ namespace xbrlcapi
 	{
 		return pImpl->getIndex();
 	}
+
+	void XML::setMetaAttribute(const std::string& name, const std::string& value)
+	{
+		pImpl->setMetaAttribute(name, value);
+	}
+
+	void XML::appendMetadataElement(const std::string& eName, const std::unordered_map<std::string,std::string>& attributes)
+	{
+		pImpl->appendMetadataElement(eName, attributes);
+	}
+
+	std::string XML::getMetaAttribute(const std::string& name)
+	{
+		return pImpl->getMetaAttribute(name);
+	}
+
 }

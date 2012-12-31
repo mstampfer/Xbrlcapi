@@ -59,12 +59,12 @@ namespace xbrlcapi
 			// Instantiate the fragment identifiers
 			try 
 			{
-				addIdentifier(XBRLXLinkIdentifier(handler));
-				addIdentifier(SchemaIdentifier(handler));
-				addIdentifier(XBRLIdentifier(handler));
-				addIdentifier(LanguageIdentifier(handler));
-				addIdentifier(ReferencePartIdentifier(handler));
-				addIdentifier(GenericDocumentRootIdentifier(handler));
+				addIdentifier(std::shared_ptr<Identifier>(new XBRLXLinkIdentifier(handler)));
+				addIdentifier(std::shared_ptr<Identifier>(new SchemaIdentifier(handler)));
+				addIdentifier(std::shared_ptr<Identifier>(new XBRLIdentifier(handler)));
+				addIdentifier(std::shared_ptr<Identifier>(new LanguageIdentifier(handler)));
+				addIdentifier(std::shared_ptr<Identifier>(new ReferencePartIdentifier(handler)));
+				addIdentifier(std::shared_ptr<Identifier>(new GenericDocumentRootIdentifier(handler)));
 			}
 			catch (const XBRLException& e) 
 			{
@@ -254,7 +254,7 @@ namespace xbrlcapi
 			}
 
 			// Update the information about the state of the current element
-			setElementState(getElementState().getParent());
+			setElementState(*getElementState().getParent());
 
 		}
 
@@ -316,9 +316,9 @@ namespace xbrlcapi
 		* The locator for a document is stored to facilitate resolution
 		* of CacheURIImpl's relative to that location.
 		*/
-		void setDocumentLocator(const xercesc::Locator& locator) 
+		void setDocumentLocator(const std::shared_ptr<xercesc::Locator>& locator) 
 		{
-			this->locator = std::make_shared<xercesc::Locator>(locator);
+			this->locator = locator;
 		}
 
 		/**
@@ -333,9 +333,9 @@ namespace xbrlcapi
 		* @param identifier The identifier to add to the list of
 		* fragment identifiers used by the content handler.
 		*/
-		void addIdentifier(const Identifier& identifier) 
+		void addIdentifier(const std::shared_ptr<Identifier>& identifier) 
 		{
-			identifiers.push_back(std::make_shared<Identifier>(identifier));
+			identifiers.push_back(identifier);
 		}
 
 
@@ -346,10 +346,10 @@ namespace xbrlcapi
 		* @param identifier The identifier to add to the list of
 		* fragment identifiers used by the content handler.
 		*/
-		void addIdentifier(int index, const Identifier& identifier) 
-		{
-			identifiers.push_back(std::make_shared<Identifier>(identifier));
-		}
+		//void addIdentifier(int index, const Identifier& identifier) 
+		//{
+		//	identifiers.push_back(std::make_shared<Identifier>(identifier));
+		//}
 
 		/**
 		* @param index The index of the identifier to remove from the list of
@@ -377,12 +377,12 @@ namespace xbrlcapi
 			return xerces_util::toNative(locator->getSystemId());
 		}
 
-		int getLineNumber()
+		long long getLineNumber()
 		{
 			return locator->getLineNumber();
 		}
 
-		int getColumnNumber()
+		long long getColumnNumber()
 		{
 			return locator->getColumnNumber();
 		}
@@ -396,19 +396,20 @@ namespace xbrlcapi
 			//	//	s.append("a document without a URI.  All DTS documents must have a URI but one being parsed into the DTS does not.");
 			//	//s.append("The problem seems to be on line" + getLineNumber() + " at column " + getColumnNumber() + ".");
 			//	//return s.toString();
-			//	return std::string();
+				return std::string();
 		}
 
 		XBRLXLinkHandler getXLinkHandler()
 		{
 			//try
 			//{
-			//	return (XBRLXLinkHandlerImpl) this->getLoader().getXlinkProcessor().getXLinkHandler();
+			//	return (XBRLXLinkHandler) this->getLoader().getXlinkProcessor().getXLinkHandler();
 			//}
 			//catch (ClassCastException e)
 			//{
 			//	throw new xercesc::SAXException("The XBRL API is not using the XBRL XLink Handler implementation.");
 			//}
+			return *(new XBRLXLinkHandler);
 		}
 
 		BaseURISAXResolver baseURISAXResolver;
@@ -430,7 +431,7 @@ namespace xbrlcapi
 
 	ContentHandler::ContentHandler(const ContentHandler& rhs) 
 	{ 
-		pImpl = rhs.pImpl; 
+		pImpl = rhs.pImpl;
 	}
 
 	ContentHandler& ContentHandler::operator=(const ContentHandler& rhs)
@@ -510,25 +511,25 @@ namespace xbrlcapi
 	}
 
 
-	void ContentHandler::setDocumentLocator(const xercesc::Locator& locator) 
+	void ContentHandler::setDocumentLocator(const std::shared_ptr<xercesc::Locator>& locator) 
 	{
 		pImpl->setDocumentLocator(locator) ;
 	}
 
 	BaseURISAXResolver ContentHandler::getBaseURISAXResolver() 
 	{
-		pImpl->getBaseURISAXResolver();
+		return pImpl->getBaseURISAXResolver();
 	}
 
-	void ContentHandler::addIdentifier(const Identifier& identifier) 
+	void ContentHandler::addIdentifier(const std::shared_ptr<Identifier>& identifier) 
 	{
 		pImpl->addIdentifier(identifier) ;
 	}
 
-	void ContentHandler::addIdentifier(int index, const Identifier& identifier) 
-	{
-		pImpl->addIdentifier(index, identifier);
-	}
+	//void ContentHandler::addIdentifier(int index, const Identifier& identifier) 
+	//{
+	//	pImpl->addIdentifier(index, identifier);
+	//}
 
 	void ContentHandler::removeIdentifier(int index)
 	{

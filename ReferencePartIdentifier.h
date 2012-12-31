@@ -27,8 +27,7 @@ namespace xbrlcapi
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#BaseIdentifier(ContentHandler)
 		*/
 
-		ReferencePartIdentifier(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler)
-		{}
+		ReferencePartIdentifier(const ContentHandler& contentHandler);
 
 		/**
         * Handle reference part fragments inside reference resources		

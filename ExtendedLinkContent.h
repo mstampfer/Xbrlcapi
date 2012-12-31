@@ -18,6 +18,6 @@ namespace xbrlcapi
 		* @return the extended link fragment containing the extended link xlink content.
 		* @throws XBRLException
 		*/
-		virtual ExtendedLink getExtendedLink();
+		//virtual ExtendedLink getExtendedLink();
 	};
 }

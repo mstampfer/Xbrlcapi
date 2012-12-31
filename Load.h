@@ -47,7 +47,7 @@ namespace xbrlcapi
 		* @param linkRole The linkrole of the network to use
 		* @throws XBRLExceptions
 		*/
-		static void reportNode(const std::string& indent, const Fragment& fragment, const std::string& linkRole); 
+//		static void reportNode(const std::string& indent, const Fragment& fragment, const std::string& linkRole); 
 		static void reportInstance(const Instance& instance); 
 
 		/**

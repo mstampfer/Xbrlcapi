@@ -33,6 +33,9 @@ namespace xbrlcapi
 	LanguageIdentifier::LanguageIdentifier() {}
 	LanguageIdentifier::~LanguageIdentifier() {} 
 
+	LanguageIdentifier::LanguageIdentifier(const ContentHandler& contentHandler) : 
+		BaseIdentifier(contentHandler), pImpl(contentHandler) {}
+
 	LanguageIdentifier::LanguageIdentifier(const LanguageIdentifier& rhs) 
 	{ 
 		pImpl = rhs.pImpl; 
@@ -69,9 +72,6 @@ namespace xbrlcapi
 	{
 		return !this->operator==(rhs);
 	}
-
-	LanguageIdentifier::LanguageIdentifier(const ContentHandler& contentHandler) : Impl(contentHandler)
-	{}
 
 	void LanguageIdentifier::startElement(
 		const std::string& namespaceURI, 

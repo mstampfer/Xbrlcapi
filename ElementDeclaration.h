@@ -1,24 +1,19 @@
-
-
 #pragma once
-
-
 #include <string>
 #include "SchemaContentDeclaration.h"
 
 namespace xbrlcapi
 {
-
 	class ComplexTypeDeclaration;
 
 	/**
 	* Used for top level element declarations (where the elements are
 	* given a name and occur as children of XML Schema schema elements.
 	* Other element declarations are not used as roots for fragments.
-
 	*/
 
-	struct ElementDeclaration : public SchemaContentDeclaration {
+	struct ElementDeclaration : public SchemaContentDeclaration 
+	{
 
 		/**
 		* @return true if the element is abstract and false otherwise.

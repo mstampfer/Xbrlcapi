@@ -5,7 +5,7 @@
 
 namespace xbrlcapi
 {
-	class SchemaIdentifier::Impl : public BaseIdentifier
+	struct SchemaIdentifier::Impl : public BaseIdentifier
 	{
 
 		//	XSModel model;    
@@ -218,6 +218,9 @@ namespace xbrlcapi
 
 	};
 	SchemaIdentifier::SchemaIdentifier() {}
+	SchemaIdentifier::SchemaIdentifier(const ContentHandler& contentHandler) : 
+		BaseIdentifier(contentHandler), pImpl(contentHandler) {}
+
 	SchemaIdentifier::~SchemaIdentifier() {} 
 
 	SchemaIdentifier::SchemaIdentifier(SchemaIdentifier& rhs) 
@@ -256,5 +259,32 @@ namespace xbrlcapi
 	{
 		return !this->operator==(rhs);
 	}
+
+	void SchemaIdentifier::startElement(
+		const std::string& namespaceURI, 
+		const std::string& lName, 
+		const std::string& qName,
+		const xercesc::Attributes& attrs)
+	{
+		pImpl->startElement(namespaceURI, 
+			lName, 
+			qName,
+			attrs);
+	}
+
+	void SchemaIdentifier::endElement(
+		const std::string& namespaceURI, 
+		const std::string& lName, 
+		const std::string& qName,
+		const xercesc::Attributes& attrs)
+	{
+		pImpl->endElement(namespaceURI, 
+			lName, 
+			qName,
+			attrs);
+	}
+
 }
+
+
 

@@ -30,6 +30,8 @@ namespace xbrlcapi
 
 	ReferencePartIdentifier::ReferencePartIdentifier() {}
 	ReferencePartIdentifier::~ReferencePartIdentifier() {} 
+	ReferencePartIdentifier::ReferencePartIdentifier(const ContentHandler& contentHandler) : 
+		BaseIdentifier(contentHandler), pImpl(contentHandler) {}
 
 	ReferencePartIdentifier::ReferencePartIdentifier(const ReferencePartIdentifier& rhs) 
 	{ 
@@ -67,9 +69,6 @@ namespace xbrlcapi
 	{
 		return !this->operator==(rhs);
 	}
-
-	ReferencePartIdentifier::ReferencePartIdentifier(const ContentHandler& contentHandler) : Impl(contentHandler)
-	{}
 
 	void ReferencePartIdentifier::startElement(
 		const std::string& namespaceURI, 

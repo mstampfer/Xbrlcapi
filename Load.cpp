@@ -9,12 +9,14 @@
 #include "Item.h"
 #include "Loader.h"
 #include "CacheFile.h"
-#include "XBRLXLinkHandlerImpl.h"
+#include "XBRLXLinkHandler.h"
 #include "XBRLException.h"
 #include "CustomLinkRecogniser.h"
 #include "XLinkProcessor.h"
 #include "EntityResolver.h"
 #include "Cache.h"
+#include "log4cpp/PropertyConfigurator.hh"
+#include <memory>
 
 using Poco::URI;
 namespace xbrlcapi
@@ -136,7 +138,7 @@ void initLogger()
 	{
 		initLogger();
 		log4cpp::Category &logger = log4cpp::Category::getInstance( std::string("log_sub1") );
-		XBRLXLinkHandlerImpl xlinkHandler;
+		std::shared_ptr<XBRLXLinkHandler> xlinkHandler;
 		CustomLinkRecogniser customLinkRecogniser; 
 		XLinkProcessor xlinkProcessor(xlinkHandler,customLinkRecogniser);
 
@@ -172,7 +174,7 @@ void initLogger()
 			Cache cache(cacheFile);
 			loader->setCache(cache);
 			//loader->setEntityResolver(entityResolver);
-			xlinkHandler.setLoader(loader);
+			xlinkHandler->setLoader(*loader);
 		}
 		catch (const XBRLException& e)
 		{

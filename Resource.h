@@ -18,6 +18,6 @@ namespace xbrlcapi
 		* null if none is specified.
 		* @throws XBRLException.
 		*/
-		virtual std::string getResourceRole();
+		//virtual std::string getResourceRole();
 	};
 }

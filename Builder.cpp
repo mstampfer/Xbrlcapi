@@ -30,24 +30,24 @@ namespace xbrlcapi
 		/**
 		* Flag to indicate that a fragment has yet to have any data inserted into it.
 		*/
-		bool isNewFragment;
+		bool newFragment;
 
 		Impl(const xercesc::DOMDocument& dom)
 		{
-	//		this->dom = std::make_shared<xercesc::DOMDocument>(dom);
+			//		this->dom = std::make_shared<xercesc::DOMDocument>(dom);
 			setupBuilder();
 		}
 
 		void setupBuilder() 
 		{
-/*			metadata = dom->createElementNS(XMLConstants::XBRLAPINamespace,
-				XMLConstants::XBRLAPIPrefix + ":" + 
-				XMLConstants::FragmentRootElementName);
+			/*			metadata = dom->createElementNS(XMLConstants::XBRLAPINamespace,
+			XMLConstants::XBRLAPIPrefix + ":" + 
+			XMLConstants::FragmentRootElementName);
 
 			std::shared_ptr<xercesc::DOMElement>  container = 
-				dom->createElementNS(XMLConstants::XBRLAPINamespace,
-				XMLConstants::XBRLAPIPrefix + ":" + 
-				XMLConstants::FragmentDataContainerElementName);
+			dom->createElementNS(XMLConstants::XBRLAPINamespace,
+			XMLConstants::XBRLAPIPrefix + ":" + 
+			XMLConstants::FragmentDataContainerElementName);
 
 			setInsertionPoint(container);
 			metadata->appendChild(container);*/		
@@ -92,10 +92,10 @@ namespace xbrlcapi
 
 
 
-		//public bool isNewFragment() 
-		//{
-		//	return isNewFragment;
-		//}
+		bool isNewFragment() 
+		{
+			return newFragment;
+		}
 
 
 
@@ -132,14 +132,14 @@ namespace xbrlcapi
 
 		void appendText(const std::string& text)
 		{
-//			appendChild(dom.createTextNode(text));
+			//			appendChild(dom.createTextNode(text));
 		}
-		
+
 
 
 		void appendProcessingInstruction(const std::string& target, const std::string& data)
 		{
-//			appendChild(dom->createProcessingInstruction(xerces_util::fromNative(target), xerces_util::fromNative(data)));
+			//			appendChild(dom->createProcessingInstruction(xerces_util::fromNative(target), xerces_util::fromNative(data)));
 		}
 
 		//public void appendComment(String text) throws XBRLException
@@ -238,26 +238,25 @@ namespace xbrlcapi
 		//
 		//
 
-		//public void endElement(
-		//		String namespaceURI,
-		//		String lName,
-		//		String qName
-		//		) throws XBRLException {
-		//	
-		//	// Make sure that the insertion point is stepping up from an element node (to an element or document node)
-		//	if (getInsertionPoint().getNodeType() != Node.ELEMENT_NODE)
-		//		throw new XBRLException("The fragment insertion point is pointing to the wrong kind of node: " + getInsertionPoint().getNodeType() + ".");
-		//	
-		//	Node parentNode = getInsertionPoint().getParentNode();
-		//	if (parentNode != null) {
-		//		if (parentNode.getNodeType() != Element.ELEMENT_NODE) {
-		//			throw new XBRLException("The fragment builder insertion point is trying to move to a non-element node.");
-		//		}
-		//		setInsertionPoint((Element) parentNode);
-		//	}
-		//	
-		//}
-		//
+		void endElement(
+			const std::string& namespaceURI,
+			const std::string& lName,
+			const std::string& qName)
+		{
+			//	
+			//	// Make sure that the insertion point is stepping up from an element node (to an element or document node)
+			//	if (getInsertionPoint().getNodeType() != Node.ELEMENT_NODE)
+			//		throw new XBRLException("The fragment insertion point is pointing to the wrong kind of node: " + getInsertionPoint().getNodeType() + ".");
+			//	
+			//	Node parentNode = getInsertionPoint().getParentNode();
+			//	if (parentNode != null) {
+			//		if (parentNode.getNodeType() != Element.ELEMENT_NODE) {
+			//			throw new XBRLException("The fragment builder insertion point is trying to move to a non-element node.");
+			//		}
+			//		setInsertionPoint((Element) parentNode);
+			//	}
+			//	
+		}
 
 		//public void appendNotationDecl(
 		//		String name, 
@@ -333,74 +332,73 @@ namespace xbrlcapi
 		//    throw new XBRLException("Not yet implemented.");
 		//}
 
-			//public void setMetaAttribute(String name, String value) {
-			//	getMetadata().setAttribute(name,value);		
-			//}
-			//
+		//public void setMetaAttribute(String name, String value) {
+		//	getMetadata().setAttribute(name,value);		
+		//}
+		//
 
-			//public String getMetaAttribute(String name) {
-			//    if (! hasMetaAttribute(name)) return null;
-			//    return getMetadata().getAttribute(name); 
-			//}
-			//
+		//public String getMetaAttribute(String name) {
+		//    if (! hasMetaAttribute(name)) return null;
+		//    return getMetadata().getAttribute(name); 
+		//}
+		//
 
-			//   public bool hasMetaAttribute(String name) {
-			//       return getMetadata().hasAttribute(name); 
-			//   }	
+		//   public bool hasMetaAttribute(String name) {
+		//       return getMetadata().hasAttribute(name); 
+		//   }	
 
-			//public void removeMetaAttribute(String name) {
-			//	getMetadata().removeAttribute(name);		
-			//}
-			//
+		//public void removeMetaAttribute(String name) {
+		//	getMetadata().removeAttribute(name);		
+		//}
+		//
 
-			//   public void appendMetadataElement(String eName, Map<String,String> attributes) throws XBRLException {
+		//   public void appendMetadataElement(String eName, Map<String,String> attributes) throws XBRLException {
 
-			//	std::shared_ptr<xercesc::DOMElement>  child = getDOM().createElementNS(Constants.XBRLAPINamespace,Constants.XBRLAPIPrefix + ":" + eName);
-			//	Iterator<String> attributeNames = attributes.keySet().iterator();
-			//	while (attributeNames.hasNext()) {
-			//		String aName = attributeNames.next();
-			//		String aValue = attributes.get(aName);
-			//		if (aName != null) {
-			//			if (aValue == null) throw new XBRLException("A metadata element is being added but attribute, " + aName + ", has a null value.");
-			//			child.setAttribute(aName,aValue); 
-			//		} else throw new XBRLException("A metadata element is being added with an attribute with a null name.");
-			//	}
-			//	getMetadata().appendChild(child);
-			//	
-			//   }
-			//   
+		//	std::shared_ptr<xercesc::DOMElement>  child = getDOM().createElementNS(Constants.XBRLAPINamespace,Constants.XBRLAPIPrefix + ":" + eName);
+		//	Iterator<String> attributeNames = attributes.keySet().iterator();
+		//	while (attributeNames.hasNext()) {
+		//		String aName = attributeNames.next();
+		//		String aValue = attributes.get(aName);
+		//		if (aName != null) {
+		//			if (aValue == null) throw new XBRLException("A metadata element is being added but attribute, " + aName + ", has a null value.");
+		//			child.setAttribute(aName,aValue); 
+		//		} else throw new XBRLException("A metadata element is being added with an attribute with a null name.");
+		//	}
+		//	getMetadata().appendChild(child);
+		//	
+		//   }
+		//   
 
 
-			//   public void removeMetadataElement(String eName, HashMap<String,String> attributes) throws XBRLException {
+		//   public void removeMetadataElement(String eName, HashMap<String,String> attributes) throws XBRLException {
 
-			//	NodeList children = getMetadata().getElementsByTagNameNS(Constants.XBRLAPINamespace,eName);
-			//	for (int i=0; i<children.getLength(); i++) {
-			//		bool match = true;
-			//		std::shared_ptr<xercesc::DOMElement>  child = (Element) children.item(i);
-			//		Iterator<String> attributeNames = attributes.keySet().iterator();
-			//		while (attributeNames.hasNext()) {
-			//			String aName = attributeNames.next();
-			//			String aValue = attributes.get(aName);
-			//			if (aName != null) {
-			//				if (aValue == null) throw new XBRLException("A metadata element is being checked but attribute, " + aName + ", has a null value.");
-			//				if (! child.getAttribute(aName).equals(aValue)) {
-			//					match = false;
-			//				}
-			//			} else throw new XBRLException("A metadata element is being checked against an attribute with a null name.");
-			//		}
-			//		
-			//		if (match) {
-			//			getMetadata().removeChild(child);
-			//			break;
-			//		}
-			//	}
-			//   	
-			//   }
+		//	NodeList children = getMetadata().getElementsByTagNameNS(Constants.XBRLAPINamespace,eName);
+		//	for (int i=0; i<children.getLength(); i++) {
+		//		bool match = true;
+		//		std::shared_ptr<xercesc::DOMElement>  child = (Element) children.item(i);
+		//		Iterator<String> attributeNames = attributes.keySet().iterator();
+		//		while (attributeNames.hasNext()) {
+		//			String aName = attributeNames.next();
+		//			String aValue = attributes.get(aName);
+		//			if (aName != null) {
+		//				if (aValue == null) throw new XBRLException("A metadata element is being checked but attribute, " + aName + ", has a null value.");
+		//				if (! child.getAttribute(aName).equals(aValue)) {
+		//					match = false;
+		//				}
+		//			} else throw new XBRLException("A metadata element is being checked against an attribute with a null name.");
+		//		}
+		//		
+		//		if (match) {
+		//			getMetadata().removeChild(child);
+		//			break;
+		//		}
+		//	}
+		//   	
+		//   }
 
 	};
 
 	Builder::Builder() {}
-	Builder::Builder(int i) : pImpl(i) {}
 	Builder::~Builder() {} 
 
 	Builder::Builder(const Builder& rhs) 
@@ -442,7 +440,7 @@ namespace xbrlcapi
 
 	std::shared_ptr<xercesc::DOMElement>  Builder::getMetadata()
 	{
-		pImpl->getMetaData();
+		return pImpl->getMetaData();
 	}
 
 	void Builder::appendText(const std::string& text)
@@ -450,4 +448,22 @@ namespace xbrlcapi
 		pImpl->appendText(text);
 	}
 
+	void Builder::endElement(
+		const std::string& namespaceURI,
+		const std::string& lName,
+		const std::string& qName
+		)
+	{
+		pImpl->endElement(
+			namespaceURI,
+			lName,
+			qName);
+	}
+
+	void Builder::appendProcessingInstruction(const std::string& target, const std::string& data)
+	{
+		pImpl->appendProcessingInstruction(target, data);
+	}
 }
+
+

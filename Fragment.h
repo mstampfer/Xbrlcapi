@@ -1,6 +1,5 @@
-
-
 #pragma once
+#include <xercesc/sax/Locator.hpp>
 
 #include <string>
 #include <vector>
@@ -17,25 +16,33 @@
 * @author Geoff Shuetrim (geoff@galexy.net)
 */
 
-using xercesc::DOMElementImpl;
-
 namespace xbrlcapi
 {
 	class Locator;
 	class SimpleLink;
-	class Node;
 	class LabelResource;
 	class ReferenceResource;
 
-	struct Fragment : public XML 
+	class Fragment : public XML 
 	{
+		struct Impl;
+		Pimpl<Impl> pImpl;
+	public:
+		Fragment();
+		~Fragment();
+		Fragment(const Fragment& rhs);
+		Fragment& operator=(const Fragment& rhs);
+		Fragment(Fragment&& rhs);
+		Fragment& operator=(Fragment&& rhs);
+		bool operator==(const Fragment& rhs);
+		bool operator!=(const Fragment& rhs);
 
 		/**
 		* Get the root element of the fragment data.
 		* @return an XML Element that is the root of the fragment data.
 		* @throws XBRLException if the fragment does not have fragment data.
 		*/
-		virtual DOMElementImpl getDataRootElement();
+		virtual std::shared_ptr<xercesc::DOMElement> getDataRootElement();
 
 		/**
 		* Tests if a fragment is new in the sense that it does not have a root data element.
@@ -64,7 +71,7 @@ namespace xbrlcapi
 		* @return a list of all locators that target this fragment.  The list can be empty.
 		* @throws XBRLException.
 		*/
-		virtual std::vector<Locator> getReferencingLocators();    
+		virtual std::vector<xercesc::Locator> getReferencingLocators();    
 
 		/**
 		* Get the index of the parent fragment or null if the fragment
@@ -88,14 +95,14 @@ namespace xbrlcapi
 		* @return The sequence through the parent fragment data to the parent element of this fragment.
 		* @throws XBRLException
 		*/
-		virtual std::string getSequenceToParentElement();   
+		virtual std::vector<std::string> getSequenceToParentElement();   
 
 		/**
 		* @return the sequence of steps through the parent fragment DOM to the 
 		* parent element of this fragment.
 		* @throws XBRLException
 		*/
-		virtual std::vector<std::string> getSequenceToParentElementAsString();
+		virtual std::string getSequenceToParentElementAsString();
 
 		/**
 		* Set the index of the parent fragment.
@@ -124,22 +131,12 @@ namespace xbrlcapi
 		*/
 		virtual void setSequenceToParentElement(const Fragment& parent);
 
-
-
-
-
-
-
 		/**
 		* Add an ID (used in XPointer resolution) to the metadata.
 		* @param id The value of the ID.
 		* @throws XBRLException.
 		*/
 		virtual void appendID(const std::string& id);
-
-
-
-
 
 		/**
 		* Add an element Scheme XPointer Expression to the metadata.
@@ -193,7 +190,7 @@ namespace xbrlcapi
 		* its child (or null if no parent exists).
 		* @throws XBRLException
 		*/
-		virtual DOMElementImpl getParentElement(DOMElementImpl parentDataRootElement);
+		virtual std::shared_ptr<xercesc::DOMElement> getParentElement(const xercesc::DOMElement& parentDataRootElement);
 
 		/**
 		* Get the parent fragment of this fragment or null if there is none.
@@ -231,7 +228,6 @@ namespace xbrlcapi
 		*/
 		virtual std::unordered_set<std::string> getAllChildrenIndices();
 
-
 		/**
 		* @return the list of simple links that are children of this fragment.
 		* @throws XBRLException
@@ -256,9 +252,7 @@ namespace xbrlcapi
 		* @return the namespace declared on the fragment for the QName
 		* @throws XBRLException if the namespace is not declared
 		*/
-		virtual std::string getNamespaceFromQName(const std::string& qname, Node node);
-
-
+		virtual std::string getNamespaceFromQName(const std::string& qname, const xercesc::DOMNode& node);
 
 		/**
 		* Returns the local name for a QName
@@ -283,8 +277,6 @@ namespace xbrlcapi
 		*/
 		virtual std::vector<LabelResource> getLabels();
 
-
-
 		/**
 		* @param resourceRole The XLink role value
 		* @return the list of labels for this fragment with the specified XLink role.
@@ -302,7 +294,8 @@ namespace xbrlcapi
 		* takes precedence over a language preference.
 		* @throws XBRLException
 		*/
-		virtual std::vector<LabelResource> getLabels(std::vector<std::string> languages, std::vector<std::string> labelRoles);
+		virtual std::vector<LabelResource> getLabels(const std::vector<std::string>& languages, 
+			const std::vector<std::string>& labelRoles);
 
 		/**
 		* @param languages
@@ -325,9 +318,9 @@ namespace xbrlcapi
 		*         for this fragment.
 		* @throws XBRLException
 		*/
-		virtual std::vector<LabelResource> getLabels(std::vector<std::string> languages,
-			std::vector<std::string> labelRoles, std::vector<std::string> linkRoles);    
-
+		virtual std::vector<LabelResource> getLabels(const std::vector<std::string>& languages,
+			const std::vector<std::string>& labelRoles, 
+			const std::vector<std::string>& linkRoles);    
 
 		/**
 		* @param role The XLink role value
@@ -336,19 +329,12 @@ namespace xbrlcapi
 		*/
 		virtual std::vector<ReferenceResource> getReferencesWithResourceRole(const std::string& role);
 
-
-
-
 		/**
 		* @param language The xml:lang language codevalue
 		* @return the list of labels for this fragment with the specified language code.
 		* @throws XBRLException
 		*/
 		virtual std::vector<LabelResource> getLabelsWithLanguage(const std::string& language);
-
-
-
-
 
 		/**
 		* @param language The xml:lang language code value
@@ -424,8 +410,13 @@ namespace xbrlcapi
 		* @return the fragment list of children fragments that match the specified fragment type
 		* @throws XBRLException
 		*/
-		//		template <typename F>
-		//		virtual std::vector<F> getChildren(const std::string& type);
+
+		template <typename T>
+		std::vector<T> getChildren(const std::string& type);
+
+		template <typename T>
+		std::vector<T> getChildren(const T& requiredClass);
+
 
 		/**
 		* Gets the child fragments with the specified fragment type.
@@ -436,6 +427,7 @@ namespace xbrlcapi
 		*         fragment type
 		* @throws XBRLException
 		*/
+
 		//		template <typename F>
 		//		virtual std::vector<F> getChildren(F requiredClass);
 
@@ -453,7 +445,7 @@ namespace xbrlcapi
 		* or null if no such attribute is applicable.
 		* @throws XBRLException
 		*/
-		virtual std::string getLanguage(Node node);
+		virtual std::string getLanguage(const xercesc::DOMNode& node);
 
 		/**
 		* @return the value of the xml:lang attribute applying to the fragment root
@@ -482,7 +474,6 @@ namespace xbrlcapi
 		* is available in the data store in the form of a Language XML resource.
 		* @throws XBRLException
 		*/
-		virtual std::string getLanguageName(std::vector<std::string> languageNameEncodings);
-
+		virtual std::string getLanguageName(const std::vector<std::string>& languageNameEncodings);
 	};
 }

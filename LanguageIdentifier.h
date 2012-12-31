@@ -24,8 +24,8 @@ namespace xbrlcapi
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#BaseIdentifier(ContentHandler)
 		*/
 
-		LanguageIdentifier(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler)
-		{}
+		LanguageIdentifier(const ContentHandler& contentHandler);
+
 
 		/**
 		* Find fragments defining and labelling XML language codes.

@@ -10,7 +10,7 @@ namespace xbrlcapi
 	struct BaseContentHandler::Impl : public xercesc::DefaultHandler
 	{
 		Impl() {}
-		Impl(const Loader& loader, const Poco::URI& uri) : xercesc::DefaultHandler()
+		Impl(const Loader& loader, const Poco::URI& uri) 
 		{
 			setURI(uri);
 			setLoader(loader);		
@@ -158,7 +158,7 @@ namespace xbrlcapi
 
 	std::list<std::shared_ptr<Identifier>> BaseContentHandler::getIdentifiers()
 	{
-		pImpl->getIdentifiers();
+		return pImpl->getIdentifiers();
 	}
 
 	void BaseContentHandler::error(const xercesc::SAXParseException& exception) 

@@ -1,5 +1,7 @@
 #pragma once
 #include "PimplImpl.h"
+#include <string>
+#include <xercesc/sax2/Attributes.hpp>
 
 /**
 * The XLink processor is responsible for taking the input from a 
@@ -24,7 +26,7 @@ namespace xbrlcapi
 	public:
 		XLinkProcessor();
 		~XLinkProcessor();
-		XLinkProcessor(XLinkHandler& xlh, CustomLinkRecogniser& clr);
+		XLinkProcessor(const std::shared_ptr<XLinkHandler>& xlh, CustomLinkRecogniser& clr);
 		XLinkProcessor(const XLinkProcessor& rhs);
 		XLinkProcessor& operator=(const XLinkProcessor& rhs);
 		XLinkProcessor(XLinkProcessor&& rhs);
@@ -41,22 +43,22 @@ namespace xbrlcapi
 		//    */
 		//   public void setCustomLinkRecogniser(CustomLinkRecogniser customLinkRecogniser);
 
-		//   /**
-		//    * Respond to the start of an element, 
-		//    * examining the element for XLink features
-		//    * 
-		//    * @param namespaceURI
-		//    * @param lName
-		//    * @param qName
-		//    * @param attrs
-		//    * @throws XLinkException
-		//    */
-		//public void startElement(
-		//		 std::string namespaceURI, 
-		//		 std::string lName, 
-		//		 std::string qName, 
-		//		Attributes attrs) throws XLinkException;
-		//
+		/**
+		* Respond to the start of an element, 
+		* examining the element for XLink features
+		* 
+		* @param namespaceURI
+		* @param lName
+		* @param qName
+		* @param attrs
+		* @throws XLinkException
+		*/
+		void startElement(
+			const std::string& namespaceURI, 
+			const std::string& lName, 
+			const std::string& qName,
+			const xercesc::Attributes& attrs);
+
 		/**
 		* Respond to the end of an element, examining the element 
 		* for XLink features.
@@ -94,6 +96,6 @@ namespace xbrlcapi
 		* Provides access to the XLink handler being used by the XLink processor.
 		* @return the XLink handler being used by the XLink processor.
 		*/
-		XLinkHandler getXLinkHandler();
+		std::shared_ptr<XLinkHandler> getXLinkHandler();
 	};
 }

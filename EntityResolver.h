@@ -24,13 +24,15 @@ namespace xbrlcapi
 		EntityResolver(const EntityResolver& rhs);
 		EntityResolver& operator=(const EntityResolver& rhs);
 		EntityResolver(EntityResolver&& );
+		EntityResolver(CacheFile&);
 		EntityResolver(CacheFile&, std::unordered_map<Poco::URI,Poco::URI>&);
+		EntityResolver(Cache& cache);
 		EntityResolver& operator=(EntityResolver&& rhs);
 		bool operator==(const EntityResolver& rhs);
 		bool operator!=(const EntityResolver& rhs);
-
-		xercesc::InputSource* resolveEntity(const wchar_t *const publicId, const wchar_t *const systemId)  override;
-		xercesc::InputSource* resolveEntity(xercesc::XMLResourceIdentifier* resourceIdentifier) override;
+//		xercesc::InputSource* resolveEntity(const wchar_t *const publicId, const wchar_t *const systemId) override;
+		virtual xercesc::InputSource* resolveEntity(const XMLCh *const publicId, const XMLCh *const systemId) override;
+		virtual xercesc::InputSource* resolveEntity(xercesc::XMLResourceIdentifier* resourceIdentifier) override;
 		//xercesc::InputSource* resolveSchemaURI(const Poco::URI& uri);
 		bool hasCache();
 	};

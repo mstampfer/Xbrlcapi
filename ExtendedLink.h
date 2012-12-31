@@ -11,7 +11,6 @@
 /**
 
 */
-struct Resulrce;
 namespace xbrlcapi
 {
 	class Arc;

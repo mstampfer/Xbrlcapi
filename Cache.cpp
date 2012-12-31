@@ -45,8 +45,7 @@ namespace xbrlcapi
 		std::unordered_map<Poco::URI, Poco::URI> uriMap;
 
 		Impl() {}
-		Impl(Impl& rhs) : cacheFile(std::move(rhs.cacheFile)) {}
-		Impl(const Impl& rhs) {}
+		Impl(const Impl& rhs) : cacheFile(std::move(rhs.cacheFile)) {}
 
 		Impl(CacheFile& rhs) : cacheFile(std::move(rhs))
 		{
@@ -80,10 +79,10 @@ namespace xbrlcapi
 				);
 		}
 
-		operator bool() const
+		operator bool() 
 		{
 			return ( 
-				cacheFile == NULL &&
+				cacheFile.getFilename().empty() &&
 				uriMap.empty()
 				);
 		}
@@ -649,7 +648,7 @@ Cache& Cache::operator=(const Cache& rhs)
 		return pImpl->isCacheURI(uri);
 	}
 
-	boost::filesystem::path getCacheFile(const Poco::URI& uri)
+	boost::filesystem::path Cache::getCacheFile(const Poco::URI& uri)
 	{
 		return pImpl->getCacheFile(uri);
 	}

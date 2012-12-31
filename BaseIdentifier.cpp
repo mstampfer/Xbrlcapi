@@ -3,19 +3,19 @@
 #include "Fragment.h"
 namespace xbrlcapi
 {
-	struct BaseIdentifier::Impl 
+	struct BaseIdentifier::Impl : public Identifier 
 	{
-		Impl() {}
-
-		Impl(const ContentHandler& contentHandler)
-		{
-			setContentHandler(contentHandler);
-		}
-
 		/**
 		* The content handler that is using this fragment identifier
 		*/
 		ContentHandler contentHandler;
+
+		Impl() {}
+
+		Impl(const ContentHandler& contentHandler) 
+		{
+			setContentHandler(contentHandler);
+		}
 
 		ContentHandler getContentHandler()
 		{
@@ -38,38 +38,34 @@ namespace xbrlcapi
 			return getContentHandler().getElementState();
 		}
 
-
-
 		void startElement(
 			const std::string& namespaceURI, 
 			const std::string& lName, 
 			const std::string& qName,
 			const xercesc::Attributes&  attrs)
-		{
-			;
-		}
+		{}		
 
 		void endElement(
 			const std::string& namespaceURI, 
 			const std::string& lName, 
 			const std::string& qName,
 			const xercesc::Attributes&  attrs)
-		{
-			;
-		}
+		{}		
 
-		void processFragment(const Fragment& fragment,const xercesc::Attributes& attrs)
+		void processFragment(const Fragment& fragment, const xercesc::Attributes& attrs)
 		{
-			Loader loader = this.getLoader();
-			fragment.setBuilder(new BuilderImpl(loader.getBuilderDOM()));
-			fragment.setIndex(getLoader().getNextFragmentId());
-			if (attrs.getValue("id") != null)
-			{
-				fragment.appendID(attrs.getValue("id"));
-				this.getElementState().setId(attrs.getValue("id"));
-			}
-			loader.add(fragment,getElementState());
-		}
+			//	Loader loader = getLoader();
+			//	fragment.setBuilder(new Builder(loader.getBuilderDOM()));
+			//	fragment.setIndex(loader.getNextFragmentId());
+			//	if (attrs.getValue("id") != null)
+			//	{
+			//		fragment.appendID(attrs.getValue("id"));
+			//		getElementState().setId(attrs.getValue("id"));
+			//	}
+			//	loader.add(fragment,getElementState());
+			//}
+		};
+
 	};
 
 	BaseIdentifier::BaseIdentifier() {}
@@ -114,7 +110,7 @@ namespace xbrlcapi
 
 	BaseIdentifier::BaseIdentifier(const ContentHandler& contentHandler)
 	{
-		Impl(contentHandler);
+		pImpl->contentHandler = contentHandler;
 	}
 
 	ContentHandler BaseIdentifier::getContentHandler()
@@ -126,7 +122,7 @@ namespace xbrlcapi
 	*/
 	void BaseIdentifier::setContentHandler(const ContentHandler& contentHandler)
 	{
-		pImpl->setContentHandler();
+		pImpl->setContentHandler(contentHandler);
 	}
 
 	/**

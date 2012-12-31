@@ -37,7 +37,6 @@
 #include <xercesc/framework/Wrapper4InputSource.hpp>
 #include <xercesc/dom/DOMImplementationLS.hpp>
 
-
 #include <stdexcept>
 #include <exception> //ecxeption (base class)
 #include <new>       //bad_alloc
@@ -484,8 +483,8 @@ namespace xbrlcapi
 
 				//if (xml.getStore() == null) {
 				//	if (xml.getBuilder() != null) 
-					xml.setResource(xml.getBuilder().getMetadata());
-					xml.setStore(store);
+				xml.setResource(xml.getBuilder().getMetadata());
+				xml.setStore(store);
 				//}
 
 			} catch (const DbXml::XmlException& e) {
@@ -1079,7 +1078,7 @@ namespace xbrlcapi
 		//    }    
 		//
 
-		void serialize(const Element& what, std::ofstream& destination) {
+		void serialize(const xercesc::DOMElement& what, std::ofstream& destination) {
 
 			try 
 			{
@@ -1101,7 +1100,7 @@ namespace xbrlcapi
 
 
 
-		/* @see Store#serialize(Element)
+		/* @see Store#serialize(xercesc::DOMElement)
 		*/
 		std::string serialize(const std::shared_ptr<xercesc::DOMElement>& what) 
 		{
@@ -1229,21 +1228,21 @@ namespace xbrlcapi
 		//    }
 		//
 
-//public void serialize(const Element& what, File destination) 
-//		{
-//
-//			//File parentFile = destination.getParentFile();
-//			//
-//			//if (parentFile != null) parentFile.mkdirs();
-//
-//			//try {
-//			//	FileOutputStream fileOutputStream = new FileOutputStream(destination.toString());
-//			//	serialize(what, fileOutputStream);
-//			//} catch (FileNotFoundException e) {
-//			//	throw XBRLException("The file to be written to cannot be found.", e);
-//			//}
-//
-//		}
+		//public void serialize(const xercesc::DOMElement& what, File destination) 
+		//		{
+		//
+		//			//File parentFile = destination.getParentFile();
+		//			//
+		//			//if (parentFile != null) parentFile.mkdirs();
+		//
+		//			//try {
+		//			//	FileOutputStream fileOutputStream = new FileOutputStream(destination.toString());
+		//			//	serialize(what, fileOutputStream);
+		//			//} catch (FileNotFoundException e) {
+		//			//	throw XBRLException("The file to be written to cannot be found.", e);
+		//			//}
+		//
+		//		}
 
 
 		//	
@@ -1272,7 +1271,7 @@ namespace xbrlcapi
 
 		//     * @see Store#getDocumentAsDOM(URI)
 		//     */
-		//    public Element getDocumentAsDOM(URI uri) {
+		//    public xercesc::DOMElement getDocumentAsDOM(URI uri) {
 		//    	return getSubtree(this.getRootFragmentForDocument(uri));
 		//    }
 		//	
@@ -1286,13 +1285,13 @@ namespace xbrlcapi
 		//     * @throws XBRLException if more or less than one document is found in the store matching 
 		//     * the supplied URI.
 		//     */
-		//    private Element getAnnotatedDocumentAsDOM(URI uri) {
+		//    private xercesc::DOMElement getAnnotatedDocumentAsDOM(URI uri) {
 		//        URI matchURI = getMatcher().getMatch(uri);
 		//        std::vector<Fragment> fragments = queryForXMLResources("#roots#[@uri='" + matchURI + "' and @parentIndex='']");
 		//        if (fragments.size() > 1) throw XBRLException("More than one document was found in the data store.");
 		//        if (fragments.size() == 0) throw XBRLException("No documents were found in the data store.");
 		//        Fragment fragment = fragments.get(0);
-		//        Element document = this.getAnnotatedSubtree(fragment);
+		//        xercesc::DOMElement document = this.getAnnotatedSubtree(fragment);
 		//        document.setAttributeNS(Constants.CompNamespace.toString(),Constants.CompPrefix + ":index",fragment.getIndex());
 		//        return document;
 		//    }
@@ -1300,7 +1299,7 @@ namespace xbrlcapi
 
 		//	 * @see Store#getSubtree(Fragment)
 		//	 */
-		//	public Element getSubtree(const Fragment& f) {
+		//	public xercesc::DOMElement getSubtree(const Fragment& f) {
 		//
 		//	    if (f == null) {
 		//	        throw XBRLException("The fragment must not be null.");
@@ -1312,9 +1311,9 @@ namespace xbrlcapi
 		//		}
 		//
 		//		// Get the DOM representation of the fragment
-		//		Element d = null;
+		//		xercesc::DOMElement d = null;
 		//		try {
-		//		    d = (Element) storeDOM.importNode(f.getDataRootElement(), true);
+		//		    d = (xercesc::DOMElement) storeDOM.importNode(f.getDataRootElement(), true);
 		//		} catch (Exception e) {
 		//		    e.printStackTrace();
 		//		    throw XBRLException("The data could not be plugged into the DOM for fragment " + f.getIndex(),e);
@@ -1338,10 +1337,10 @@ namespace xbrlcapi
 		//    	for (const Fragment& childFragment: sortedFragments) {
 		//
 		//    		// Get XML DOM for child fragment
-		//    		Element child = getSubtree(childFragment);
+		//    		xercesc::DOMElement child = getSubtree(childFragment);
 		//
 		//    		// Get parent element of child fragment in current fragment
-		//    		Element parentElement = childFragment.getParentElement(d);
+		//    		xercesc::DOMElement parentElement = childFragment.getParentElement(d);
 		//
 		//            // Do the fragment insertion
 		//    		parentElement.appendChild(child);
@@ -1356,7 +1355,7 @@ namespace xbrlcapi
 		//     * @param precedingSiblings The number of sibling elements preceding the element of interest.
 		//     * @return the following sibling of this fragment's root (or null if there is no preceding sibling).
 		//     */
-		//    protected Element getFollowingSibling(Element parentElement, int precedingSiblings) {
+		//    protected xercesc::DOMElement getFollowingSibling(xercesc::DOMElement parentElement, int precedingSiblings) {
 		//    	
 		//    	// Traverse the parent data DOM to find the relevant child node
 		//		int siblingCount = 0;
@@ -1365,7 +1364,7 @@ namespace xbrlcapi
 		//			Node child = children.item(i);
 		//			if (child.getNodeType() == Node.ELEMENT_NODE) {
 		//				siblingCount++;  // We have found a sibling element
-		//				if (siblingCount > precedingSiblings) return (Element) child;
+		//				if (siblingCount > precedingSiblings) return (xercesc::DOMElement) child;
 		//			}
 		//		}
 		//		return null;
@@ -1382,7 +1381,7 @@ namespace xbrlcapi
 		//	 * with the specified index.
 		//	 * @throws XBRLException if the subtree cannot be constructed.
 		//	 */
-		//	private Element getAnnotatedSubtree(const Fragment& f) {
+		//	private xercesc::DOMElement getAnnotatedSubtree(const Fragment& f) {
 		//		
 		//    	//logger.debug((new Date()) + ":Getting fragment " + f.getIndex());
 		//    	
@@ -1392,7 +1391,7 @@ namespace xbrlcapi
 		//		}
 		//
 		//		// Get the DOM representation of the fragment
-		//		Element d = (Element) storeDOM.importNode(f.getDataRootElement(), true);
+		//		xercesc::DOMElement d = (xercesc::DOMElement) storeDOM.importNode(f.getDataRootElement(), true);
 		//		
 		//		// Get the child fragment IDs
 		//		List<Fragment> fs = this.queryForXMLResources("/"+ Constants.XBRLAPIPrefix+ ":" + "fragment[@parentIndex='" + f.getIndex() + "']");
@@ -1416,11 +1415,11 @@ namespace xbrlcapi
 		//    		Fragment childFragment = iterator.next();
 		//
 		//    		// Get XML DOM for child fragment using recursion
-		//    		Element child = getAnnotatedSubtree(childFragment);
+		//    		xercesc::DOMElement child = getAnnotatedSubtree(childFragment);
 		//	    	child.setAttributeNS(Constants.CompNamespace.toString(),Constants.CompPrefix + ":index",childFragment.getIndex());
 		//
 		//    		// Get parent element of child fragment in current fragment
-		//    		Element parentElement = childFragment.getParentElement(d);
+		//    		xercesc::DOMElement parentElement = childFragment.getParentElement(d);
 		//
 		//    		// Do the fragment insertion
 		//            parentElement.appendChild(child);
@@ -1439,11 +1438,11 @@ namespace xbrlcapi
 		//			storeDOM = (new XMLDOMBuilder()).newDocument();
 		//		}
 		//		
-		//    	Element root = storeDOM.createElementNS(Constants.XBRLAPINamespace.toString(),Constants.XBRLAPIPrefix + ":dts");
+		//    	xercesc::DOMElement root = storeDOM.createElementNS(Constants.XBRLAPINamespace.toString(),Constants.XBRLAPIPrefix + ":dts");
 		//		
 		//		Set<URI> uris = getDocumentURIs();
 		//		for (URI uri: uris) {
-		//			Element e = getDocumentAsDOM(uri);
+		//			xercesc::DOMElement e = getDocumentAsDOM(uri);
 		//			root.appendChild(e);			
 		//		}
 		//    	storeDOM.appendChild(root);
@@ -1459,12 +1458,12 @@ namespace xbrlcapi
 		//			storeDOM = (new XMLDOMBuilder()).newDocument();
 		//		}
 		//		
-		//    	Element root = storeDOM.createElementNS(Constants.CompNamespace.toString(),Constants.CompPrefix + ":dts");
+		//    	xercesc::DOMElement root = storeDOM.createElementNS(Constants.CompNamespace.toString(),Constants.CompPrefix + ":dts");
 		//		
 		//		Set<URI> uris = getDocumentURIs();
 		//		long counter = 1;
 		//		for (URI uri: uris) {
-		//	    	Element file = storeDOM.createElementNS(Constants.CompNamespace.toString(),Constants.CompPrefix + ":file");
+		//	    	xercesc::DOMElement file = storeDOM.createElementNS(Constants.CompNamespace.toString(),Constants.CompPrefix + ":file");
 		//	    	file.setAttributeNS(Constants.CompNamespace.toString(),Constants.CompPrefix + ":uri", uri.toString());
 		//	    	file.setAttributeNS(Constants.CompNamespace.toString(),Constants.CompPrefix + ":index","composite_" + new Long(counter++).toString());
 		//			root.appendChild(file);
@@ -1537,7 +1536,7 @@ namespace xbrlcapi
 		//			if (uri.toString().startsWith(uriPrefix)) {
 		//				Cache cache = new CacheImpl(destination);
 		//				File file = cache.getCacheFile(uri);
-		//				Element e = getDocumentAsDOM(uri);
+		//				xercesc::DOMElement e = getDocumentAsDOM(uri);
 		//				serialize(e,file);
 		//			}
 		//		}
@@ -1557,7 +1556,7 @@ namespace xbrlcapi
 		//     * @return The string that is the serialised element.
 		//     * @throws XBRLException if an IO exception occurs.
 		//     */
-		//    protected  std::string DOM2String(Element element) {
+		//    protected  std::string DOM2String(xercesc::DOMElement element) {
 		//        try {
 		//            LSSerializer writer = domImplementation.createLSSerializer();
 		//            return writer.writeToString(element);
@@ -1729,74 +1728,76 @@ namespace xbrlcapi
 		//    }
 		//    
 
-		//     * @see Store#getLabels(String, String, String, String)
-		//     */
-		//    public std::vector<LabelResource> getLabels( std::string fragment,  std::string linkRole,  std::string resourceRole,  std::string language) {
-		//
-		//        if (this.isPersistingRelationships()) {
-		//             std::string query = "#roots#[@label and @type='" + Relationship.class.getName() + "' and @sourceIndex='" + fragment + "'";
-		//            if (linkRole != null) query += " and @linkRole='" + linkRole + "'"; 
-		//            if (resourceRole != null) query += " and @targetRole='" + resourceRole + "'"; 
-		//            if (language != null) query += " and @targetLanguage='" + language + "'"; 
-		//            query += "]";
-		//            
-		//            std::vector<Relationship> relationships = this.<Relationship>queryForXMLResources(query);
-		//            std::vector<LabelResource> labels = new Vector<LabelResource>();
-		//            for (const Relationship& relationship: relationships) {
-		//                labels.add(relationship.<LabelResource>getTarget());
-		//            }
-		//            return labels;
-		//        }
-		//
-		//        try {
-		//
-		//            Networks labelNetworks = this.getNetworksFrom(fragment,linkRole,Constants.LabelArcrole);
-		//            labelNetworks.addAll(this.getNetworksFrom(fragment,linkRole,Constants.GenericLabelArcrole));
-		//            
-		//            std::vector<LabelResource> labels = new Vector<LabelResource>();
-		//            for (const Network& network: labelNetworks) {
-		//                RELATIONSHIPS: for (const Relationship& relationship: network.getAllActiveRelationships()) {
-		//                    LabelResource label = (LabelResource) relationship.getTarget();
-		//                    if (resourceRole == null && language == null) {
-		//                        labels.add(label);
-		//                        continue RELATIONSHIPS;
-		//                    }
-		//                    bool languagesMatch = false;
-		//                    bool resourceRolesMatch = false;
-		//                     std::string l = label.getLanguage();
-		//                     std::string r = label.getResourceRole();
-		//                    
-		//                    if (language == null) languagesMatch = true;
-		//                    else if (l != null && l.equals(language)) languagesMatch = true; 
-		//
-		//                    if (resourceRole == null) resourceRolesMatch = true;
-		//                    else if (resourceRole != null && resourceRole != null && r.equals(resourceRole)) resourceRolesMatch = true; 
-		//
-		//                    if (languagesMatch && resourceRolesMatch) labels.add(label); 
-		//                }
-		//            }
-		//            return labels;            
-		//        } catch (XBRLException e) {
-		//            throw e;
-		//        }
-		//        
-		//        
-		//    }
-		//
+		std::vector<LabelResource> getLabels( const std::string& fragment,  
+			const std::string& linkRole,  
+			const std::string& resourceRole,  
+			const std::string& language) 
+		{
 
-		//     * @see Store#getLabels(String, String, String)
-		//     */
-		//    public std::vector<LabelResource> getLabels( std::string fragment,  std::string resourceRole,  std::string language) {
-		//        return this.getLabels(fragment,null,resourceRole,language);
-		//    }
-		//    
+			//if (this.isPersistingRelationships()) {
+			//     std::string query = "#roots#[@label and @type='" + Relationship.class.getName() + "' and @sourceIndex='" + fragment + "'";
+			//    if (linkRole != null) query += " and @linkRole='" + linkRole + "'"; 
+			//    if (resourceRole != null) query += " and @targetRole='" + resourceRole + "'"; 
+			//    if (language != null) query += " and @targetLanguage='" + language + "'"; 
+			//    query += "]";
+			//    
+			//    std::vector<Relationship> relationships = this.<Relationship>queryForXMLResources(query);
+			//    std::vector<LabelResource> labels = new Vector<LabelResource>();
+			//    for (const Relationship& relationship: relationships) {
+			//        labels.add(relationship.<LabelResource>getTarget());
+			//    }
+			//    return labels;
+			//}
 
-		//     * @see Store#getLabelsWithLanguage(String, String)
-		//     */
-		//    public std::vector<LabelResource> getLabelsWithLanguage( std::string fragment,  std::string language) {
-		//        return this.getLabels(fragment,null,null,language);
-		//    }
-		//    
+			//try {
+
+			//    Networks labelNetworks = this.getNetworksFrom(fragment,linkRole,Constants.LabelArcrole);
+			//    labelNetworks.addAll(this.getNetworksFrom(fragment,linkRole,Constants.GenericLabelArcrole));
+			//    
+			//    std::vector<LabelResource> labels = new Vector<LabelResource>();
+			//    for (const Network& network: labelNetworks) {
+			//        RELATIONSHIPS: for (const Relationship& relationship: network.getAllActiveRelationships()) {
+			//            LabelResource label = (LabelResource) relationship.getTarget();
+			//            if (resourceRole == null && language == null) {
+			//                labels.add(label);
+			//                continue RELATIONSHIPS;
+			//            }
+			//            bool languagesMatch = false;
+			//            bool resourceRolesMatch = false;
+			//             std::string l = label.getLanguage();
+			//             std::string r = label.getResourceRole();
+			//            
+			//            if (language == null) languagesMatch = true;
+			//            else if (l != null && l.equals(language)) languagesMatch = true; 
+
+			//            if (resourceRole == null) resourceRolesMatch = true;
+			//            else if (resourceRole != null && resourceRole != null && r.equals(resourceRole)) resourceRolesMatch = true; 
+
+			//            if (languagesMatch && resourceRolesMatch) labels.add(label); 
+			//        }
+			//    }
+			//    return labels;            
+			//} catch (XBRLException e) {
+			//    throw e;
+			//}
+
+			return std::vector<LabelResource>();
+		}
+
+		std::vector<LabelResource> getLabels( const std::string& fragment,  
+			const std::string& resourceRole,  
+			const std::string& language) 
+		{
+			return getLabels(fragment,NULL,resourceRole,language);
+		}
+
+
+		std::vector<LabelResource> getLabelsWithLanguage( const std::string& fragment,  
+			const std::string& language) 
+		{
+			return getLabels(fragment,NULL,NULL,language);
+		}
+
 
 		//     * @see Store#getLabels(String)
 		//     */
@@ -1871,12 +1872,11 @@ namespace xbrlcapi
 		//    }
 		//    
 
-		//     * @see Store#getReferencesWithLanguage(String, String)
-		//     */
-		//    public std::vector<ReferenceResource> getReferencesWithLanguage( std::string fragment,  std::string language) {
-		//        return this.getReferences(fragment,null,null,language);
-		//    }
-		//    
+		std::vector<ReferenceResource> getReferencesWithLanguage( const std::string& fragment,  const std::string& language) {
+			//		        return this.getReferences(fragment,null,null,language);
+			return std::vector<ReferenceResource>();
+		}
+
 
 		//     * @see Store#getReferences(String)
 		//     */
@@ -3216,26 +3216,26 @@ namespace xbrlcapi
 	//		}
 	//
 
-			void Store::serialize(const Element& what, std::ofstream& destination)
-			{
-//				pImpl->serialize(destination);
-			}
-	
+	void Store::serialize(const xercesc::DOMElement& what, std::ofstream& destination)
+	{
+		//				pImpl->serialize(destination);
+	}
 
-			//void Store::serialize(const Element& what, const File& destination)
-			//{
-			//	pImpl->serialize(destination);
-			//}
-	
 
-			std::string Store::serialize(const Element& what)
-			{
-//				pImpl->serialize(what);
-				return std::string();
-			}    
-	
+	//void Store::serialize(const xercesc::DOMElement& what, const File& destination)
+	//{
+	//	pImpl->serialize(destination);
+	//}
 
-	//		//Element getDocumentAsDOM(const Poco::URI& uri)
+
+	std::string Store::serialize(const xercesc::DOMElement& what)
+	{
+		//				pImpl->serialize(what);
+		return std::string();
+	}    
+
+
+	//		//xercesc::DOMElement getDocumentAsDOM(const Poco::URI& uri)
 	//		//{
 	//		//	pImpl->getDocumentAsDOM(uri);
 	//		//}
@@ -3259,7 +3259,7 @@ namespace xbrlcapi
 	//		}
 	//
 
-	//		//Element getSubtree(const Fragment& f)
+	//		//xercesc::DOMElement getSubtree(const Fragment& f)
 	//		//{
 	//		//	pImpl->getSubtree(f);
 	//		//}
@@ -3820,23 +3820,25 @@ namespace xbrlcapi
 	//		}    
 	//
 
-	//		std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& linkRole, const std::string& resourceRole, const std::string& language)
-	//		{
-	//			pImpl->getLabels(fragment, linkRole, resourceRole, language);
-	//		}
-	//
+	std::vector<LabelResource> Store::getLabels(const std::string& fragment, 
+		const std::string& linkRole, 
+		const std::string& resourceRole, 
+		const std::string& language)
+	{
+		return pImpl->getLabels(fragment, linkRole, resourceRole, language);
+	}
 
-	//		std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& resourceRole, const std::string& language)
-	//		{
-	//			pImpl->getLabels(fragment, resourceRole, language);
-	//		}
-	//
 
-	//		std::vector<LabelResource> getLabelsWithLanguage(const std::string& fragment, const std::string& language)
-	//		{
-	//			pImpl->getLabelsWithLanguage(fragment, language);
-	//		}
-	//
+	std::vector<LabelResource> Store::getLabels(const std::string& fragment, const std::string& resourceRole, const std::string& language)
+	{
+		return pImpl->getLabels(fragment, resourceRole, language);
+	}
+
+
+	std::vector<LabelResource> Store::getLabelsWithLanguage(const std::string& fragment, const std::string& language)
+	{
+		return pImpl->getLabelsWithLanguage(fragment, language);
+	}
 
 	//		std::vector<LabelResource> getLabels(const std::string& fragment)
 	//		{
@@ -3862,11 +3864,10 @@ namespace xbrlcapi
 	//		}
 	//
 
-	//		std::vector<ReferenceResource> getReferencesWithLanguage(const std::string& fragment, const std::string& language)
-	//		{
-	//			pImpl->getReferencesWithLanguage(fragment, language);
-	//		}
-	//
+	std::vector<ReferenceResource> Store::getReferencesWithLanguage(const std::string& fragment, const std::string& language)
+	{
+		return pImpl->getReferencesWithLanguage(fragment, language);
+	}
 
 	//		std::vector<ReferenceResource> getReferences(const std::string& fragment)
 	//		{

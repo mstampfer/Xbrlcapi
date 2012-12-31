@@ -135,14 +135,14 @@ namespace xbrlcapi
 		//* @param value the value to give to the metadata attribute
 		//* @throws XBRLException
 		//*/
-		//virtual void setMetaAttribute(const std::string& name, const std::string& value);
+		virtual void setMetaAttribute(const std::string& name, const std::string& value);
 
 		///**
 		//* Get a fragment metadata attribute.
 		//* @param name the name of the attribute.
 		//* @return The value of the metadata attribute or null if none exists.
 		//*/
-		//virtual std::string getMetaAttribute(const std::string& name);
+		virtual std::string getMetaAttribute(const std::string& name);
 
 		///**
 		//* @param name the name of the attribute.
@@ -157,13 +157,13 @@ namespace xbrlcapi
 		//*/
 		//virtual void removeMetaAttribute(const std::string& name);
 
-		///**
-		//* Appends a child element to the root metadata element.
-		//* @param eName Name of the element to be added (no namespaces are used).
-		//* @param attributes A map from attribute name keys to attribute values.
-		//* @throws XBRLException.
-		//*/
-		//virtual void appendMetadataElement(const std::string& eName, std::unordered_map<std::string,std::string> attributes);
+		/**
+		* Appends a child element to the root metadata element.
+		* @param eName Name of the element to be added (no namespaces are used).
+		* @param attributes A map from attribute name keys to attribute values.
+		* @throws XBRLException.
+		*/
+		virtual void appendMetadataElement(const std::string& eName, const std::unordered_map<std::string,std::string>& attributes);
 
 		///**
 		//* removes a child element from the metadata root element by specifying the name of the child and

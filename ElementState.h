@@ -51,11 +51,12 @@ namespace xbrlcapi
 		* Use the org.xml.sax.helpers.AttributesImpl(Attributes); constructor to clone the
 		* originals.
 		*/
-		ElementState(const ElementState& parent, const xercesc::Attributes& attrs); 
+		ElementState(const ElementState& parent, 
+			const std::shared_ptr<xercesc::Attributes>& attrs); 
 
 		bool hasParent(); 
 
-		ElementState getParent(); 
+		std::shared_ptr<ElementState> getParent(); 
 
 		void addChild(); 
 

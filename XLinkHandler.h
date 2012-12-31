@@ -1,6 +1,7 @@
-
-
 #pragma once
+#include <xercesc/sax2/Attributes.hpp>
+#include <string>
+
 /**
 * Event handler for the XLink processor,
 * responsible for performing the user required responses
@@ -71,11 +72,11 @@ namespace xbrlcapi
 		* @param attrs
 		* @throws XLinkException
 		*/
-		void startTitle(
+		virtual void startTitle(
 			 const std::string& namespaceURI, 
 			 const std::string& lName, 
 			 const std::string& qName, 
-			const xercesc::Attributes& attrs);
+			const xercesc::Attributes& attrs) = 0;
 
 		///**
 		//* Handles straight pass through of SAX event for 

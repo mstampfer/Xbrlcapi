@@ -17,13 +17,14 @@ namespace xbrlcapi
 		Cache cache;
 		CacheFile cacheFile;
 
-		Impl() {}
+		Impl() : cache(Cache()), cacheFile(CacheFile()) {}
 
-		Impl(Cache& cache) : cache(std::move(cache))
+		Impl(Cache& cache) 
 		{}    
 
 		Impl(CacheFile& cacheFile) : cache(Cache(cacheFile))
 		{}
+
 		Impl(CacheFile& cacheFile, std::unordered_map<Poco::URI, Poco::URI> uriMap) 
 			: cache(Cache(cacheFile, uriMap))
 		{}
@@ -46,12 +47,11 @@ namespace xbrlcapi
 				);
 		}
 
-		xercesc::InputSource* resolveEntity(const std::wstring& publicId, const std::wstring& systemId) 
+		xercesc::InputSource* resolveEntity(const XMLCh *const publicId, const XMLCh *const systemId) 
 		{
 			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
 			logger.debug("SAX: Resolving the entity for " + xerces_util::toNative(systemId));
-			std::string id(systemId.begin(), systemId.end());
-			Poco::URI uri(id);
+			Poco::URI uri(xerces_util::toNative(systemId));
 			try {
 				if (hasCache()) 
 				{ 
@@ -82,8 +82,8 @@ namespace xbrlcapi
 			//try {
 			//	logger.debug("SCHEMA: Resolving the entity for " + resource.getExpandedSystemId());
 			xercesc::XMLPlatformUtils::Initialize();
-			std::wstring systemId = resource.getSystemId();
-			Poco::URI uri(std::string(systemId.begin(), systemId.end()));
+			std::string id = xerces_util::toNative(resource.getSystemId());
+			Poco::URI uri(id);
 			if (hasCache()) 
 			{
 				uri = cache.getCacheURI(uri);
@@ -201,9 +201,9 @@ namespace xbrlcapi
 		return !this->operator==(rhs);
 	}
 
-	xercesc::InputSource* EntityResolver::resolveEntity(const wchar_t *const publicId, const wchar_t *const systemId)  
+	xercesc::InputSource* EntityResolver::resolveEntity(const XMLCh *const publicId, const XMLCh *const systemId) 
 	{
-		return pImpl->resolveEntity(std::wstring(publicId), std::wstring(systemId));
+		return pImpl->resolveEntity(publicId, systemId);
 	}
 
 	xercesc::InputSource* EntityResolver::resolveEntity(xercesc::XMLResourceIdentifier* resourceIdentifier) 

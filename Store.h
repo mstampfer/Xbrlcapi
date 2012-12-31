@@ -2,6 +2,10 @@
 #include "PimplImpl.h"
 #include <unordered_set>
 #include <Poco/URI.h>
+#include <xercesc/dom/DOMElement.hpp>
+#include "LabelResource.h"
+#include "ReferenceResource.h"
+
 
 namespace xbrlcapi
 {
@@ -18,8 +22,8 @@ namespace xbrlcapi
 	* steps would be taken if XML data binding to Java objects were
 	* being used to handle the underlying data.
 	*
-
 	*/
+	class XML;
 	//template <typename F>
 	class Store// extends Serializable 
 	{
@@ -212,7 +216,7 @@ namespace xbrlcapi
 				* because the destination cannot be written to or some other
 				* different problem occurs during serialisation.
 				*/
-				void serialize(const Element& what, std::ofstream& destination);
+				void serialize(const xercesc::DOMElement& what, std::ofstream& destination);
 		
 				/**
 				* Serialize the specified XML DOM to the specified destination.
@@ -222,7 +226,7 @@ namespace xbrlcapi
 				* because the destination cannot be written to or some other
 				* different problem occurs during serialisation.
 				*/
-				//void serialize(const Element& what, const File& destination);
+				//void serialize(const xercesc::DOMElement& what, const File& destination);
 		
 				/**
 				* Serialize the specified XML DOM node.
@@ -230,7 +234,7 @@ namespace xbrlcapi
 				* @return a string containing the serialized XML.
 				* @throws XBRLException
 				*/
-				std::string serialize(const Element& what);
+				std::string serialize(const xercesc::DOMElement& what);
 		
 		//		/**
 		//		* Get a single document in the store as a DOM.
@@ -240,7 +244,7 @@ namespace xbrlcapi
 		//		* contain a document with the given URI.
 		//		* @throws XBRLException if the document cannot be constructed as a DOM.
 		//		*/
-		//		//Element getDocumentAsDOM(const Poco::URI& uri);
+		//		//xercesc::DOMElement getDocumentAsDOM(const Poco::URI& uri);
 		//
 		//		/**
 		//		* Serializes the individual documents in the data store, 
@@ -294,7 +298,7 @@ namespace xbrlcapi
 		//		* with the specified index.
 		//		* @throws XBRLException if the subtree cannot be constructed.
 		//		*/
-		//		//Element getSubtree(const Fragment& f);
+		//		//xercesc::DOMElement getSubtree(const Fragment& f);
 		//
 		//		/**
 		//		* Get all data in the store as a single XML DOM object.
@@ -1148,7 +1152,7 @@ namespace xbrlcapi
 		//		* @return the set of labels matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& linkRole, const std::string& resourceRole, const std::string& language);
+				std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& linkRole, const std::string& resourceRole, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getLabels(const std::string&,std::string,std::string,String)}.
@@ -1158,7 +1162,7 @@ namespace xbrlcapi
 		//		* @return the set of labels matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& resourceRole, const std::string& language);
+				std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& resourceRole, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getLabels(const std::string&,std::string,std::string,String)}.
@@ -1167,7 +1171,7 @@ namespace xbrlcapi
 		//		* @return the set of labels matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<LabelResource> getLabelsWithLanguage(const std::string& fragment, const std::string& language);
+				std::vector<LabelResource> getLabelsWithLanguage(const std::string& fragment, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getLabels(const std::string&,std::string,std::string,String)}.
@@ -1175,7 +1179,7 @@ namespace xbrlcapi
 		//		* @return the set of labels matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<LabelResource> getLabels(const std::string& fragment);
+				std::vector<LabelResource> getLabels(const std::string& fragment);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getLabels(const std::string&,std::string,std::string,String)}.
@@ -1217,7 +1221,7 @@ namespace xbrlcapi
 		//		* @return the set of references matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-		//		std::vector<ReferenceResource> getReferencesWithLanguage(const std::string& fragment, const std::string& language);
+				std::vector<ReferenceResource> getReferencesWithLanguage(const std::string& fragment, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getReferences(const std::string&,std::string,std::string,String)}.

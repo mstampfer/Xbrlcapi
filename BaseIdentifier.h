@@ -1,6 +1,7 @@
 #pragma once
 #include "PimplImpl.h"
 #include "Identifier.h"
+#include "ContentHandler.h"
 
 /**
 * The class implements the common methods for a fragment identifier.
@@ -14,8 +15,6 @@
 
 namespace xbrlcapi
 {
-
-	class ContentHandler;
 	class BaseIdentifier : public Identifier 
 	{
 
@@ -31,29 +30,29 @@ namespace xbrlcapi
 		bool operator==(const BaseIdentifier& rhs);
 		bool operator!=(const BaseIdentifier& rhs);
 
-		BaseIdentifier::BaseIdentifier(const ContentHandler& contentHandler);
+		BaseIdentifier(const ContentHandler& contentHandler);
 
-		ContentHandler BaseIdentifier::getContentHandler();
+		ContentHandler getContentHandler();
 
 		/**
 		* @see Identifier#setContentHandler(ContentHandler)
 		*/
-		void BaseIdentifier::setContentHandler(const ContentHandler& contentHandler);
+		void setContentHandler(const ContentHandler& contentHandler);
 
 		/**
 		* @see Identifier#getLoader()
 		*/
-		Loader BaseIdentifier::getLoader();
+		Loader getLoader();
 
 		/**
 		* @see Identifier#getElementState()
 		*/
-		ElementState BaseIdentifier::getElementState();
+		ElementState getElementState();
 
 		/**
 		* @see Identifier#startElement(String, String, String, Attributes)
 		*/
-		void BaseIdentifier::startElement(
+		void startElement(
 			const std::string& namespaceURI, 
 			const std::string& lName, 
 			const std::string& qName,
@@ -62,7 +61,7 @@ namespace xbrlcapi
 		/**
 		* @see Identifier#endElement(String, String, String, Attributes)
 		*/
-		void BaseIdentifier::endElement(
+		void endElement(
 			const std::string& namespaceURI, 
 			const std::string& lName, 
 			const std::string& qName,
@@ -81,7 +80,7 @@ namespace xbrlcapi
 		* expressed by an attribute other than "id".
 		* @see Identifier#processFragment(Fragment, Attributes)
 		*/
-		void BaseIdentifier::processFragment(const Fragment& fragment, const xercesc::Attributes& attrs);
+		void processFragment(const Fragment& fragment, const xercesc::Attributes& attrs);
 	};
 }
 

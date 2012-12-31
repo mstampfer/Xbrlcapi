@@ -1,6 +1,7 @@
 #pragma once
 #include "XLinkProcessor.h"
-#include "XBRLXLinkHandlerImpl.h"
+#include "CustomLinkRecogniser.h"
+#include "XBRLxlinkHandler.h"
 #include <stack>
 #include <unordered_map>
 
@@ -11,15 +12,13 @@
 * @author Henry S. Thompson (ht@w3.org)
 */
 
-#include "CustomLinkRecogniser.h"
-#include "XLinkHandler.h"
 
 namespace xbrlcapi
 {
 
 	struct XLinkProcessor::Impl  //, Serializable 
 	{
-		XLinkHandler xlinkHandler;
+		std::shared_ptr<XLinkHandler> xlinkHandler;
 		CustomLinkRecogniser customLinkRecogniser;
 		std::stack<int> ancestorTypes;
 		//transient private bool insideAnExtendedLink = false;
@@ -35,12 +34,12 @@ namespace xbrlcapi
 
 		Impl() {}
 
-		Impl(XLinkHandler& xlinkHandler)
+		Impl(const std::shared_ptr<XLinkHandler>& xlinkHandler)
 		{
 			initialize(xlinkHandler);
 		}
 
-		Impl(XLinkHandler& xlinkHandler, CustomLinkRecogniser& recogniser) 
+		Impl(const std::shared_ptr<XLinkHandler>& xlinkHandler, CustomLinkRecogniser& recogniser) 
 		{
 			initialize(xlinkHandler);
 			setCustomLinkRecogniser(recogniser);
@@ -51,9 +50,9 @@ namespace xbrlcapi
 			customLinkRecogniser = std::move(clr);
 		}
 
-		void initialize(const XLinkHandler& xlinkHandler) 
+		void initialize(const std::shared_ptr<XLinkHandler>& xlinkHandler) 
 		{
-			//this->xlinkHandler = xlinkHandler; //TODO
+			this->xlinkHandler = xlinkHandler; 
 			ancestorTypes.push(NOT_XLINK);
 			if ( xlinkAttrs.empty() ) 
 			{
@@ -70,180 +69,184 @@ namespace xbrlcapi
 			}
 		}
 
-		//public void startElement( std::string namespaceURI,  std::string lName,  std::string qName, Attributes attrs) throws XLinkException {
+		void startElement(
+			const std::string& namespaceURI, 
+			const std::string& lName, 
+			const std::string& qName,
+			const xercesc::Attributes& attrs)
+		{
+			//	// Handle the XML Base attribute on the element (even when it does not exist or has "" value)
+			//	xlinkHandler->xmlBaseStart(attrs.getValue(Constants.XMLNamespace.toString(),"base"));
 
-		//	// Handle the XML Base attribute on the element (even when it does not exist or has "" value)
-		//	xlinkHandler.xmlBaseStart(attrs.getValue(Constants.XMLNamespace.toString(),"base"));
+			//	// Complain about any unexpected attributes in the XLink namespace.
+			//	// Added by Henry S Thompson
+			//	bool hasSomeXLinkAttributes = false;
+			//	for (int i=0; i<attrs.getLength(); i++) {
+			//		if (attrs.getURI(i).equals(Constants.XLinkNamespace.toString())) {
+			//			 std::string attributeName = attrs.getLocalName(i);
+			//			if (! XLINKATTRS.containsKey(attributeName)) {
+			//				xlinkHandler->error(namespaceURI, lName, qName, attrs, attributeName + " is not defined in the XLink namespace.");
+			//			} else {
+			//				hasSomeXLinkAttributes = true;
+			//			}
+			//		}
+			//	}
 
-		//	// Complain about any unexpected attributes in the XLink namespace.
-		//	// Added by Henry S Thompson
-		//	bool hasSomeXLinkAttributes = false;
-		//	for (int i=0; i<attrs.getLength(); i++) {
-		//		if (attrs.getURI(i).equals(Constants.XLinkNamespace.toString())) {
-		//			 std::string attributeName = attrs.getLocalName(i);
-		//			if (! XLINKATTRS.containsKey(attributeName)) {
-		//				xlinkHandler.error(namespaceURI, lName, qName, attrs, attributeName + " is not defined in the XLink namespace.");
-		//			} else {
-		//				hasSomeXLinkAttributes = true;
-		//			}
-		//		}
-		//	}
+			//	// Handle any custom links
+			//	if (! (customLinkRecogniser == null))
+			//		if (customLinkRecogniser.isLink(namespaceURI, lName, qName, attrs)) {
 
-		//	// Handle any custom links
-		//	if (! (customLinkRecogniser == null))
-		//		if (customLinkRecogniser.isLink(namespaceURI, lName, qName, attrs)) {
+			//			logger.debug("Found a custom link: " + lName);
 
-		//			logger.debug("Found a custom link: " + lName);
+			//			 std::string href = customLinkRecogniser.getHref(namespaceURI, lName, qName, attrs);
+			//			 std::string role = customLinkRecogniser.getRole(namespaceURI, lName, qName, attrs);
+			//			 std::string arcrole = customLinkRecogniser.getArcrole(namespaceURI, lName, qName, attrs);
+			//			 std::string title = customLinkRecogniser.getTitle(namespaceURI, lName, qName, attrs);
+			//			 std::string show = customLinkRecogniser.getShow(namespaceURI, lName, qName, attrs);
+			//			 std::string actuate = customLinkRecogniser.getActuate(namespaceURI, lName, qName, attrs);
 
-		//			 std::string href = customLinkRecogniser.getHref(namespaceURI, lName, qName, attrs);
-		//			 std::string role = customLinkRecogniser.getRole(namespaceURI, lName, qName, attrs);
-		//			 std::string arcrole = customLinkRecogniser.getArcrole(namespaceURI, lName, qName, attrs);
-		//			 std::string title = customLinkRecogniser.getTitle(namespaceURI, lName, qName, attrs);
-		//			 std::string show = customLinkRecogniser.getShow(namespaceURI, lName, qName, attrs);
-		//			 std::string actuate = customLinkRecogniser.getActuate(namespaceURI, lName, qName, attrs);
+			//			validateHref(namespaceURI,lName,qName,attrs,href);
+			//			validateRole(namespaceURI,lName,qName,attrs,role);
+			//			validateArcrole(namespaceURI,lName,qName,attrs,arcrole);
+			//			validateShow(namespaceURI,lName,qName,attrs,show);
+			//			validateActuate(namespaceURI,lName,qName,attrs,actuate);
 
-		//			validateHref(namespaceURI,lName,qName,attrs,href);
-		//			validateRole(namespaceURI,lName,qName,attrs,role);
-		//			validateArcrole(namespaceURI,lName,qName,attrs,arcrole);
-		//			validateShow(namespaceURI,lName,qName,attrs,show);
-		//			validateActuate(namespaceURI,lName,qName,attrs,actuate);
+			//			xlinkHandler->startSimpleLink(namespaceURI, lName, qName, attrs,href,role,arcrole,title,show,actuate);
+			//			ancestorTypes.push(NOT_XLINK);
+			//			return;
+			//		}
 
-		//			xlinkHandler.startSimpleLink(namespaceURI, lName, qName, attrs,href,role,arcrole,title,show,actuate);
-		//			ancestorTypes.push(NOT_XLINK);
-		//			return;
-		//		}
+			//		// Try to get XLink attribute values directly from the set of attributes on the element
+			//		 std::string href = attrs.getValue(Constants.XLinkNamespace.toString(), "href");
+			//		 std::string role = attrs.getValue(Constants.XLinkNamespace.toString(), "role");
+			//		 std::string arcrole = attrs.getValue(Constants.XLinkNamespace.toString(), "arcrole");
+			//		 std::string from = attrs.getValue(Constants.XLinkNamespace.toString(), "from");
+			//		 std::string to = attrs.getValue(Constants.XLinkNamespace.toString(), "to");
+			//		 std::string title = attrs.getValue(Constants.XLinkNamespace.toString(), "title");
+			//		 std::string show = attrs.getValue(Constants.XLinkNamespace.toString(), "show");
+			//		 std::string actuate = attrs.getValue(Constants.XLinkNamespace.toString(), "actuate");
+			//		 std::string label = attrs.getValue(Constants.XLinkNamespace.toString(), "label");
+			//		 std::string type = attrs.getValue(Constants.XLinkNamespace.toString(), "type");        
 
-		//		// Try to get XLink attribute values directly from the set of attributes on the element
-		//		 std::string href = attrs.getValue(Constants.XLinkNamespace.toString(), "href");
-		//		 std::string role = attrs.getValue(Constants.XLinkNamespace.toString(), "role");
-		//		 std::string arcrole = attrs.getValue(Constants.XLinkNamespace.toString(), "arcrole");
-		//		 std::string from = attrs.getValue(Constants.XLinkNamespace.toString(), "from");
-		//		 std::string to = attrs.getValue(Constants.XLinkNamespace.toString(), "to");
-		//		 std::string title = attrs.getValue(Constants.XLinkNamespace.toString(), "title");
-		//		 std::string show = attrs.getValue(Constants.XLinkNamespace.toString(), "show");
-		//		 std::string actuate = attrs.getValue(Constants.XLinkNamespace.toString(), "actuate");
-		//		 std::string label = attrs.getValue(Constants.XLinkNamespace.toString(), "label");
-		//		 std::string type = attrs.getValue(Constants.XLinkNamespace.toString(), "type");        
+			//		// Handle elements that are explicitly not XLink elements
+			//		if (type != null) {
+			//			if (type.equals("none")) {
+			//				ancestorTypes.push(NOT_XLINK);
+			//				return; // We definitely do not have any XLink meaning for this element.
+			//			}
+			//		}
 
-		//		// Handle elements that are explicitly not XLink elements
-		//		if (type != null) {
-		//			if (type.equals("none")) {
-		//				ancestorTypes.push(NOT_XLINK);
-		//				return; // We definitely do not have any XLink meaning for this element.
-		//			}
-		//		}
+			//		// If not an XLink element, handle accordingly.
+			//		// Improved by Henry S Thompson
+			//		if (type == null) {
+			//			if (href == null) {
+			//				ancestorTypes.push(NOT_XLINK);
+			//				// Throw an error if real XLink attributes are used but 
+			//				// the xlink:type or xlink:href attributes are missing.
+			//				if (hasSomeXLinkAttributes) {
+			//					xlinkHandler->error(namespaceURI,lName,qName,attrs,"Attributes in the XLink namespace must be accompanied by xlink:type and/or xlink:href attributes");
+			//				}
+			//				return;
+			//			} 
+			//			// XLink 1.1 says we default to 'simple' if xlink:type is missing but xlink:href is present
+			//			type = "simple";
+			//		}
 
-		//		// If not an XLink element, handle accordingly.
-		//		// Improved by Henry S Thompson
-		//		if (type == null) {
-		//			if (href == null) {
-		//				ancestorTypes.push(NOT_XLINK);
-		//				// Throw an error if real XLink attributes are used but 
-		//				// the xlink:type or xlink:href attributes are missing.
-		//				if (hasSomeXLinkAttributes) {
-		//					xlinkHandler.error(namespaceURI,lName,qName,attrs,"Attributes in the XLink namespace must be accompanied by xlink:type and/or xlink:href attributes");
-		//				}
-		//				return;
-		//			} 
-		//			// XLink 1.1 says we default to 'simple' if xlink:type is missing but xlink:href is present
-		//			type = "simple";
-		//		}
+			//		// We have a potential XLink element
+			//		// Improved by Henry S Thompson
+			//		if (type.equals("simple")) {
 
-		//		// We have a potential XLink element
-		//		// Improved by Henry S Thompson
-		//		if (type.equals("simple")) {
+			//			if (isXLink(namespaceURI, lName, qName, attrs,SIMPLE_LINK) &&
+			//				validateHref(namespaceURI,lName,qName,attrs,href) &&
+			//				validateRole(namespaceURI,lName,qName,attrs,role) &&
+			//				validateArcrole(namespaceURI,lName,qName,attrs,arcrole) &&
+			//				validateShow(namespaceURI,lName,qName,attrs,show) &&
+			//				validateActuate(namespaceURI,lName,qName,attrs,actuate)) {
 
-		//			if (isXLink(namespaceURI, lName, qName, attrs,SIMPLE_LINK) &&
-		//				validateHref(namespaceURI,lName,qName,attrs,href) &&
-		//				validateRole(namespaceURI,lName,qName,attrs,role) &&
-		//				validateArcrole(namespaceURI,lName,qName,attrs,arcrole) &&
-		//				validateShow(namespaceURI,lName,qName,attrs,show) &&
-		//				validateActuate(namespaceURI,lName,qName,attrs,actuate)) {
+			//					ancestorTypes.push(SIMPLE_LINK);
+			//					xlinkHandler->startSimpleLink(namespaceURI, lName, qName, attrs,
+			//						href,role,arcrole,title,show,actuate
+			//						);
+			//			} else {
+			//				ancestorTypes.push(NOT_XLINK);
+			//			}           
 
-		//					ancestorTypes.push(SIMPLE_LINK);
-		//					xlinkHandler.startSimpleLink(namespaceURI, lName, qName, attrs,
-		//						href,role,arcrole,title,show,actuate
-		//						);
-		//			} else {
-		//				ancestorTypes.push(NOT_XLINK);
-		//			}           
+			//		} else if (type.equals("extended")) {
 
-		//		} else if (type.equals("extended")) {
+			//			if (isXLink(namespaceURI, lName, qName, attrs,EXTENDED_LINK) &&
+			//				validateRole(namespaceURI,lName,qName,attrs,role)) {
 
-		//			if (isXLink(namespaceURI, lName, qName, attrs,EXTENDED_LINK) &&
-		//				validateRole(namespaceURI,lName,qName,attrs,role)) {
+			//					insideAnExtendedLink = true;
+			//					ancestorTypes.push(EXTENDED_LINK);
+			//					xlinkHandler->startExtendedLink(namespaceURI, lName, qName, attrs,
+			//						role,title
+			//						);              
+			//			} else {
+			//				ancestorTypes.push(NOT_XLINK);
+			//			}
 
-		//					insideAnExtendedLink = true;
-		//					ancestorTypes.push(EXTENDED_LINK);
-		//					xlinkHandler.startExtendedLink(namespaceURI, lName, qName, attrs,
-		//						role,title
-		//						);              
-		//			} else {
-		//				ancestorTypes.push(NOT_XLINK);
-		//			}
+			//		} else if (type.equals("locator")) {
 
-		//		} else if (type.equals("locator")) {
+			//			if (isXLink(namespaceURI, lName, qName, attrs,LOCATOR) &&
+			//				validateHref(namespaceURI,lName,qName,attrs,href) &&
+			//				validateRole(namespaceURI,lName,qName,attrs,role) &&
+			//				validateLabel(namespaceURI,lName,qName,attrs,label)) {
 
-		//			if (isXLink(namespaceURI, lName, qName, attrs,LOCATOR) &&
-		//				validateHref(namespaceURI,lName,qName,attrs,href) &&
-		//				validateRole(namespaceURI,lName,qName,attrs,role) &&
-		//				validateLabel(namespaceURI,lName,qName,attrs,label)) {
+			//					ancestorTypes.push(LOCATOR);
+			//					xlinkHandler->startLocator(namespaceURI, lName, qName, attrs,href,role,title,label);
+			//			} else {
+			//				ancestorTypes.push(NOT_XLINK);
+			//			}
 
-		//					ancestorTypes.push(LOCATOR);
-		//					xlinkHandler.startLocator(namespaceURI, lName, qName, attrs,href,role,title,label);
-		//			} else {
-		//				ancestorTypes.push(NOT_XLINK);
-		//			}
+			//		} else if (type.equals("arc")) {
 
-		//		} else if (type.equals("arc")) {
+			//			if (isXLink(namespaceURI, lName, qName, attrs,ARC) &&
+			//				validateLabel(namespaceURI,lName,qName,attrs,from) &&
+			//				validateLabel(namespaceURI,lName,qName,attrs,to) &&
+			//				validateArcrole(namespaceURI,lName,qName,attrs,arcrole) &&
+			//				validateShow(namespaceURI,lName,qName,attrs,show) &&
+			//				validateActuate(namespaceURI,lName,qName,attrs,actuate)) {
 
-		//			if (isXLink(namespaceURI, lName, qName, attrs,ARC) &&
-		//				validateLabel(namespaceURI,lName,qName,attrs,from) &&
-		//				validateLabel(namespaceURI,lName,qName,attrs,to) &&
-		//				validateArcrole(namespaceURI,lName,qName,attrs,arcrole) &&
-		//				validateShow(namespaceURI,lName,qName,attrs,show) &&
-		//				validateActuate(namespaceURI,lName,qName,attrs,actuate)) {
+			//					ancestorTypes.push(ARC);
+			//					xlinkHandler->startArc(namespaceURI, lName, qName, attrs,from,to,arcrole,title,show,actuate);              
 
-		//					ancestorTypes.push(ARC);
-		//					xlinkHandler.startArc(namespaceURI, lName, qName, attrs,from,to,arcrole,title,show,actuate);              
+			//			} else {
+			//				ancestorTypes.push(NOT_XLINK);
+			//			}
 
-		//			} else {
-		//				ancestorTypes.push(NOT_XLINK);
-		//			}
+			//		} else if (type.equals("resource")) {
 
-		//		} else if (type.equals("resource")) {
+			//			if (isXLink(namespaceURI, lName, qName, attrs,RESOURCE) &&
+			//				validateLabel(namespaceURI,lName,qName,attrs,label) &&
+			//				validateRole(namespaceURI,lName,qName,attrs,role)) {
 
-		//			if (isXLink(namespaceURI, lName, qName, attrs,RESOURCE) &&
-		//				validateLabel(namespaceURI,lName,qName,attrs,label) &&
-		//				validateRole(namespaceURI,lName,qName,attrs,role)) {
+			//					ancestorTypes.push(RESOURCE);
+			//					xlinkHandler->startResource(namespaceURI, lName, qName, attrs,role,title,label);
+			//			} else {
+			//				ancestorTypes.push(NOT_XLINK);
+			//			}
 
-		//					ancestorTypes.push(RESOURCE);
-		//					xlinkHandler.startResource(namespaceURI, lName, qName, attrs,role,title,label);
-		//			} else {
-		//				ancestorTypes.push(NOT_XLINK);
-		//			}
+			//		} else if (type.equals("title")) {
 
-		//		} else if (type.equals("title")) {
+			//			if (isXLink(namespaceURI, lName, qName, attrs,TITLE)) {
+			//				ancestorTypes.push(TITLE);              
+			//				xlinkHandler->startTitle(namespaceURI, lName, qName, attrs);
+			//			} else {
+			//				ancestorTypes.push(NOT_XLINK);
+			//			}
 
-		//			if (isXLink(namespaceURI, lName, qName, attrs,TITLE)) {
-		//				ancestorTypes.push(TITLE);              
-		//				xlinkHandler.startTitle(namespaceURI, lName, qName, attrs);
-		//			} else {
-		//				ancestorTypes.push(NOT_XLINK);
-		//			}
+			//			// XLink type attributes with a value of none should generate a warning
+			//			// because they are not doing anything, even though they are valid.
+			//		} else if (type.equals("none")) {
+			//			ancestorTypes.push(NOT_XLINK);
 
-		//			// XLink type attributes with a value of none should generate a warning
-		//			// because they are not doing anything, even though they are valid.
-		//		} else if (type.equals("none")) {
-		//			ancestorTypes.push(NOT_XLINK);
+			//			// Any other value of the xlink type attribute is an error
+			//		} else {
+			//			xlinkHandler->error(namespaceURI, lName, qName, attrs,"The XLink type attribute must take one of the following values: extended, simple, locator, arc, resource or title or none.");
+			//			ancestorTypes.push(NOT_XLINK);
+			//		}
 
-		//			// Any other value of the xlink type attribute is an error
-		//		} else {
-		//			xlinkHandler.error(namespaceURI, lName, qName, attrs,"The XLink type attribute must take one of the following values: extended, simple, locator, arc, resource or title or none.");
-		//			ancestorTypes.push(NOT_XLINK);
-		//		}
-
-		//}
+		}
 
 		///**
 		//* Tests if an XLink type element is really appropriate to give XLink semantics.
@@ -274,7 +277,7 @@ namespace xbrlcapi
 		//				Integer allowed = XLINKATTRS.get(attributeName);
 		//				// if the attribute is allowed for this XLink element type
 		//				if ( allowed!=null && ((allowed.intValue()&type.intValue())==0) ) {
-		//					xlinkHandler.error(namespaceURI,lName,qName,attrs,attributeName + " attribute not allowed for this type of XLink.");
+		//					xlinkHandler->error(namespaceURI,lName,qName,attrs,attributeName + " attribute not allowed for this type of XLink.");
 		//					OK = false;
 		//				}
 		//			}
@@ -284,21 +287,21 @@ namespace xbrlcapi
 		//		// Extended links cannot contain simple links or extended links
 		//		if (insideAnExtendedLink)
 		//			if (type.equals(SIMPLE_LINK) || type.equals(EXTENDED_LINK)) {
-		//				xlinkHandler.warning(namespaceURI,lName,qName,attrs,"Simple and extended links have no XLink meaning when nexted in an extended link.");
+		//				xlinkHandler->warning(namespaceURI,lName,qName,attrs,"Simple and extended links have no XLink meaning when nexted in an extended link.");
 		//				return false;
 		//			}
 
 		//			// Locators, resources and arcs must be children of extended links
 		//			if (!parentType.equals(EXTENDED_LINK))
 		//				if (type.equals(LOCATOR) || type.equals(ARC) || type.equals(RESOURCE)) {
-		//					xlinkHandler.warning(namespaceURI,lName,qName,attrs,"Arcs, locators and resources only have XLink semantics when they are children of extended link elements.");
+		//					xlinkHandler->warning(namespaceURI,lName,qName,attrs,"Arcs, locators and resources only have XLink semantics when they are children of extended link elements.");
 		//					return false;
 		//				}
 
 		//				// Title types only imply XLink title elements when children of extended links, locators or arcs.
 		//				if (parentType.equals(NOT_XLINK) || parentType.equals(RESOURCE) || parentType.equals(SIMPLE_LINK) || parentType.equals(TITLE))
 		//					if (type.equals(TITLE)) {
-		//						xlinkHandler.warning(namespaceURI,lName,qName,attrs,"Titles only have XLink semantics when they are children of extended links, locators or arcs.");
+		//						xlinkHandler->warning(namespaceURI,lName,qName,attrs,"Titles only have XLink semantics when they are children of extended links, locators or arcs.");
 		//						return false;
 		//					}
 
@@ -319,11 +322,11 @@ namespace xbrlcapi
 		//private bool validateHref( std::string namespaceURI,  std::string lName,  std::string qName,
 		//	Attributes attrs, std::string value) throws XLinkException {
 		//		if (value == "") {
-		//			xlinkHandler.error(namespaceURI,lName,qName,attrs,"The XLink href attribute must not be empty.");
+		//			xlinkHandler->error(namespaceURI,lName,qName,attrs,"The XLink href attribute must not be empty.");
 		//			return false;
 		//		}
 		//		if (value == null) {
-		//			xlinkHandler.error(namespaceURI,lName,qName,attrs,"The XLink href attribute must be provided on a locator.");
+		//			xlinkHandler->error(namespaceURI,lName,qName,attrs,"The XLink href attribute must be provided on a locator.");
 		//			return false;
 		//		}
 		//		return true;
@@ -345,12 +348,12 @@ namespace xbrlcapi
 		//		try {
 		//			URI uri = new URI(value);
 		//			if (! uri.isAbsolute()) {
-		//				xlinkHandler.error(namespaceURI,lName,qName,attrs,"The XLink role must be an absolute URI");
+		//				xlinkHandler->error(namespaceURI,lName,qName,attrs,"The XLink role must be an absolute URI");
 		//				return false;
 		//			}
 		//			return true;
 		//		} catch (URISyntaxException e) {
-		//			xlinkHandler.error(namespaceURI,lName,qName,attrs,"The XLink role must have valid URI syntax");
+		//			xlinkHandler->error(namespaceURI,lName,qName,attrs,"The XLink role must have valid URI syntax");
 		//			return false;
 		//		}
 		//}
@@ -367,12 +370,12 @@ namespace xbrlcapi
 		//		try {           
 		//			URI uri = new URI(value);
 		//			if (! uri.isAbsolute()) {
-		//				xlinkHandler.error(namespaceURI,lName,qName,attrs,"The arcrole must be an absolute URI");
+		//				xlinkHandler->error(namespaceURI,lName,qName,attrs,"The arcrole must be an absolute URI");
 		//				return false;
 		//			}
 		//			return true;
 		//		} catch (URISyntaxException e) {
-		//			xlinkHandler.error(namespaceURI,lName,qName,attrs,"The arcrole must be an absolute URI");
+		//			xlinkHandler->error(namespaceURI,lName,qName,attrs,"The arcrole must be an absolute URI");
 		//			return false;
 		//		}
 		//}
@@ -388,7 +391,7 @@ namespace xbrlcapi
 		//	Attributes attrs, std::string value) throws XLinkException {
 		//		if (value == null) return true;
 		//		if (! XML11Char.isXML11ValidNCName(value)) {
-		//			xlinkHandler.error(namespaceURI,lName,qName,attrs,"The XLink label must be an NCName.");
+		//			xlinkHandler->error(namespaceURI,lName,qName,attrs,"The XLink label must be an NCName.");
 		//			return false;
 		//		}
 		//		return true;
@@ -411,7 +414,7 @@ namespace xbrlcapi
 		//			(!value.equals("other")) && 
 		//			(!value.equals("none"))
 		//			){
-		//				xlinkHandler.error(namespaceURI,lName,qName,attrs,"If supplied, the XLink show attribute must be one of new, replace, embed, other or none. Instead it was " + value);
+		//				xlinkHandler->error(namespaceURI,lName,qName,attrs,"If supplied, the XLink show attribute must be one of new, replace, embed, other or none. Instead it was " + value);
 		//				return false;
 		//		}
 		//		return true;
@@ -433,7 +436,7 @@ namespace xbrlcapi
 		//			(!value.equals("other")) && 
 		//			(!value.equals("none"))
 		//			){
-		//				xlinkHandler.error(namespaceURI,lName,qName,attrs,"If supplied, the XLink actuate attribute must be one of onLoad, onRequest, other or none.  Instead it was " + value);
+		//				xlinkHandler->error(namespaceURI,lName,qName,attrs,"If supplied, the XLink actuate attribute must be one of onLoad, onRequest, other or none.  Instead it was " + value);
 		//				return false;
 		//		}
 		//		return true;
@@ -443,15 +446,15 @@ namespace xbrlcapi
 			const std::string& namespaceURI, 
 			const std::string& lName, 
 			const std::string& qName,
-			const xercesc::Attributes& attrs);
+			const xercesc::Attributes& attrs)
 		{
-			//xlinkHandler.xmlBaseEnd();
+			//xlinkHandler->xmlBaseEnd();
 			//Integer parentType = ancestorTypes.pop();
 
 			//// Handle any custom links
 			//if (! (customLinkRecogniser == null))
 			//	if (customLinkRecogniser.isLink(namespaceURI, lName, qName, attrs)) {
-			//		xlinkHandler.endSimpleLink(namespaceURI, lName, qName);
+			//		xlinkHandler->endSimpleLink(namespaceURI, lName, qName);
 			//		return;
 			//	}
 
@@ -461,18 +464,18 @@ namespace xbrlcapi
 
 			//	// We have an XLink element so find which one
 			//	if (parentType.equals(SIMPLE_LINK)) {
-			//		xlinkHandler.endSimpleLink(namespaceURI, lName, qName);
+			//		xlinkHandler->endSimpleLink(namespaceURI, lName, qName);
 			//	} else if (parentType.equals(EXTENDED_LINK)) {
-			//		xlinkHandler.endExtendedLink(namespaceURI, lName, qName);
+			//		xlinkHandler->endExtendedLink(namespaceURI, lName, qName);
 			//		insideAnExtendedLink = false;
 			//	} else if (parentType.equals(RESOURCE)) {
-			//		xlinkHandler.endResource(namespaceURI, lName, qName);
+			//		xlinkHandler->endResource(namespaceURI, lName, qName);
 			//	} else if (parentType.equals(LOCATOR)) {
-			//		xlinkHandler.endLocator(namespaceURI, lName, qName);
+			//		xlinkHandler->endLocator(namespaceURI, lName, qName);
 			//	} else if (parentType.equals(ARC)) {
-			//		xlinkHandler.endArc(namespaceURI, lName, qName);
+			//		xlinkHandler->endArc(namespaceURI, lName, qName);
 			//	} else if (parentType.equals(TITLE)) {
-			//		xlinkHandler.endTitle(namespaceURI, lName, qName);
+			//		xlinkHandler->endTitle(namespaceURI, lName, qName);
 			//	}       
 		}   
 
@@ -482,11 +485,11 @@ namespace xbrlcapi
 		//public void titleCharacters(char[] buf, int offset, int len)
 		//	throws XLinkException {
 		//		if ((ancestorTypes.peek()).equals(TITLE)) {
-		//			xlinkHandler.titleCharacters(buf, offset, len);
+		//			xlinkHandler->titleCharacters(buf, offset, len);
 		//		}
 		//}
 
-		XLinkHandler getXLinkHandler() 
+		std::shared_ptr<XLinkHandler> getXLinkHandler() 
 		{
 			return xlinkHandler;
 		}
@@ -515,7 +518,7 @@ namespace xbrlcapi
 		//			* result
 		//			+ ((customLinkRecogniser == null) ? 0 : customLinkRecogniser.hashCode());
 		//		result = prime * result
-		//			+ ((xlinkHandler == null) ? 0 : xlinkHandler.hashCode());
+		//			+ ((xlinkHandler == null) ? 0 : xlinkHandler->hashCode());
 		//		return result;
 		//}
 
@@ -539,7 +542,7 @@ namespace xbrlcapi
 		//		if (xlinkHandler == null) {
 		//			if (other.xlinkHandler != null)
 		//				return false;
-		//		} else if (!xlinkHandler.equals(other.xlinkHandler))
+		//		} else if (!xlinkHandler->equals(other.xlinkHandler))
 		//			return false;
 		//		return true;
 		//}
@@ -566,7 +569,7 @@ namespace xbrlcapi
 		pImpl = std::move(rhs.pImpl); 
 	}
 
-	XLinkProcessor::XLinkProcessor(XLinkHandler& xlh, CustomLinkRecogniser& clr) : pImpl(xlh, clr)
+	XLinkProcessor::XLinkProcessor(const std::shared_ptr<XLinkHandler>& xlh, CustomLinkRecogniser& clr) : pImpl(xlh, clr)
 	{}
 
 	XLinkProcessor& XLinkProcessor::operator=(XLinkProcessor&& rhs)
@@ -587,19 +590,29 @@ namespace xbrlcapi
 	}
 
 	//   public void setCustomLinkRecogniser(CustomLinkRecogniser customLinkRecogniser);
-	//public void startElement(
-	//		 std::string namespaceURI, 
-	//		 std::string lName, 
-	//		 std::string qName, 
-	//		Attributes attrs) throws XLinkException;
-	void endElement(
+
+	void XLinkProcessor::startElement(
 		const std::string& namespaceURI, 
 		const std::string& lName, 
 		const std::string& qName,
-		const xercesc::Attributes& attrs);
-	//public void titleCharacters(char buf[], int offset, int len) throws XLinkException;
-	XLinkHandler XLinkProcessor::getXLinkHandler()
+		const xercesc::Attributes& attrs)
 	{
-		pImpl->getXLinkHandler();
+		pImpl->startElement(namespaceURI, lName, qName, attrs);
+	}
+
+	void XLinkProcessor::endElement(
+		const std::string& namespaceURI, 
+		const std::string& lName, 
+		const std::string& qName,
+		const xercesc::Attributes& attrs)
+	{
+		pImpl->endElement(namespaceURI, lName, qName, attrs);
+	}
+
+
+	//public void titleCharacters(char buf[], int offset, int len) throws XLinkException;
+	std::shared_ptr<XLinkHandler> XLinkProcessor::getXLinkHandler()
+	{
+		return pImpl->getXLinkHandler();
 	}
 }

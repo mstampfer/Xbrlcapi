@@ -29,7 +29,6 @@ namespace xbrlcapi
 		Builder& operator=(Builder&& rhs);
 		bool operator==(const Builder& rhs);
 		bool operator!=(const Builder& rhs);
-		Builder(int i);
 
 		//	/**
 		//	 * Create the builder controlling which XML DOM is being used.
@@ -60,11 +59,11 @@ namespace xbrlcapi
 		* @return the metadata XML structure.
 		*/
 		std::shared_ptr<xercesc::DOMElement>  Builder::getMetadata();
-		//
-		//	/**
-		//	 * @return true iff the builder has not yet added an element to the fragment.
-		//	 */
-		//	boolean isNewFragment();
+		
+			/**
+			 * @return true iff the builder has not yet added an element to the fragment.
+			 */
+			bool isNewFragment();
 		//
 		//    /**
 		//     * Get the insertion point for new data content.

@@ -1,6 +1,7 @@
 #pragma once
 #include "PimplImpl.h"
 #include "BaseIdentifier.h"
+#include "ContentHandler.h"
 #include <xercesc/sax2/Attributes.hpp>
 
 namespace xbrlcapi
@@ -26,7 +27,7 @@ namespace xbrlcapi
 		/**
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#BaseIdentifier(ContentHandler)
 		*/
-		GenericDocumentRootIdentifier(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler) {}
+		GenericDocumentRootIdentifier(const ContentHandler& contentHandler);
 
 		/**
 		* Add a generic fragment for a document root element if we 

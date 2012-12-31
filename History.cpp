@@ -1,4 +1,5 @@
 #include "History.h"
+#include <log4cpp/Category.hh>
 
 namespace xbrlcapi
 {

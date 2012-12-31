@@ -16,15 +16,18 @@ namespace xbrlcapi
 		//	String qName,
 		//	Attributes attrs) throws XBRLException {
 
-        ////if (! getLoader().get().isNewFragment()) {
-        //    if (! getElementState().hasParent()) {
-        //        Fragment root = new FragmentImpl();
-        //        processFragment(root,attrs);
-        //    }
-        ////}
+		////if (! getLoader().get().isNewFragment()) {
+		//    if (! getElementState().hasParent()) {
+		//        Fragment root = new FragmentImpl();
+		//        processFragment(root,attrs);
+		//    }
+		////}
 	};
 
 	GenericDocumentRootIdentifier::GenericDocumentRootIdentifier() {}
+	GenericDocumentRootIdentifier::GenericDocumentRootIdentifier(const ContentHandler& contentHandler) : 
+		BaseIdentifier(contentHandler), pImpl(contentHandler) {}
+
 	GenericDocumentRootIdentifier::~GenericDocumentRootIdentifier() {} 
 
 	GenericDocumentRootIdentifier::GenericDocumentRootIdentifier(const GenericDocumentRootIdentifier& rhs) 
@@ -63,9 +66,6 @@ namespace xbrlcapi
 	{
 		return !this->operator==(rhs);
 	}
-
-	GenericDocumentRootIdentifier::GenericDocumentRootIdentifier(const ContentHandler& contentHandler) : Impl(contentHandler)
-	{}
 
 	void GenericDocumentRootIdentifier::startElement(
 		const std::string& namespaceURI, 

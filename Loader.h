@@ -1,4 +1,3 @@
-
 #pragma once
 #include "PimplImpl.h"
 #include <Poco/URI.h>
@@ -254,7 +253,7 @@ namespace xbrlcapi
 		* Return the entity resolver being used by the loader.
 		* @return the entity resolver being used by the loader.
 		*/
-//		EntityResolver getEntityResolver();
+		EntityResolver getEntityResolver();
 
 		/**
 		* The default behaviour is to ignore the content of XML Schema 

@@ -9,7 +9,7 @@ namespace xbrlcapi
  
  */
 
-class SchemaDeclarationImpl : public  SchemaContentImpl, public SchemaDeclaration 
+class SchemaDeclarationImpl 
 {
 public:
     /**
