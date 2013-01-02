@@ -1,7 +1,7 @@
 #pragma once
 #include "XLinkProcessor.h"
 #include "CustomLinkRecogniser.h"
-#include "XBRLxlinkHandler.h"
+#include "XBRLXLinkHandler.h"
 #include <stack>
 #include <unordered_map>
 
@@ -47,7 +47,7 @@ namespace xbrlcapi
 
 		void setCustomLinkRecogniser(CustomLinkRecogniser& clr) 
 		{
-			customLinkRecogniser = std::move(clr);
+			customLinkRecogniser = clr;
 		}
 
 		void initialize(const std::shared_ptr<XLinkHandler>& xlinkHandler) 
@@ -559,7 +559,7 @@ namespace xbrlcapi
 	{
 		if (pImpl != rhs.pImpl)
 		{
-			pImpl->~Impl();
+			//pImpl->~Impl();
 			pImpl = rhs.pImpl;
 		}
 		return *this;

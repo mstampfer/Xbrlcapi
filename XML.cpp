@@ -14,16 +14,16 @@ namespace xbrlcapi
 		std::shared_ptr<xercesc::DOMElement> rootElement;
 		Impl() {}
 
-		Impl& operator=(Impl&& rhs)
-		{
-			if (this != &rhs)
-			{
-				builder = std::move(rhs.builder);
-				store = std::move(rhs.store);
-				rootElement = std::move(rhs.rootElement);
-			}
-			return *this;
-		}
+		//Impl& operator=(Impl&& rhs)
+		//{
+		//	if (this != &rhs)
+		//	{
+		//		builder = std::move(rhs.builder);
+		//		store = std::move(rhs.store);
+		//		rootElement = std::move(rhs.rootElement);
+		//	}
+		//	return *this;
+		//}
 
 		bool operator==(const Impl& rhs)
 		{
@@ -376,7 +376,7 @@ namespace xbrlcapi
 	{
 		if (pImpl != rhs.pImpl)
 		{
-			pImpl->~Impl();
+			//pImpl->~Impl();
 			pImpl = rhs.pImpl;
 		}
 		return *this;

@@ -98,7 +98,7 @@ namespace xbrlcapi
 		Impl(Store& s)
 			: Impl()
 		{
-			store = std::move(s); 
+			store = s; 
 		}
 
 		Impl(Store& s, 
@@ -106,9 +106,9 @@ namespace xbrlcapi
 			EntityResolver& er)
 			: Impl()
 		{
-			store = std::move(s); 
-			xlinkProcessor = std::move(xlp); 
-			entityResolver = std::move(er);
+			store = s; 
+			xlinkProcessor = xlp; 
+			entityResolver = er;
 		}
 
 		Impl(Store& s, 
@@ -117,9 +117,9 @@ namespace xbrlcapi
 			std::vector<Poco::URI>& uris)
 			: Impl()
 		{
-			store = std::move(s); 
-			xlinkProcessor = std::move(xlp); 
-			entityResolver = std::move(er);
+			store = s; 
+			xlinkProcessor = xlp; 
+			entityResolver = er;
 			stashURIs(uris);								
 		}
 
@@ -183,12 +183,12 @@ namespace xbrlcapi
 
 		void setCache(Cache& cache)
 		{
-			cache = std::move(cache);
+			this->cache = cache;
 		}
 
 		void setCache(Cache&& cache)
 		{
-			cache = std::move(cache);
+			this->cache = cache;
 		}
 
 		Cache getCache() 
@@ -196,7 +196,7 @@ namespace xbrlcapi
 			//        if (this.cache == null)
 			//            throw XBRLException(
 			//                    "The loader cache is null and so cannot be used.");
-			return std::move(cache);
+			return cache;
 		}
 
 		std::shared_ptr<xercesc::DOMDocument> getBuilderDOM() {
@@ -223,12 +223,12 @@ namespace xbrlcapi
 
 		void setStore(Store& s)
 		{
-			store = std::move(s); 
+			store = s; 
 		}
 
 		Store getStore() 
 		{
-			return std::move(store);
+			return store;
 		}
 
 		void setDocumentURI(const Poco::URI& uri)
@@ -265,7 +265,7 @@ namespace xbrlcapi
 
 		void setXlinkProcessor(XLinkProcessor& xlp)
 		{
-			xlinkProcessor = std::move(xlp);
+			xlinkProcessor = xlp;
 		}
 
 
@@ -672,7 +672,7 @@ namespace xbrlcapi
 
 		void setEntityResolver(EntityResolver& resolver) 
 		{
-			entityResolver = std::move(resolver);
+			entityResolver = resolver;
 		}
 
 		//public std::string getNextFragmentId() {
@@ -696,7 +696,7 @@ namespace xbrlcapi
 
 		EntityResolver getEntityResolver() 
 		{
-			return std::move(entityResolver);
+			return entityResolver;
 		}
 		//
 		//    private bool useSchemaLocationAttributes = false;
@@ -833,7 +833,7 @@ namespace xbrlcapi
 		//        out.defaultWriteObject();
 		//    }    
 		void setHistory(History& h) {
-			history = std::move(h);
+			history = h;
 		}
 		//
 		/**
@@ -841,7 +841,7 @@ namespace xbrlcapi
 		*/
 		//History getHistory() 
 		//{
-		//	return std::move(history);
+		//	return history;
 		//}
 		//    
 		//    /**
@@ -966,7 +966,7 @@ namespace xbrlcapi
 	{
 		if (pImpl != rhs.pImpl)
 		{
-			pImpl->~Impl();
+			//pImpl->~Impl();
 			pImpl = rhs.pImpl;
 		}
 		return *this;
@@ -1168,12 +1168,12 @@ namespace xbrlcapi
 
 	void Loader::setHistory(History& history)
 	{
-		pImpl->setHistory(std::move(history));
+		pImpl->setHistory(history);
 	}
 
 	//History Loader::getHistory()
 	//{
-	//	return std::move(pImpl->getHistory()); 
+	//	return pImpl->getHistory(); 
 	//}
 
 	//bool Loader::hasHistory()

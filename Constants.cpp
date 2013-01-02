@@ -43,7 +43,7 @@ namespace xbrlcapi
 	const std::string XMLConstants::XBRLAPIMeasuresNamespace("http://xbrlapi.org/measures");
 	const std::string XMLConstants::XBRLAPIEquivalentEntitiesArcrole("http://xbrlapi.org/arcrole/equivalent-entity");
 	const std::string XMLConstants::XBRLAPILanguagesNamespace("http://xbrlapi.org/rfc1766/languages");    
-	//const std::string XMLConstants::XMLSchemaNamespace(XMLConstants.W3C_XML_SCHEMA_NS_URI;
+	const std::string XMLConstants::XMLSchemaNamespace(XMLConstants::W3C_XML_SCHEMA_NS_URI);
 	//const std::string XMLConstants::XMLSchemaInstanceNamespace(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
 	const std::string XMLConstants::LabelArcrole("http://www.xbrl.org/2003/arcrole/concept-label");
 	const std::string XMLConstants::GenericLabelArcrole("http://xbrl.org/arcrole/2008/element-label");

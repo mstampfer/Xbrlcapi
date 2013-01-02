@@ -77,7 +77,7 @@ namespace xbrlcapi
 		std::string containerName;
 		std::shared_ptr<DbEnv> environment;
 		int cacheSize;
-		DbXml::XmlManager dataManager;
+		std::shared_ptr<DbXml::XmlManager> dataManager;
 		long lastSync;
 		DbXml::XmlContainer dataContainer;
 		/**
@@ -89,7 +89,7 @@ namespace xbrlcapi
 			DB_INIT_LOG   |  // Initialize logging
 			DB_INIT_MPOOL |  // Initialize the cache
 			DB_INIT_TXN	|  // Initialize transactions
-			DB_THREAD;	   // 
+			DB_THREAD ;	   // 
 
 		Impl() {}
 
@@ -129,46 +129,46 @@ namespace xbrlcapi
 			computerIdentity(rhs.computerIdentity),
 			containerName(rhs.containerName),
 			dataContainer(rhs.dataContainer),
-			dataManager(std::move(rhs.dataManager)),
+			dataManager(rhs.dataManager),
 			domimplementation(rhs.domimplementation),
-			domImplementationRegistry(std::move(rhs.domImplementationRegistry)),
-			environment(std::move(rhs.environment)),
+			domImplementationRegistry(rhs.domImplementationRegistry),
+			environment(rhs.environment),
 			lastSync(rhs.lastSync),
 			loadingRights(rhs.loadingRights),
 			loadingStatus(rhs.loadingStatus),
 			locationName(rhs.locationName),
-			matcher(std::move(rhs.matcher)),
+			matcher(rhs.matcher),
 			namespaceBindings(rhs.namespaceBindings),
 			queryEvaluationType(rhs.queryEvaluationType),
 			storedom(rhs.storedom),
 			uris(rhs.uris)
 		{}
 
-		Impl& operator=(Impl&& rhs)
-		{
-			if (this != &rhs)
-			{
-				cacheSize = std::move(rhs.cacheSize);
-				computerIdentity = std::move(rhs.computerIdentity);
-				containerName = std::move(rhs.containerName);
-				dataContainer = std::move(rhs.dataContainer);
-				dataManager = std::move(rhs.dataManager);
-				domimplementation = std::move(rhs.domimplementation);
-				domImplementationRegistry = std::move(rhs.domImplementationRegistry);
-				environment = std::move(rhs.environment);
-				lastSync = std::move(rhs.lastSync);
-				loadingRights = std::move(rhs.loadingRights);
-				loadingStatus = std::move(rhs.loadingStatus);
-				locationName = std::move(rhs.locationName);
-				//			logger = rhs.logger;
-				matcher = std::move(rhs.matcher);
-				namespaceBindings = std::move(rhs.namespaceBindings);
-				queryEvaluationType = std::move(rhs.queryEvaluationType);
-				storedom = std::move(rhs.storedom);
-				uris = std::move(rhs.uris);
-			}
-			return *this;
-		}
+		//Impl& operator=(Impl&& rhs)
+		//{
+		//	if (this != &rhs)
+		//	{
+		//		cacheSize = std::move(rhs.cacheSize);
+		//		computerIdentity = std::move(rhs.computerIdentity);
+		//		containerName = std::move(rhs.containerName);
+		//		dataContainer = std::move(rhs.dataContainer);
+		//		dataManager = rhs.dataManager;
+		//		domimplementation = std::move(rhs.domimplementation);
+		//		domImplementationRegistry = std::move(rhs.domImplementationRegistry);
+		//		environment = std::move(rhs.environment);
+		//		lastSync = std::move(rhs.lastSync);
+		//		loadingRights = std::move(rhs.loadingRights);
+		//		loadingStatus = std::move(rhs.loadingStatus);
+		//		locationName = std::move(rhs.locationName);
+		//		//			logger = rhs.logger;
+		//		matcher = std::move(rhs.matcher);
+		//		namespaceBindings = std::move(rhs.namespaceBindings);
+		//		queryEvaluationType = std::move(rhs.queryEvaluationType);
+		//		storedom = std::move(rhs.storedom);
+		//		uris = std::move(rhs.uris);
+		//	}
+		//	return *this;
+		//}
 
 		std::string getComputerName()
 		{
@@ -282,9 +282,9 @@ namespace xbrlcapi
 
 			if (environment == nullptr) initEnvironment();
 			try {
-				dataManager = DbXml::XmlManager(environment->get_DB_ENV(), DbXml::DBXML_ADOPT_DBENV |
+				dataManager = std::make_shared<DbXml::XmlManager>(DbXml::XmlManager(environment->get_DB_ENV(), DbXml::DBXML_ADOPT_DBENV |
 					DbXml::DBXML_ALLOW_EXTERNAL_ACCESS |
-					DbXml::DBXML_ALLOW_AUTO_OPEN);
+					DbXml::DBXML_ALLOW_AUTO_OPEN));
 				logger.debug("Initialised the data manager.");
 			} catch (DbXml::XmlException e) {
 				throw XBRLException("The Berkeley XML database manager could not be set up.", e);
@@ -295,10 +295,12 @@ namespace xbrlcapi
 		{
 			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
 
-			if (dataManager == nullptr) initManager();
+			if (!dataManager) initManager();
+			containerName = ".\\test2";			
+			auto xx = dataManager->existsContainer(containerName);
 			try {
-				if (dataManager.existsContainer(containerName) != 0) {
-					dataContainer = dataManager.openContainer(containerName);
+ 				if (dataManager->existsContainer(containerName)) {
+					dataContainer = dataManager->openContainer(containerName);
 				} else {
 					createContainer();
 				}
@@ -312,12 +314,12 @@ namespace xbrlcapi
 
 		void createContainer()
 		{
-			if (dataManager == nullptr) initManager();
+			if (!dataManager) initManager();
 			try 
 			{
 				DbXml::XmlContainerConfig config;
 				config.setStatistics(DbXml::XmlContainerConfig::On);
-				dataContainer = dataManager.createContainer(containerName,config);
+				dataContainer = dataManager->createContainer(containerName,config);
 
 			} 
 			catch (const DbXml::XmlException& e) 
@@ -422,7 +424,7 @@ namespace xbrlcapi
 			xmlIndexSpecification.addIndex(XMLConstants::XBRLAPILanguagesNamespace,"value","node-element-equality-string");
 			xmlIndexSpecification.addIndex(XMLConstants::XBRLAPILanguagesNamespace,"encoding","node-element-equality-string");
 
-			xmlUpdateContext = dataManager.createUpdateContext();
+			xmlUpdateContext = dataManager->createUpdateContext();
 			dataContainer.setIndexSpecification(xmlIndexSpecification,xmlUpdateContext);
 
 			//} catch (XmlException e) {
@@ -448,11 +450,11 @@ namespace xbrlcapi
 
 		void deleteContainer()
 		{
-			//        if (dataManager == null) initManager();
+			//        if (!dataManager) initManager();
 			//        closeContainer();
 			//        try {
-			//            if (dataManager.existsContainer(containerName) != 0) {
-			//                dataManager.removeContainer(containerName);
+			//            if (dataManager->existsContainer(containerName) != 0) {
+			//                dataManager->removeContainer(containerName);
 			//            }
 			//        } catch (XmlException e) {
 			//            throw XBRLException("The BDB XML database container could not be deleted.");
@@ -476,7 +478,7 @@ namespace xbrlcapi
 				if (hasXMLResource(index)) remove(index);
 
 				std::string content = serialize(xml.getMetadataRootElement());
-				xmlUpdateContext = dataManager.createUpdateContext();
+				xmlUpdateContext = dataManager->createUpdateContext();
 				//DbXml::XmlDocumentConfig documentConfiguration = new XmlDocumentConfig();
 				//documentConfiguration.setWellFormedOnly(true);
 				dataContainer.putDocument(index, content, xmlUpdateContext, NULL);
@@ -542,7 +544,7 @@ namespace xbrlcapi
 
 			DbXml::XmlUpdateContext xmlUpdateContext;
 			try {
-				xmlUpdateContext = dataManager.createUpdateContext();
+				xmlUpdateContext = dataManager->createUpdateContext();
 				dataContainer.deleteDocument(index,xmlUpdateContext);
 			} 
 			catch (const DbXml::XmlException& e) 
@@ -726,7 +728,7 @@ namespace xbrlcapi
 			myQuery.replace(pos, expr.size(), roots);
 			DbXml::XmlQueryContext xmlQueryContext = createQueryContext();
 			xmlQueryContext.setEvaluationType(evaluationType);
-			xmlQueryExpression = dataManager.prepare(myQuery,xmlQueryContext);
+			xmlQueryExpression = dataManager->prepare(myQuery,xmlQueryContext);
 			//logger.debug(xmlQueryExpression.getQueryPlan());
 			//double startTime = System.currentTimeMillis();
 			DbXml::XmlResults xmlResults = xmlQueryExpression.execute(xmlQueryContext);
@@ -751,7 +753,7 @@ namespace xbrlcapi
 			//             std::string query = "collection('" + dataContainer.getName() + "')" + myQuery;
 			//            XmlQueryContext xmlQueryContext = createQueryContext();
 			//            xmlQueryContext.setEvaluationType(XmlQueryContext.Lazy);
-			//            xmlQueryExpression = dataManager.prepare(query,xmlQueryContext);
+			//            xmlQueryExpression = dataManager->prepare(query,xmlQueryContext);
 			//            double startTime = System.currentTimeMillis();
 			//            XmlResults xmlResults = xmlQueryExpression.execute(xmlQueryContext);
 			//            Double time = new Double((System.currentTimeMillis()-startTime));
@@ -774,7 +776,7 @@ namespace xbrlcapi
 			DbXml::XmlQueryContext xmlQueryContext;
 			std::vector<std::string> keys;
 			//try {
-			xmlQueryContext = dataManager.createQueryContext();
+			xmlQueryContext = dataManager->createQueryContext();
 			xmlQueryContext.setReturnType(xmlQueryContext.LiveValues);
 			xmlQueryContext.setNamespace(XMLConstants::XLinkPrefix, XMLConstants::XLinkNamespace);
 			//	xmlQueryContext.setNamespace(XMLConstants::XMLSchemaPrefix, XMLConstants::XMLSchemaNamespace); TODO
@@ -819,7 +821,7 @@ namespace xbrlcapi
 			//            if (namespace != null) ns = namespace;
 			//            xmlIndexSpecification.addIndex(ns,name,type);
 			//            logger.info("Adding index for " + ns + ":" + name + " " + type);
-			//            xmlUpdateContext = dataManager.createUpdateContext();
+			//            xmlUpdateContext = dataManager->createUpdateContext();
 			//            dataContainer.setIndexSpecification(xmlIndexSpecification,xmlUpdateContext);
 			//        } catch (XmlException e) {
 			//            throw XBRLException("The new index could not be configured.", e);
@@ -903,7 +905,7 @@ namespace xbrlcapi
 		//
 		DefaultMatcher getMatcher()
 		{
-			return std::move(matcher);
+			return matcher;
 		}    
 
 		//
@@ -3103,7 +3105,7 @@ namespace xbrlcapi
 	{
 		if (pImpl != rhs.pImpl)
 		{
-			pImpl->~Impl();
+			//pImpl->~Impl();
 			pImpl = rhs.pImpl;
 		}
 		return *this;

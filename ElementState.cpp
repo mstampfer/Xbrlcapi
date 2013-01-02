@@ -146,7 +146,7 @@ namespace xbrlcapi
 	{
 		if (pImpl != rhs.pImpl)
 		{
-			pImpl->~Impl();
+			//pImpl->~Impl();
 			pImpl = rhs.pImpl;
 		}
 		return *this;

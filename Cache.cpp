@@ -45,15 +45,15 @@ namespace xbrlcapi
 		std::unordered_map<Poco::URI, Poco::URI> uriMap;
 
 		Impl() {}
-		Impl(const Impl& rhs) : cacheFile(std::move(rhs.cacheFile)) {}
+		Impl(const Impl& rhs) : cacheFile(rhs.cacheFile) {}
 
-		Impl(CacheFile& rhs) : cacheFile(std::move(rhs))
+		Impl(CacheFile& rhs) : cacheFile(rhs)
 		{
 			if (! exists(cacheFile.getPath())) throw XBRLException("The cache " + cacheFile.getFilename() + " does not exist.");
 		}
 		Impl(CacheFile& cf, const std::unordered_map<Poco::URI, Poco::URI>& map)
 		{
-			cacheFile = std::move(cf);
+			cacheFile = cf;
 			uriMap = map;
 		}	
 
@@ -61,7 +61,7 @@ namespace xbrlcapi
 		{
 			if (this != &rhs)
 			{
-				cacheFile = std::move(rhs.cacheFile);
+				cacheFile = rhs.cacheFile;
 			}
 			return *this;
 		}
@@ -593,7 +593,7 @@ Cache& Cache::operator=(const Cache& rhs)
 {
 	if (pImpl != rhs.pImpl)
 	{
-		pImpl->~Impl();
+		//pImpl->~Impl();
 		pImpl = rhs.pImpl;
 	}
 	return *this;
@@ -613,12 +613,12 @@ Cache& Cache::operator=(const Cache& rhs)
 
 	Cache::Cache(CacheFile& cacheFile) 
 	{
-		pImpl->cacheFile = std::move(cacheFile);
+		pImpl->cacheFile = cacheFile;
 	}
 
 	Cache::Cache(CacheFile& cacheFile, const std::unordered_map<Poco::URI, Poco::URI>& map)
 	{
-		pImpl->cacheFile = std::move(cacheFile);
+		pImpl->cacheFile = cacheFile;
 		pImpl->uriMap = map;
 	}
 

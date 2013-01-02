@@ -29,15 +29,15 @@ namespace xbrlcapi
 			: cache(Cache(cacheFile, uriMap))
 		{}
 
-		Impl& operator=(Impl&& rhs)
-		{
-			if (this != &rhs)
-			{
-				cache = std::move(cache);
-				cacheFile = std::move(cacheFile);
-			}
-			return *this;
-		}
+		//Impl& operator=(Impl&& rhs)
+		//{
+		//	if (this != &rhs)
+		//	{
+		//		cache = std::move(cache);
+		//		cacheFile = std::move(cacheFile);
+		//	}
+		//	return *this;
+		//}
 
 		bool operator==(Impl& rhs)
 		{
@@ -162,7 +162,7 @@ namespace xbrlcapi
 	{
 		if (pImpl != rhs.pImpl)
 		{
-			pImpl->~Impl();
+			//pImpl->~Impl();
 			pImpl = rhs.pImpl;
 		}
 		return *this;
