@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CA77662E-3B69-4986-B4E7-F53C122900A8}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>XBRLCAPI</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120_CTP_Nov2012</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>C:\Users\Marcel\Documents\Visual Studio 2012\Projects\XBRLCAPI\XBRLCAPI\Debug;C:\ProgramData\log4cpp\msvc10\log4cppLIB\Debug;C:\ProgramData\Poco\poco-1.4.5\bin;C:\ProgramData\Poco\poco-1.4.5\lib;C:\Program Files (x86)\Oracle\Berkeley DB XML 2.5.16\lib;C:\ProgramData\boost\boost_1_52_0\lib;C:\ProgramData\xerces-c\Build\Win32\VC10\Debug;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib;$(LibraryPath)</LibraryPath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <SourcePath>C:\ProgramData\Berkeley DB\db-5.3.21\src;C:\ProgramData\xerces-c\src\xercesc;C:\Users\Marcel\BerkeleyXMLDB\xqilla\src;C:\Users\Marcel\BerkeleyXMLDB\dbxml\src\dbxml;$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ProgramData\Poco\poco-1.4.5\Foundation\include;C:\Program Files (x86)\Oracle\Berkeley DB XML 2.5.16\include;C:\ProgramData\boost\boost_1_52_0;C:\ProgramData\log4cpp\include;C:\ProgramData\xerces-c\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CallingConvention>Cdecl</CallingConvention>
+      <BrowseInformation>true</BrowseInformation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>libboost_filesystem-vc110-mt-gd-1_52.lib;PocoFoundationd.lib;xerces-c_3D.lib;libdbxml25.lib;libdb48.lib;Ws2_32.lib;log4cppD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CallingConvention>Cdecl</CallingConvention>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Cache.cpp" />
+    <ClCompile Include="CacheFile.cpp" />
+    <ClCompile Include="ContentHandler.cpp" />
+    <ClCompile Include="ElementState.cpp" />
+    <ClCompile Include="EntityResolver.cpp" />
+    <ClCompile Include="GenericDocumentRootIdentifier.cpp" />
+    <ClCompile Include="History.cpp" />
+    <ClCompile Include="BaseMatcherImpl.cpp" />
+    <ClCompile Include="LanguageIdentifier.cpp" />
+    <ClCompile Include="MD5Signer.cpp" />
+    <ClCompile Include="DefaultMatcher.cpp" />
+    <ClCompile Include="BaseContentHandler.cpp" />
+    <ClCompile Include="ReferencePartIdentifier.cpp" />
+    <ClCompile Include="ReferenceResource.cpp" />
+    <ClCompile Include="Signer.cpp" />
+    <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="Builder.cpp" />
+    <ClCompile Include="SchemaIdentifier.cpp" />
+    <ClCompile Include="BaseIdentifier.cpp" />
+    <ClCompile Include="BaseURISAXResolver.cpp" />
+    <ClCompile Include="LabelResource.cpp" />
+    <ClCompile Include="CustomLinkRecogniser.cpp" />
+    <ClCompile Include="XMLDOMSerializer.cpp" />
+    <ClCompile Include="XBRLIdentifier.cpp" />
+    <ClCompile Include="XBRLXLinkIdentifier.cpp" />
+    <ClCompile Include="XLinkProcessor.cpp" />
+    <ClCompile Include="XML.cpp" />
+    <ClCompile Include="StubImpl.cpp" />
+    <ClCompile Include="XBRLXLinkHandler.cpp" />
+    <ClInclude Include="ArcEnd.h" />
+    <ClInclude Include="BaseURIResolver.h" />
+    <ClInclude Include="Cache.h" />
+    <ClInclude Include="CacheFile.h" />
+    <ClInclude Include="Comparable.h" />
+    <ClInclude Include="Concept.h" />
+    <ClInclude Include="ConceptImpl.h" />
+    <ClCompile Include="Constants.cpp" />
+    <ClInclude Include="Constants.h" />
+    <ClInclude Include="Context.h" />
+    <ClInclude Include="ElementDeclaration.h" />
+    <ClInclude Include="ElementDeclarationImpl.h" />
+    <ClInclude Include="ElementState.h" />
+    <ClInclude Include="EntityResolver.h" />
+    <ClInclude Include="ExtendedLink.h" />
+    <ClInclude Include="ExtendedLinkContent.h" />
+    <ClInclude Include="Fact.h" />
+    <ClInclude Include="FactDimensionContainer.h" />
+    <ClInclude Include="FootnoteResource.h" />
+    <ClInclude Include="Fragment.h" />
+    <ClInclude Include="GenericDocumentRootIdentifier.h" />
+    <ClInclude Include="HashFunctions.h" />
+    <ClInclude Include="DefaultMatcher.h" />
+    <ClInclude Include="BaseMatcherImpl.h" />
+    <ClInclude Include="ContentHandler.h" />
+    <ClInclude Include="BaseContentHandler.h" />
+    <ClInclude Include="FragmentFactory.h" />
+    <ClInclude Include="DbXmlXerces.hpp" />
+    <ClInclude Include="BaseIdentifier.h" />
+    <ClInclude Include="BaseURISAXResolver.h" />
+    <ClInclude Include="LabelResource.h" />
+    <ClInclude Include="LanguageIdentifier.h" />
+    <ClInclude Include="Identifier.h" />
+    <ClInclude Include="NonFragmentXML.h" />
+    <ClInclude Include="Builder.h" />
+    <ClInclude Include="Pimpl.h" />
+    <ClInclude Include="PimplImpl.h" />
+    <ClInclude Include="ReferencePart.h" />
+    <ClInclude Include="ReferencePartIdentifier.h" />
+    <ClInclude Include="ReferenceResource.h" />
+    <ClInclude Include="SchemaIdentifier.h" />
+    <ClInclude Include="SimpleLink.h" />
+    <ClInclude Include="XBRLIdentifier.h" />
+    <ClInclude Include="XBRLXLinkIdentifier.h" />
+    <ClInclude Include="XLinkException.h" />
+    <ClInclude Include="XMLDOMSerializer.h" />
+    <ClInclude Include="XmlInputStreamWrapper.hpp" />
+    <ClInclude Include="XBRLException.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="XercesStrings.h" />
+    <ClInclude Include="XMLDomBuilder.h" />
+    <ClInclude Include="Util.h" />
+    <ClInclude Include="Stub.h" />
+    <ClInclude Include="Signer.h" />
+    <ClInclude Include="MD5Signer.h" />
+    <ClInclude Include="Matcher.h" />
+    <ClInclude Include="History.h" />
+    <ClInclude Include="Instance.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="Link.h" />
+    <ClInclude Include="Load.h" />
+    <ClInclude Include="Loader.h" />
+    <ClInclude Include="MixedContentResource.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ScchemaDeclaration.h" />
+    <ClInclude Include="SchemaContent.h" />
+    <ClInclude Include="SchemaContentDeclaration.h" />
+    <ClInclude Include="SchemaContentDeclarationImpl.h" />
+    <ClInclude Include="SchemaContentImpl.h" />
+    <ClInclude Include="SchemaDeclaration.h" />
+    <ClInclude Include="SchemaDeclarationImpl.h" />
+    <ClInclude Include="Store.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Storer.h" />
+    <ClInclude Include="StorerImpl.h" />
+    <ClInclude Include="StubImpl.h" />
+    <ClInclude Include="Unit.h" />
+    <ClInclude Include="CustomLinkRecogniser.h" />
+    <ClInclude Include="XBRLXLinkHandler.h" />
+    <ClInclude Include="Xlink.h" />
+    <ClInclude Include="XLinkHandler.h" />
+    <ClInclude Include="XLinkHandlerDefault.h" />
+    <ClInclude Include="XLinkProcessor.h" />
+    <ClInclude Include="XML.h" />
+    <ClInclude Include="XMLImpl.h" />
+    <ClInclude Include="XmlInputStreamWrap.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ConceptImpl.cpp" />
+    <ClCompile Include="ElementDeclarationImpl.cpp" />
+    <ClCompile Include="Fragment.cpp" />
+    <ClCompile Include="HashFunctions.cpp" />
+    <ClCompile Include="Load.cpp" />
+    <ClCompile Include="SchemaContentDeclarationImpl.cpp" />
+    <ClCompile Include="SchemaContentImpl.cpp" />
+    <ClCompile Include="SchemaDeclarationImpl.cpp" />
+    <ClCompile Include="Loader.cpp" />
+    <ClCompile Include="Store.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
