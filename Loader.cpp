@@ -67,59 +67,72 @@ namespace xbrlcapi
 		std::stack<ElementState> states;
 		std::stack<Fragment> fragments;
 
-		Impl() :
+		Impl() : 
 			discovering(false),
 			fragmentId(0),
 			interrupt(false),
 			_useSchemaLocationAttributes(false)
 		{
+		}
+
+		Impl(const Impl& rhs) //: 
+			//cache(rhs.cache), 
+			//discovering(rhs.discovering),
+			//documentId(rhs.documentId),
+			//documentQueue(rhs.documentQueue),
+			//documentURI(rhs.documentURI),
+			//dom(rhs.dom),
+			//entityResolver(rhs.entityResolver),
+			//failures(rhs.failures),
+			//fragmentId(rhs.fragmentId),
+			//history(rhs.history),
+			//interrupt(rhs.interrupt),
+			//store(rhs.store),
+			//successes(rhs.successes),
+			//xlinkProcessor(rhs.xlinkProcessor),
+			//_useSchemaLocationAttributes(rhs._useSchemaLocationAttributes)
+		{}
+
+		Impl(Store& store) : 			
+			discovering(false),
+			fragmentId(0),
+			interrupt(false),
+			_useSchemaLocationAttributes(false),
+			store(store)
+		{
+		}
+
+		Impl(Store& store, 
+			XLinkProcessor& xlinkProcessor, 
+			EntityResolver& entityResolver, 			
+			const Cache& cache) :
+		discovering(false),
+			fragmentId(0),
+			interrupt(false),
+			_useSchemaLocationAttributes(false),
+			store(store),
+			xlinkProcessor(xlinkProcessor),
+			entityResolver(entityResolver),
+			cache(cache)
+		{
 			initialize();
 		}
 
-		//Impl(const Impl& rhs) 
-		//{
-		//	cache = std::move(rhs.cache);
-		//	discovering = rhs.discovering;
-		//	documentId = rhs.documentId;
-		//	documentQueue = rhs.documentQueue;
-		//	documentURI = rhs.documentURI;
-		//	dom = rhs.dom;
-		//	entityResolver = std::move(rhs.entityResolver);
-		//	failures = rhs.failures;
-		//	fragmentId = rhs.fragmentId;
-		//	history = std::move(rhs.history);
-		//	interrupt = rhs.interrupt;
-		//	store = std::move(rhs.store);
-		//	successes = rhs.successes;
-		//	xlinkProcessor = std::move(rhs.xlinkProcessor);
-		//	_useSchemaLocationAttributes = rhs._useSchemaLocationAttributes;
-		//}
-
-		Impl(Store& s)
-			: Impl()
+		Impl(Store& store, 
+			XLinkProcessor& xlinkProcessor, 
+			EntityResolver& entityResolver,	
+			const Cache& cache,
+			std::vector<Poco::URI>& uris) :
+		discovering(false),
+			fragmentId(0),
+			interrupt(false),
+			_useSchemaLocationAttributes(false),
+			store(store),
+			xlinkProcessor(xlinkProcessor),
+			entityResolver(entityResolver),
+			cache(cache)
 		{
-			store = s; 
-		}
-
-		Impl(Store& s, 
-			XLinkProcessor& xlp, 
-			EntityResolver& er)
-			: Impl()
-		{
-			store = s; 
-			xlinkProcessor = xlp; 
-			entityResolver = er;
-		}
-
-		Impl(Store& s, 
-			XLinkProcessor& xlp, 
-			EntityResolver& er,		
-			std::vector<Poco::URI>& uris)
-			: Impl()
-		{
-			store = s; 
-			xlinkProcessor = xlp; 
-			entityResolver = er;
+			initialize();
 			stashURIs(uris);								
 		}
 
@@ -352,17 +365,17 @@ namespace xbrlcapi
 		}
 
 
-		void discover(const std::vector<Poco::URI>& startingURIs)
+		void discover(const std::vector<Poco::URI>& startingURIs, Loader& loader)
 		{
 			for (auto uri : startingURIs) 
 				stashURI(uri);
-			discover();
+			discover(loader);
 		}
 
-		void discover(const Poco::URI& uri)
+		void discover(const Poco::URI& uri, Loader& loader)
 		{
 			stashURI(uri);
-			discover();
+			discover(loader);
 		}
 
 		void discover(wchar_t* uri)
@@ -384,7 +397,7 @@ namespace xbrlcapi
 		//    }
 
 
-		void discover()
+		void discover(Loader& loader)
 		{
 			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
 			store.startLoading();
@@ -426,7 +439,7 @@ namespace xbrlcapi
 					setDocumentURI(uri);
 					setNextFragmentId("1");
 					try {
-						parse(uri);
+						parse(uri, loader);
 						end = std::chrono::system_clock::now();
 						long long duration = std::chrono::duration_cast<std::chrono::seconds>(end-start).count();
 						logger.info("#" + std::to_string(discoveryCount) + " took " 
@@ -602,10 +615,10 @@ namespace xbrlcapi
 			store.recindLoadingRightsFor(uri); 
 		}
 
-		void parse(const Poco::URI& uri) 
+		void parse(const Poco::URI& uri, Loader& loader) 
 		{
 			xercesc::InputSource* inputSource =  entityResolver.resolveEntity(L"", getWC(uri.toString()).c_str());
-			ContentHandler contentHandler;
+			ContentHandler contentHandler(loader, uri);
 			parse(uri, *inputSource, contentHandler);
 		}
 
@@ -947,7 +960,7 @@ namespace xbrlcapi
 			parser->setEntityResolver(&entityResolver);
 			parser->setErrorHandler(&contentHandler);        
 			parser->setContentHandler(dynamic_cast<xercesc::ContentHandler*>(&contentHandler));     
-			inputSource.setSystemId(L"file:/C:/Users/marcel/cache2/http/www.xbrl.org/-1/2003/xbrl-instance-2003-12-31.xsd");
+			inputSource.setSystemId(L"file:\\C:\\Users\\marcel\\cache2\\http\\www.xbrl.org\\-1\\2003\\xbrl-instance-2003-12-31.xsd");
 			parser->parse(inputSource);
 
 		}
@@ -983,18 +996,22 @@ namespace xbrlcapi
 
 	Loader::Loader(Store& store, 
 		XLinkProcessor& xlinkProcessor, 
-		EntityResolver& entityResolver)
+		EntityResolver& entityResolver,
+		const Cache& cache)
 		: pImpl(store, 
 		xlinkProcessor, 
-		entityResolver)
+		entityResolver, 
+		cache)
 	{}
 	Loader::Loader(Store& store, 
 		XLinkProcessor& xlinkProcessor, 
 		EntityResolver& entityResolver, 
+		const Cache& cache,
 		std::vector<Poco::URI>& uris)
 		: pImpl(store, 
 		xlinkProcessor, 
 		entityResolver, 
+		cache,
 		uris)
 	{}
 
@@ -1047,7 +1064,7 @@ namespace xbrlcapi
 
 	void Loader::discover()
 	{
-		pImpl->discover();
+		pImpl->discover(*this);
 	}
 
 	//void Loader::discoverNext()
@@ -1062,12 +1079,12 @@ namespace xbrlcapi
 
 	void Loader::discover(const std::vector<Poco::URI>& startingURIs)
 	{
-		pImpl->discover(startingURIs);
+		pImpl->discover(startingURIs, *this);
 	}
 
 	void Loader::discover(const Poco::URI& uri)
 	{
-		pImpl->discover(uri);
+		pImpl->discover(uri, *this);
 	}
 
 	void Loader::discover(const std::string& uri)

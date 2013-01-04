@@ -34,7 +34,7 @@ namespace xbrlcapi
 
 		Impl(const xercesc::DOMDocument& dom)
 		{
-			//		this->dom = std::make_shared<xercesc::DOMDocument>(dom);
+			//		this->dom = std::shared_ptr<xercesc::DOMDocument>(&dom);
 			setupBuilder();
 		}
 

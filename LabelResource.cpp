@@ -20,16 +20,16 @@ namespace xbrlcapi
 		//std::string getStringValue()
 		//{
 		//	//std::string value = "";
-		//	//std::shared_ptr<xercesc::DOMNodeList> nodes = std::make_shared<xercesc::DOMNodeList>(getContentAsNodeList());
+		//	//std::shared_ptr<xercesc::DOMNodeList> nodes = std::shared_ptr<xercesc::DOMNodeList>(getContentAsNodeList());
 		//	//for (int i=0; i<nodes->getLength(); i++) 
 		//	//{
-		//	//	std::shared_ptr<xercesc::DOMNode> node = std::make_shared<xercesc::DOMNode>(nodes->item(i));
+		//	//	std::shared_ptr<xercesc::DOMNode> node = std::shared_ptr<xercesc::DOMNode>(nodes->item(i));
 		//	//	if (node->getNodeType() == xercesc::DOMNode::TEXT_NODE) value = value + " " + xerces_util::toNative(node->getTextContent()).trim() + " ";
 		//	//	if (node->getNodeType() == xercesc::DOMNode::ELEMENT_NODE) value = value + getStringValue((Element) node);			
 		//	//}
 
 		//	//Pattern pattern = Pattern.compile("\\s+");
-		//	//std::shared_ptr<Matcher> matcher = std::make_shared(pattern.matcher(value));
+		//	//std::shared_ptr<Matcher> matcher = std::shared_ptr(pattern.matcher(value));
 		//	//return matcher->replaceAll(" ").trim();
 		//	return std::string();
 		//}

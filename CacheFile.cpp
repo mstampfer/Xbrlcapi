@@ -9,7 +9,7 @@ namespace xbrlcapi
 	{
 
 		boost::filesystem::path path;
-		std::unique_ptr<boost::filesystem::fstream> os;
+		std::shared_ptr<boost::filesystem::fstream> os;
 
 		Impl(const char* name = "c:\\temp\\default.cache") : path(name)
 		{
@@ -20,6 +20,9 @@ namespace xbrlcapi
 		{
 			os = std::unique_ptr<boost::filesystem::fstream>(new boost::filesystem::fstream(path));
 		}
+
+		Impl(const Impl& rhs) : path(rhs.path), os(rhs.os)
+		{}
 
 		operator bool() const
 		{

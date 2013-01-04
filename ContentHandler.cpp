@@ -37,10 +37,10 @@ namespace xbrlcapi
 
 		Impl() {}
 
-		Impl(const Loader& loader, const Poco::URI& uri) : BaseContentHandler(loader, uri)
+		Impl(Loader& loader, const Poco::URI& uri) : BaseContentHandler(loader, uri)
 		{}
 
-		Impl(const Loader& loader, const Poco::URI& uri, const std::string& xml) : Impl(loader, uri)
+		Impl(Loader& loader, const Poco::URI& uri, const std::string& xml) : Impl(loader, uri)
 		{
 			//identifiers = getIdentifiers();
 			setXML(xml);
@@ -214,9 +214,9 @@ namespace xbrlcapi
 			try 
 			{
 				getLoader().getXlinkProcessor().endElement(namespaceURI, 
-														   lName, 
-														   qName, 
-														   *attrs);
+					lName, 
+					qName, 
+					*attrs);
 			}
 			catch (XLinkException e) 
 			{
@@ -348,7 +348,7 @@ namespace xbrlcapi
 		*/
 		//void addIdentifier(int index, const Identifier& identifier) 
 		//{
-		//	identifiers.push_back(std::make_shared<Identifier>(identifier));
+		//	identifiers.push_back(std::shared_ptr<Identifier>(identifier));
 		//}
 
 		/**
@@ -396,7 +396,7 @@ namespace xbrlcapi
 			//	//	s.append("a document without a URI.  All DTS documents must have a URI but one being parsed into the DTS does not.");
 			//	//s.append("The problem seems to be on line" + getLineNumber() + " at column " + getColumnNumber() + ".");
 			//	//return s.toString();
-				return std::string();
+			return std::string();
 		}
 
 		XBRLXLinkHandler getXLinkHandler()
@@ -438,11 +438,14 @@ namespace xbrlcapi
 	{
 		if (pImpl != rhs.pImpl)
 		{
-			//pImpl->~Impl();
+			pImpl->~Impl();
 			pImpl = rhs.pImpl;
 		}
 		return *this;
 	}
+
+	ContentHandler::ContentHandler(Loader& loader, const Poco::URI& uri) : pImpl(loader, uri)
+	{}
 
 	ContentHandler::ContentHandler(ContentHandler&& rhs) 
 	{ 

@@ -12,7 +12,7 @@ namespace xbrlcapi
 	* This class provides a real world example of an XLink handler for XBRL.
 	* @author Geoffrey Shuetrim (geoff@galexy.net)
 	*/
-	class XBRLXLinkHandler : public XLinkHandlerDefault 
+	class XBRLXLinkHandler //: public XLinkHandlerDefault 
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;
@@ -34,7 +34,7 @@ namespace xbrlcapi
 		* Set the XBRL DTS loader
 		* @param loader The XBRL DTS loader
 		*/
-		void setLoader(const Loader& loader);
+		//void setLoader(const Loader& loader);
 
 		/**
 		* Set the base URI resolver for the XBRL XLink handler.
@@ -54,7 +54,7 @@ namespace xbrlcapi
 		void startTitle(const std::string& namespaceURI, 
 						const std::string& lName, 
 						const std::string& qName,
-						const xercesc::Attributes& attrs) override;
+						const xercesc::Attributes& attrs);
 
 		/**
 		* Handle the change of XML Base scope as you step back up the tree

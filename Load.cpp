@@ -17,6 +17,7 @@
 #include "Cache.h"
 #include "log4cpp/PropertyConfigurator.hh"
 #include <memory>
+#include <Poco/Exception.h>
 
 using Poco::URI;
 namespace xbrlcapi
@@ -105,48 +106,47 @@ namespace xbrlcapi
 	}
 
 
-void initLogger()
-{
-	log4cpp::Category &log_root = log4cpp::Category::getRoot();
-	log4cpp::Category &log_sub1 = log4cpp::Category::getInstance( std::string("log_sub1") );
-	log4cpp::Category &log_sub2 = log4cpp::Category::getInstance( std::string("log_sub1.log_sub2") );
-
-	const char *file_log4cpp_init = "log4cpp.properties";
-
-	try
+	void initLogger()
 	{
-		log4cpp::PropertyConfigurator::configure( file_log4cpp_init );
-	}
-	catch( log4cpp::ConfigureFailure &e )
-	{
-		std::cout 
-			<< e.what() 
-			<< " [log4cpp::ConfigureFailure catched] while reading " 
-			<< file_log4cpp_init 
-			<< std::endl;
+		log4cpp::Category &log_root = log4cpp::Category::getRoot();
+		log4cpp::Category &log_sub1 = log4cpp::Category::getInstance( std::string("log_sub1") );
+		log4cpp::Category &log_sub2 = log4cpp::Category::getInstance( std::string("log_sub1.log_sub2") );
 
-		exit(1);
+		const char *file_log4cpp_init = "log4cpp.properties";
+
+		try
+		{
+			log4cpp::PropertyConfigurator::configure( file_log4cpp_init );
+		}
+		catch( log4cpp::ConfigureFailure &e )
+		{
+			std::cout 
+				<< e.what() 
+				<< " [log4cpp::ConfigureFailure catched] while reading " 
+				<< file_log4cpp_init 
+				<< std::endl;
+
+			exit(1);
+		}
 	}
-}
 	///**
 	//* @param store The store to use for the loader.
 	//* @param cache The root directory of the document cache.
 	//* @return the loader to use for loading the instance and its DTS
 	//* @throws XBRLException if the loader cannot be initialised.
 	//*/
-	std::shared_ptr<Loader> Load::createLoader(Store& store, const std::string& cache) 
+	std::shared_ptr<Loader> Load::createLoader(Store& store, const std::string& filename) 
 	{
+		std::unordered_map<Poco::URI,Poco::URI> map;
 		initLogger();
 		log4cpp::Category &logger = log4cpp::Category::getInstance( std::string("log_sub1") );
-		std::shared_ptr<XBRLXLinkHandler> xlinkHandler;
+		std::shared_ptr<XBRLXLinkHandler> xlinkHandler = std::shared_ptr<XBRLXLinkHandler>(new XBRLXLinkHandler());
 		CustomLinkRecogniser customLinkRecogniser; 
 		XLinkProcessor xlinkProcessor(xlinkHandler,customLinkRecogniser);
 
-		CacheFile cacheFile(cache);
-
-		// Rivet errors in the SEC XBRL data require these URI remappings to prevent discovery process from breaking.
-		std::unordered_map<Poco::URI,Poco::URI> map;
-		try {
+		try 
+		{
+			// Rivet errors in the SEC XBRL data require these URI remappings to prevent discovery process from breaking.
 			map.insert(std::make_pair(Poco::URI("http://www.xbrl.org/2003/linkbase/xbrl-instance-2003-12-31.xsd"),
 				Poco::URI("http://www.xbrl.org/2003/xbrl-instance-2003-12-31.xsd")));
 			map.insert(std::make_pair( Poco::URI("http://www.xbrl.org/2003/instance/xbrl-instance-2003-12-31.xsd"),
@@ -163,19 +163,20 @@ void initLogger()
 				Poco::URI("http://www.xbrl.org/2003/xlink-2003-12-31.xsd")));
 			map.insert(std::make_pair( Poco::URI("http://www.xbrl.org/2003/linkbase/xlink-2003-12-31.xsd"),
 				Poco::URI("http://www.xbrl.org/2003/xlink-2003-12-31.xsd")));
-		} catch (...) 
+
+			CacheFile cacheFile(filename);
+			Cache cache(cacheFile);
+			EntityResolver entityResolver(cacheFile, map);      
+			std::shared_ptr<Loader> loader(new Loader(store, xlinkProcessor, entityResolver, cache));
+//			loader->setCache(cache);
+//			loader->setEntityResolver(entityResolver);
+//			xlinkHandler->setLoader(*loader);
+			return loader;
+		}
+		catch (Poco::SyntaxException) 
 		{
 			throw std::exception("URI syntax exception");
-		}
-			EntityResolver entityResolver(cacheFile, map);      
-			std::shared_ptr<Loader> loader(new Loader(store, xlinkProcessor, entityResolver));
-		try
-		{
-			Cache cache(cacheFile);
-			loader->setCache(cache);
-			//loader->setEntityResolver(entityResolver);
-			xlinkHandler->setLoader(*loader);
-		}
+		}		
 		catch (const XBRLException& e)
 		{
 			logger.error("Error initializing Loader " + e.getMessage());
@@ -184,8 +185,6 @@ void initLogger()
 		{
 			logger.error("Unknown error initializing Loader ");
 		}
-		return loader;
-
 	}
 
 	/**
@@ -195,7 +194,7 @@ void initLogger()
 	*/
 	void Load::cleanup(Store& store) 
 	{
-					store.close();
+		store.close();
 	}    
 	/**
 	/* Report incorrect usage of the command line, with a list of the arguments

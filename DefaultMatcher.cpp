@@ -7,14 +7,14 @@ namespace xbrlcapi
 	{
 		Impl() {}
 
-		//Impl(const DefaultMatcher& rhs)
-		//{
-		//}
+		Impl(const Impl& rhs)
+		{
+		}
 
-		//DefaultMatcher& operator=(const DefaultMatcher& rhs)
-		//{
-		//	return *this;
-		//}
+		Impl& operator=(const Impl& rhs)
+		{
+			return *this;
+		}
 
 		void setSigner(const Signer& signer) 
 		{
@@ -69,10 +69,8 @@ namespace xbrlcapi
 	DefaultMatcher::DefaultMatcher() {}
 	DefaultMatcher::~DefaultMatcher() {} 
 
-	DefaultMatcher::DefaultMatcher(const DefaultMatcher& rhs) 
-	{ 
-		pImpl = rhs.pImpl; 
-	}
+	DefaultMatcher::DefaultMatcher(const DefaultMatcher& rhs) : pImpl(rhs.pImpl)
+	{ }
 
 	DefaultMatcher& DefaultMatcher::operator=(const DefaultMatcher& rhs)
 	{

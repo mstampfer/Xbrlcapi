@@ -7,13 +7,13 @@
 
 namespace xbrlcapi
 {
-	struct BaseContentHandler::Impl : public xercesc::DefaultHandler
+	struct BaseContentHandler::Impl 
 	{
 		Impl() {}
-		Impl(const Loader& loader, const Poco::URI& uri) 
+		Impl(Loader& loader, const Poco::URI& uri) 
 		{
-			setURI(uri);
-			setLoader(loader);		
+			this->uri = uri;
+			this->loader = loader;		
 		}
 		Loader loader;
 
@@ -53,7 +53,7 @@ namespace xbrlcapi
 			return state;
 		}    
 
-		std::list<std::shared_ptr<Identifier>> getIdentifiers() 
+		std::list<std::shared_ptr<Identifier>> getIdentifiers()  
 		{
 			return identifiers;
 		}    
@@ -78,21 +78,17 @@ namespace xbrlcapi
 
 	};
 
-	BaseContentHandler::BaseContentHandler(const Loader& loader, const Poco::URI& uri)
-	{
-		Impl(loader,uri);
-	}
-	BaseContentHandler::BaseContentHandler() 
-	{
-		Impl();
-	}
+	BaseContentHandler::BaseContentHandler(Loader& loader, const Poco::URI& uri) : pImpl(loader,uri)
+	{}
+
+	BaseContentHandler::BaseContentHandler() : pImpl()
+	{}
+
 	BaseContentHandler::~BaseContentHandler() 
 	{} 
 
-	BaseContentHandler::BaseContentHandler(const BaseContentHandler& rhs) 
-	{ 
-		pImpl = rhs.pImpl; 
-	}
+	BaseContentHandler::BaseContentHandler(const BaseContentHandler& rhs) : pImpl(rhs.pImpl)
+	{}
 
 	BaseContentHandler& BaseContentHandler::operator=(const BaseContentHandler& rhs)
 	{
@@ -104,10 +100,8 @@ namespace xbrlcapi
 		return *this;
 	}
 
-	BaseContentHandler::BaseContentHandler(BaseContentHandler&& rhs) 
-	{ 
-		pImpl = std::move(rhs.pImpl); 
-	}
+	BaseContentHandler::BaseContentHandler(BaseContentHandler&& rhs) : pImpl(std::move(rhs.pImpl))
+	{}
 
 	BaseContentHandler& BaseContentHandler::operator=(BaseContentHandler&& rhs)
 	{

@@ -27,15 +27,19 @@ T& Pimpl<T>::operator*() { return *p.get(); }
 
 // copy ctor
 template <typename T>
-Pimpl<T>::Pimpl(const Pimpl<T>& rhs) : p(new Pimpl<T>(rhs.p)) {}
+Pimpl<T>::Pimpl(const Pimpl<T>& rhs) 
+{
+	std::unique_ptr<T> new_p(new T(*rhs.p.get()));
+	p = std::move(new_p); 
+}
 
 // copy assignment operator
 template<typename T>
 Pimpl<T>& Pimpl<T>::operator=(const Pimpl<T>& rhs) 
 {  
-	if (p != rhs.p) 
+	if (p.get() != rhs.p.get()) 
 	{
-		std::unique_ptr<T> new_p(rhs.p.get());
+		std::unique_ptr<T> new_p(new T(*rhs.p.get()));
 		p.reset();
 		p = std::move(new_p); 
 	}

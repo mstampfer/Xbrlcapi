@@ -20,10 +20,6 @@ namespace xbrlcapi
 		bool operator==(const DefaultMatcher& rhs);
 		bool operator!=(const DefaultMatcher& rhs);
 
-		//		DefaultMatcher(const DefaultMatcher& rhs);
-
-		//		DefaultMatcher& operator=(const DefaultMatcher& rhs);
-
 		/**
 		* @see Matcher#setSigner(Signer)
 		*/

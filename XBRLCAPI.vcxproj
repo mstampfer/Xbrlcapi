@@ -131,6 +131,7 @@
     <ClCompile Include="Constants.cpp" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Context.h" />
+    <ClInclude Include="doxygen_dummy.h" />
     <ClInclude Include="ElementDeclaration.h" />
     <ClInclude Include="ElementDeclarationImpl.h" />
     <ClInclude Include="ElementState.h" />

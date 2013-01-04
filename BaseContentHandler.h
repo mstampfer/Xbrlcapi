@@ -33,7 +33,7 @@ namespace xbrlcapi
 		* @param uri The URI of the document being parsed.
 		* @throws XBRLException if any of the parameters are null.
 		*/
-		BaseContentHandler(const Loader& loader, const Poco::URI& uri);
+		BaseContentHandler(Loader& loader, const Poco::URI& uri);
 		~BaseContentHandler();
 		BaseContentHandler(const BaseContentHandler& rhs);
 		BaseContentHandler& operator=(const BaseContentHandler& rhs);

@@ -20,6 +20,7 @@
 namespace xbrlcapi
 {
 	class BaseURISAXResolver;
+	class Loader;
 	class ContentHandler : public BaseContentHandler 
 	{
 		struct Impl;
@@ -34,8 +35,20 @@ namespace xbrlcapi
 		* @throws XBRLException if any of the parameters
 		* are null.
 		*/
-		//ContentHandler(const Loader& loader, const Poco::URI& uri) : BaseContentHandler(loader, uri)
-		//{}
+		ContentHandler(Loader& loader, const Poco::URI& uri);
+
+		/**
+		* Creates the content handler, starting out by
+		* identifying the data structure that the content
+		* handler is discovering.
+		* @param loader The data loader that is using this content handler.
+		* @param uri The URI of the document being parsed.
+		* @param xml The string representation of the XML document being parsed.
+		* @throws XBRLException if any of the parameters
+		* are null.
+		*/
+	//	ContentHandler(const Loader& loader, const Poco::URI& uri, const std::string& xml);
+
 		ContentHandler();
 		~ContentHandler(); 
 		ContentHandler(const ContentHandler& rhs);
@@ -100,18 +113,6 @@ namespace xbrlcapi
 		* of CacheURIImpl's relative to that location.
 		*/
 		void setDocumentLocator(const std::shared_ptr<xercesc::Locator>& locator);
-
-		/**
-		* Creates the content handler, starting out by
-		* identifying the data structure that the content
-		* handler is discovering.
-		* @param loader The data loader that is using this content handler.
-		* @param uri The URI of the document being parsed.
-		* @param xml The string representation of the XML document being parsed.
-		* @throws XBRLException if any of the parameters
-		* are null.
-		*/
-		ContentHandler(const Loader& loader, const Poco::URI& uri, const std::string& xml);
 
 	protected:
 

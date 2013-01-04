@@ -15,7 +15,7 @@ namespace xbrlcapi
 
 	struct XBRLXLinkHandler::Impl 
 	{
-		Loader loader;
+		//Loader loader;
 
 		BaseURISAXResolver baseURIResolver;
 
@@ -45,10 +45,10 @@ namespace xbrlcapi
 			loader.add(fragment,getElementState());*/
 		}
 
-		void setLoader(const Loader& loader) 
-		{
-			this->loader = loader;
-		}
+		//void setLoader(const Loader& loader) 
+		//{
+		//	this->loader = loader;
+		//}
 
 		void setBaseURISAXResolver(const BaseURISAXResolver& resolver)
 		{
@@ -428,10 +428,10 @@ namespace xbrlcapi
 		return !this->operator==(rhs);
 	}
 
-	void XBRLXLinkHandler::setLoader(const Loader& loader) 
-	{
-		pImpl-> setLoader(loader);
-	}
+	//void XBRLXLinkHandler::setLoader(const Loader& loader) 
+	//{
+	//	pImpl-> setLoader(loader);
+	//}
 
 	void XBRLXLinkHandler::setBaseURISAXResolver(const BaseURISAXResolver& resolver)
 	{

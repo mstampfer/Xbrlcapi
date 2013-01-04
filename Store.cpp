@@ -296,8 +296,6 @@ namespace xbrlcapi
 			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
 
 			if (!dataManager) initManager();
-			containerName = ".\\test2";			
-			auto xx = dataManager->existsContainer(containerName);
 			try {
  				if (dataManager->existsContainer(containerName)) {
 					dataContainer = dataManager->openContainer(containerName);
@@ -2842,7 +2840,7 @@ namespace xbrlcapi
 		{
 			//if (loadingRights.find(document) == loadingRights.end()) 
 			//{
-			//	loadingRights.insert(std::make_pair(document, std::make_shared<Loader>(loader)));
+			//	loadingRights.insert(std::make_pair(document, std::shared_ptr<Loader>(&loader)));
 			//	return true;
 			//}
 
@@ -3096,10 +3094,8 @@ namespace xbrlcapi
 		: pImpl(database,container,size)
 	{}
 	Store::~Store() {} 
-	Store::Store(const Store& rhs) 
-	{ 
-		pImpl = rhs.pImpl; 
-	}
+	Store::Store(const Store& rhs) : pImpl(rhs.pImpl)
+	{}
 
 	Store& Store::operator=(const Store& rhs)
 	{
