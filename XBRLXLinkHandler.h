@@ -1,5 +1,5 @@
 #pragma once
-#include "XLinkHandlerDefault.h"
+
 #include <xercesc/sax2/Attributes.hpp>
 #include "BaseURISAXResolver.h"
 
@@ -12,7 +12,7 @@ namespace xbrlcapi
 	* This class provides a real world example of an XLink handler for XBRL.
 	* @author Geoffrey Shuetrim (geoff@galexy.net)
 	*/
-	class XBRLXLinkHandler //: public XLinkHandlerDefault 
+	class XLinkHandler //: public XLinkHandlerDefault 
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;
@@ -20,14 +20,14 @@ namespace xbrlcapi
 		/**
 		* XBRL XLink handler constructor
 		*/
-		XBRLXLinkHandler();
-		~XBRLXLinkHandler();
-		XBRLXLinkHandler(const XBRLXLinkHandler& rhs);
-		XBRLXLinkHandler& operator=(const XBRLXLinkHandler& rhs);
-		XBRLXLinkHandler(XBRLXLinkHandler&& rhs);
-		XBRLXLinkHandler& operator=(XBRLXLinkHandler&& rhs);
-		bool operator==(const XBRLXLinkHandler& rhs);
-		bool operator!=(const XBRLXLinkHandler& rhs);
+		XLinkHandler();
+		~XLinkHandler();
+		XLinkHandler(const XLinkHandler& rhs);
+		XLinkHandler& operator=(const XLinkHandler& rhs);
+		XLinkHandler(XLinkHandler&& rhs);
+		XLinkHandler& operator=(XLinkHandler&& rhs);
+		bool operator==(const XLinkHandler& rhs);
+		bool operator!=(const XLinkHandler& rhs);
 
 
 		/**

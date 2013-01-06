@@ -1,6 +1,6 @@
 #include "ElementState.h"
 #include "Constants.h"
-#include "XercesStrings.h"
+
 
 /**
 * Assists in the tracking of document state information
@@ -116,7 +116,7 @@ namespace xbrlcapi
 
 		std::string getLanguageCode()
 		{
-		//	XMLCh * xch = xerces_util::fromNative(XMLConstants::XMLNamespace).c_str();
+		//	XMLCh * xch = XercesString(XMLConstants::XMLNamespace).c_str();
 		//	int index = attributes->getIndex(,L"lang");
 		//	if (index > -1) 
 		//	{

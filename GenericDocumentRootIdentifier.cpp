@@ -10,18 +10,19 @@ namespace xbrlcapi
 		Impl(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler)
 		{}
 
-		//void startElement(
-		//String namespaceURI, 
-		//	String lName, 
-		//	String qName,
-		//	Attributes attrs) throws XBRLException {
+		void startElement(
+			const std::string& namespaceURI, 
+			const std::string& lName, 
+			const std::string& qName,
+			const xercesc::Attributes& attrs)
+		{
 
-		////if (! getLoader().get().isNewFragment()) {
-		//    if (! getElementState().hasParent()) {
-		//        Fragment root = new FragmentImpl();
-		//        processFragment(root,attrs);
-		//    }
-		////}
+			////if (! getLoader().get().isNewFragment()) {
+			//    if (! getElementState().hasParent()) {
+			//        Fragment root = new FragmentImpl();
+			//        processFragment(root,attrs);
+			//    }
+		}
 	};
 
 	GenericDocumentRootIdentifier::GenericDocumentRootIdentifier() {}

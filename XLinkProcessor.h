@@ -26,7 +26,7 @@ namespace xbrlcapi
 	public:
 		XLinkProcessor();
 		~XLinkProcessor();
-		XLinkProcessor(const std::shared_ptr<XLinkHandler>& xlh, CustomLinkRecogniser& clr);
+		XLinkProcessor(const XLinkHandler& xlh, CustomLinkRecogniser& clr);
 		XLinkProcessor(const XLinkProcessor& rhs);
 		XLinkProcessor& operator=(const XLinkProcessor& rhs);
 		XLinkProcessor(XLinkProcessor&& rhs);
@@ -96,6 +96,6 @@ namespace xbrlcapi
 		* Provides access to the XLink handler being used by the XLink processor.
 		* @return the XLink handler being used by the XLink processor.
 		*/
-		std::shared_ptr<XLinkHandler> getXLinkHandler();
+		XLinkHandler getXLinkHandler();
 	};
 }

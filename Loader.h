@@ -33,9 +33,15 @@ namespace xbrlcapi
 	public:
 		Loader();
 		~Loader();
-		Loader(Store& store);
-		Loader(Store& store, XLinkProcessor& xlinkProcessor, EntityResolver& entityResolver, const Cache& cache);
-		Loader(Store& store, XLinkProcessor& xlinkProcessor, EntityResolver& entityResolver, const Cache& cache, std::vector<Poco::URI>& uris);
+		Loader(const Store& store);
+		Loader(const Store& store, 
+			const XLinkProcessor& xlinkProcessor, 
+			const EntityResolver& entityResolver);
+		Loader(const Store& store, 
+			const XLinkProcessor& xlinkProcessor, 
+			const EntityResolver& entityResolver, 
+			const Cache& cache, 
+			const std::vector<Poco::URI>& uris);
 		Loader(const Loader& rhs);
 		Loader& operator=(const Loader& rhs);
 		Loader(Loader&& rhs);

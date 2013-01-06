@@ -16,142 +16,143 @@ namespace xbrlcapi
 		Impl(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler) 
 		{}
 
-		//void startElement(
-		//	std::string namespaceURI, 
-		//	std::string lName, 
-		//	std::string qName,
-		//	Attributes attrs) throws XBRLException {
+		void startElement(
+			const std::string& namespaceURI, 
+			const std::string& lName, 
+			const std::string& qName,
+			const xercesc::Attributes& attrs)
+		{
 
-		//		Fragment fragment;
+			//		Fragment fragment;
 
-		//		if (namespaceURI.equals(Constants.XMLSchemaNamespace.toString())) {
+			//		if (namespaceURI.equals(Constants.XMLSchemaNamespace.toString())) {
 
-		//			if (lName.equals("group")) {
+			//			if (lName.equals("group")) {
 
-		//				fragment = new SchemaGroupCompositorImpl();
+			//				fragment = new SchemaGroupCompositorImpl();
 
-		//			} else if (lName.equals("all")) {
+			//			} else if (lName.equals("all")) {
 
-		//				fragment = new SchemaAllCompositorImpl();
+			//				fragment = new SchemaAllCompositorImpl();
 
-		//			} else if (lName.equals("choice")) {
+			//			} else if (lName.equals("choice")) {
 
-		//				fragment = new SchemaChoiceCompositorImpl();
+			//				fragment = new SchemaChoiceCompositorImpl();
 
-		//			} else if (lName.equals("sequence")) {
+			//			} else if (lName.equals("sequence")) {
 
-		//				fragment = new SchemaSequenceCompositorImpl();
+			//				fragment = new SchemaSequenceCompositorImpl();
 
-		//			} else if (lName.equals("complexType")) {
+			//			} else if (lName.equals("complexType")) {
 
-		//				fragment = new ComplexTypeDeclarationImpl();
+			//				fragment = new ComplexTypeDeclarationImpl();
 
-		//			} else if (lName.equals("simpleType")) {
+			//			} else if (lName.equals("simpleType")) {
 
-		//				fragment = new SimpleTypeDeclarationImpl();
+			//				fragment = new SimpleTypeDeclarationImpl();
 
-		//			} else if (lName.equals("attribute")) {
+			//			} else if (lName.equals("attribute")) {
 
-		//				fragment = new AttributeDeclarationImpl();
+			//				fragment = new AttributeDeclarationImpl();
 
-		//			} else if (lName.equals("attributeGroup")) {
+			//			} else if (lName.equals("attributeGroup")) {
 
-		//				fragment = new AttributeGroupDeclarationImpl();
+			//				fragment = new AttributeGroupDeclarationImpl();
 
-		//			} else if (lName.equals("schema")) {
+			//			} else if (lName.equals("schema")) {
 
-		//				fragment = new SchemaImpl();
-		//				setXSModel(constructXSModel());
-		//				setTargetNamespace(attrs.getValue("targetNamespace"));
+			//				fragment = new SchemaImpl();
+			//				setXSModel(constructXSModel());
+			//				setTargetNamespace(attrs.getValue("targetNamespace"));
 
-		//			} else if (lName.equals("element")) {
+			//			} else if (lName.equals("element")) {
 
-		//				std::string elementName = attrs.getValue("name");
+			//				std::string elementName = attrs.getValue("name");
 
-		//				if (getXSModel() == null) {
-		//					throw new XBRLException("An XML Schema element declaration was found outside of an XML Schema.");
-		//				}
+			//				if (getXSModel() == null) {
+			//					throw new XBRLException("An XML Schema element declaration was found outside of an XML Schema.");
+			//				}
 
-		//				std::string targetNamespace = getTargetNamespace(); 
-		//				if (targetNamespace == null) {
-		//					throw new XBRLException("An XML Schema element was found without a target namespace.");
-		//				}
+			//				std::string targetNamespace = getTargetNamespace(); 
+			//				if (targetNamespace == null) {
+			//					throw new XBRLException("An XML Schema element was found without a target namespace.");
+			//				}
 
-		//				// Find the XS model element declaration for the element that has been started - if one can be found
-		//				XSElementDeclaration declaration;
+			//				// Find the XS model element declaration for the element that has been started - if one can be found
+			//				XSElementDeclaration declaration;
 
-		//				// Handle anonymous schemas first - these are the tough case
-		//				if (targetNamespace.equals("")) {
+			//				// Handle anonymous schemas first - these are the tough case
+			//				if (targetNamespace.equals("")) {
 
-		//					// Get the list of namespaces declared in the model
-		//					XSNamespaceItemList nsItemList = getXSModel().getNamespaceItems();
+			//					// Get the list of namespaces declared in the model
+			//					XSNamespaceItemList nsItemList = getXSModel().getNamespaceItems();
 
-		//					// For each namespace ...
-		//					for (int i=0; i<nsItemList.getLength(); i++) {
-		//						XSNamespaceItem nsItem = nsItemList.item(i);
+			//					// For each namespace ...
+			//					for (int i=0; i<nsItemList.getLength(); i++) {
+			//						XSNamespaceItem nsItem = nsItemList.item(i);
 
-		//						// Get a candidate element declaration if one exists
-		//						XSElementDeclaration candidateDeclaration = nsItem.getElementDeclaration(elementName);
-		//						if (candidateDeclaration != null) {
+			//						// Get a candidate element declaration if one exists
+			//						XSElementDeclaration candidateDeclaration = nsItem.getElementDeclaration(elementName);
+			//						if (candidateDeclaration != null) {
 
-		//							// Get the URIs of the documents that were used to create elements in this namespace
-		//							StringList locations = nsItem.getDocumentLocations();
+			//							// Get the URIs of the documents that were used to create elements in this namespace
+			//							StringList locations = nsItem.getDocumentLocations();
 
-		//							// Check to see if the current document URI is one of those documents and if so, the candidate could be good
-		//							for (int j=0; j<locations.getLength(); j++) {
-		//								std::string location = locations.item(j);
-		//								if (location.equals(getContentHandler().getURI().toString())) {
-		//									// Throw an exception if we find two feasible candidate element declarations in the Schema model
-		//									if (declaration != null) throw new XBRLException("Potentially ambiguous anonymous Schema problem.");
-		//									declaration = candidateDeclaration;
-		//								}
-		//							}
-		//						}
-		//					}
+			//							// Check to see if the current document URI is one of those documents and if so, the candidate could be good
+			//							for (int j=0; j<locations.getLength(); j++) {
+			//								std::string location = locations.item(j);
+			//								if (location.equals(getContentHandler().getURI().toString())) {
+			//									// Throw an exception if we find two feasible candidate element declarations in the Schema model
+			//									if (declaration != null) throw new XBRLException("Potentially ambiguous anonymous Schema problem.");
+			//									declaration = candidateDeclaration;
+			//								}
+			//							}
+			//						}
+			//					}
 
-		//					if (declaration == null) throw new XBRLException("An element declaration was found that could not be handled.");
+			//					if (declaration == null) throw new XBRLException("An element declaration was found that could not be handled.");
 
-		//					// Handle the easy case where the schema specifies its target namespace
-		//				} else if (elementName != null) {
-		//					declaration = getXSModel().getElementDeclaration(elementName, getTargetNamespace());
-		//				}
+			//					// Handle the easy case where the schema specifies its target namespace
+			//				} else if (elementName != null) {
+			//					declaration = getXSModel().getElementDeclaration(elementName, getTargetNamespace());
+			//				}
 
-		//				// Determine what substitution groups the element is in - if any.
-		//				if (declaration != null) {
-		//					XSElementDeclaration sgDeclaration = declaration.getSubstitutionGroupAffiliation();
-		//					while (sgDeclaration != null) {
+			//				// Determine what substitution groups the element is in - if any.
+			//				if (declaration != null) {
+			//					XSElementDeclaration sgDeclaration = declaration.getSubstitutionGroupAffiliation();
+			//					while (sgDeclaration != null) {
 
-		//						if (sgDeclaration.getNamespace().equals(Constants.XBRL21Namespace.toString())) {
-		//							if (sgDeclaration.getName().equals("item")) {
-		//								fragment = new ConceptImpl();
-		//								break;
-		//							} else if (sgDeclaration.getName().equals("tuple")) {
-		//								fragment = new ConceptImpl();
-		//								break;
-		//							}
-		//						}
+			//						if (sgDeclaration.getNamespace().equals(Constants.XBRL21Namespace.toString())) {
+			//							if (sgDeclaration.getName().equals("item")) {
+			//								fragment = new ConceptImpl();
+			//								break;
+			//							} else if (sgDeclaration.getName().equals("tuple")) {
+			//								fragment = new ConceptImpl();
+			//								break;
+			//							}
+			//						}
 
-		//						if (sgDeclaration.getNamespace().equals(Constants.XBRL21LinkNamespace.toString())) {
-		//							if (sgDeclaration.getName().equals("part"))
-		//								fragment = new ReferencePartDeclarationImpl();
-		//							break;
-		//						}
+			//						if (sgDeclaration.getNamespace().equals(Constants.XBRL21LinkNamespace.toString())) {
+			//							if (sgDeclaration.getName().equals("part"))
+			//								fragment = new ReferencePartDeclarationImpl();
+			//							break;
+			//						}
 
-		//						sgDeclaration = sgDeclaration.getSubstitutionGroupAffiliation();
-		//					}
-		//				}
+			//						sgDeclaration = sgDeclaration.getSubstitutionGroupAffiliation();
+			//					}
+			//				}
 
-		//				if ((fragment == null)) {
-		//					fragment = new ElementDeclarationImpl();
-		//				}
+			//				if ((fragment == null)) {
+			//					fragment = new ElementDeclarationImpl();
+			//				}
 
-		//			}
+			//			}
 
-		//			if (fragment != null) {
-		//				this.processFragment(fragment,attrs);
-		//			}
-		//		}
-		//}
+			//			if (fragment != null) {
+			//				this.processFragment(fragment,attrs);
+			//			}
+			//		}
+		}
 
 		//void endElement(
 		//	std::string namespaceURI, 

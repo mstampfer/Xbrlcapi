@@ -35,7 +35,7 @@ namespace xbrlcapi
 		* @throws XBRLException if any of the parameters
 		* are null.
 		*/
-		ContentHandler(Loader& loader, const Poco::URI& uri);
+		ContentHandler(const Loader& loader, const Poco::URI& uri);
 
 		/**
 		* Creates the content handler, starting out by

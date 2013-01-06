@@ -1,7 +1,7 @@
 
 #pragma once
 #include "XBRLException.h"
-#include "XercesStrings.h"
+
 #include <exception>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/sax2/XMLReaderFactory.hpp>
@@ -73,7 +73,7 @@ namespace xbrlcapi
 			}*/ 
 			catch (const xercesc::SAXException& e) 
 			{
-				throw XBRLException("SAX exception building an XML DOM.",xerces_util::toNative(e.getMessage()));
+				throw XBRLException("SAX exception building an XML DOM.",toNative(e.getMessage()));
 			}
 		}
 

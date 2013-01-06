@@ -15,7 +15,9 @@
 #include "XBRLXLinkHandler.h"
 #include "XLinkException.h"
 #include "XLinkProcessor.h"
-#include "XercesStrings.h"
+#include "XercesString.h"
+
+
 #include <iostream>
 #include <xercesc/sax/Locator.hpp>
 #include <xercesc/sax/SAXException.hpp>
@@ -37,10 +39,10 @@ namespace xbrlcapi
 
 		Impl() {}
 
-		Impl(Loader& loader, const Poco::URI& uri) : BaseContentHandler(loader, uri)
+		Impl(const Loader& loader, const Poco::URI& uri) : BaseContentHandler(loader, uri)
 		{}
 
-		Impl(Loader& loader, const Poco::URI& uri, const std::string& xml) : Impl(loader, uri)
+		Impl(const Loader& loader, const Poco::URI& uri, const std::string& xml)  : BaseContentHandler(loader, uri)
 		{
 			//identifiers = getIdentifiers();
 			setXML(xml);
@@ -369,12 +371,12 @@ namespace xbrlcapi
 		}
 		std::string getPublicId()
 		{
-			return xerces_util::toNative(locator->getPublicId());
+			return toNative(locator->getPublicId());
 		}
 
 		std::string getSystemId()
 		{
-			return xerces_util::toNative(locator->getSystemId());
+			return toNative(locator->getSystemId());
 		}
 
 		long long getLineNumber()
@@ -399,17 +401,9 @@ namespace xbrlcapi
 			return std::string();
 		}
 
-		XBRLXLinkHandler getXLinkHandler()
+		XLinkHandler getXLinkHandler()
 		{
-			//try
-			//{
-			//	return (XBRLXLinkHandler) this->getLoader().getXlinkProcessor().getXLinkHandler();
-			//}
-			//catch (ClassCastException e)
-			//{
-			//	throw new xercesc::SAXException("The XBRL API is not using the XBRL XLink Handler implementation.");
-			//}
-			return *(new XBRLXLinkHandler);
+			return getLoader().getXlinkProcessor().getXLinkHandler();
 		}
 
 		BaseURISAXResolver baseURISAXResolver;
@@ -444,7 +438,7 @@ namespace xbrlcapi
 		return *this;
 	}
 
-	ContentHandler::ContentHandler(Loader& loader, const Poco::URI& uri) : pImpl(loader, uri)
+	ContentHandler::ContentHandler(const Loader& loader, const Poco::URI& uri) : pImpl(loader, uri)
 	{}
 
 	ContentHandler::ContentHandler(ContentHandler&& rhs) 

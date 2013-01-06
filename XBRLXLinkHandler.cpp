@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "XLinkHandlerDefault.h"
+
 #include "Loader.h"
 #include "XBRLXLinkHandler.h"
 #include "BaseURISAXResolver.h"
@@ -13,7 +13,7 @@
 namespace xbrlcapi
 {
 
-	struct XBRLXLinkHandler::Impl 
+	struct XLinkHandler::Impl 
 	{
 		//Loader loader;
 
@@ -388,15 +388,15 @@ namespace xbrlcapi
 
 	};
 
-	XBRLXLinkHandler::XBRLXLinkHandler() {}
-	XBRLXLinkHandler::~XBRLXLinkHandler() {} 
+	XLinkHandler::XLinkHandler() {}
+	XLinkHandler::~XLinkHandler() {} 
 
-	XBRLXLinkHandler::XBRLXLinkHandler(const XBRLXLinkHandler& rhs) 
+	XLinkHandler::XLinkHandler(const XLinkHandler& rhs) 
 	{ 
 		pImpl = rhs.pImpl; 
 	}
 
-	XBRLXLinkHandler& XBRLXLinkHandler::operator=(const XBRLXLinkHandler& rhs)
+	XLinkHandler& XLinkHandler::operator=(const XLinkHandler& rhs)
 	{
 		if (pImpl != rhs.pImpl)
 		{
@@ -406,45 +406,45 @@ namespace xbrlcapi
 		return *this;
 	}
 
-	XBRLXLinkHandler::XBRLXLinkHandler(XBRLXLinkHandler&& rhs) 
+	XLinkHandler::XLinkHandler(XLinkHandler&& rhs) 
 	{ 
 		pImpl = std::move(rhs.pImpl); 
 	}
 
-	XBRLXLinkHandler& XBRLXLinkHandler::operator=(XBRLXLinkHandler&& rhs)
+	XLinkHandler& XLinkHandler::operator=(XLinkHandler&& rhs)
 	{
 		if (pImpl != rhs.pImpl)
 			pImpl = std::move(rhs.pImpl);
 		return *this;
 	}
 
-	bool XBRLXLinkHandler::operator==(const XBRLXLinkHandler& rhs)
+	bool XLinkHandler::operator==(const XLinkHandler& rhs)
 	{
 		return (pImpl == rhs.pImpl);
 	}
 
-	bool XBRLXLinkHandler::operator!=(const XBRLXLinkHandler& rhs)
+	bool XLinkHandler::operator!=(const XLinkHandler& rhs)
 	{
 		return !this->operator==(rhs);
 	}
 
-	//void XBRLXLinkHandler::setLoader(const Loader& loader) 
+	//void XLinkHandler::setLoader(const Loader& loader) 
 	//{
 	//	pImpl-> setLoader(loader);
 	//}
 
-	void XBRLXLinkHandler::setBaseURISAXResolver(const BaseURISAXResolver& resolver)
+	void XLinkHandler::setBaseURISAXResolver(const BaseURISAXResolver& resolver)
 	{
 		pImpl->setBaseURISAXResolver(resolver);
 	}
 
-	void XBRLXLinkHandler::xmlBaseStart(const std::string& value)
+	void XLinkHandler::xmlBaseStart(const std::string& value)
 	{
 		pImpl->xmlBaseStart(value);
 	}
 
 
-	void XBRLXLinkHandler::startTitle(const std::string& namespaceURI, 
+	void XLinkHandler::startTitle(const std::string& namespaceURI, 
 		const std::string& lName, 
 		const std::string& qName,
 		const xercesc::Attributes& attrs)
@@ -456,13 +456,13 @@ namespace xbrlcapi
 	}
 
 
-	void XBRLXLinkHandler::xmlBaseEnd()
+	void XLinkHandler::xmlBaseEnd()
 	{
 		pImpl->xmlBaseEnd();
 	}
 
 
-	void XBRLXLinkHandler::startExtendedLink(
+	void XLinkHandler::startExtendedLink(
 		const std::string& namespaceURI, 
 		const std::string& lName,
 		const std::string& qName, 
@@ -478,14 +478,14 @@ namespace xbrlcapi
 			title);
 	}
 
-	void XBRLXLinkHandler::endExtendedLink(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
+	void XLinkHandler::endExtendedLink(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
 	{
 		pImpl->endExtendedLink(namespaceURI, 
 			sName,
 			qName);
 	}
 
-	void XBRLXLinkHandler::startResource(
+	void XLinkHandler::startResource(
 		const std::string& namespaceURI, 
 		const std::string& lName, 
 		const std::string& qName,
@@ -503,14 +503,14 @@ namespace xbrlcapi
 			label);
 	}
 
-	void XBRLXLinkHandler::endResource(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
+	void XLinkHandler::endResource(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
 	{
 		pImpl->endResource(namespaceURI, 
 			sName, 
 			qName);
 	}
 
-	void XBRLXLinkHandler::startLocator(
+	void XLinkHandler::startLocator(
 		const std::string& namespaceURI, 
 		const std::string& lName, 
 		const std::string& qName,
@@ -530,7 +530,7 @@ namespace xbrlcapi
 			label);
 	}
 
-	void XBRLXLinkHandler::endLocator(const std::string& namespaceURI, 
+	void XLinkHandler::endLocator(const std::string& namespaceURI, 
 		const std::string& sName, 
 		const std::string& qName)
 	{
@@ -539,7 +539,7 @@ namespace xbrlcapi
 			qName);
 	}
 
-	void XBRLXLinkHandler::startArc(
+	void XLinkHandler::startArc(
 		const std::string& namespaceURI, 
 		const std::string& lName, 
 		const std::string& qName,
@@ -563,14 +563,14 @@ namespace xbrlcapi
 			actuate);
 	}
 
-	void XBRLXLinkHandler::endArc(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
+	void XLinkHandler::endArc(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
 	{
 		pImpl->endArc(namespaceURI, 
 			sName, 
 			qName);
 	}
 
-	void XBRLXLinkHandler::startSimpleLink(
+	void XLinkHandler::startSimpleLink(
 		const std::string& namespaceURI, 
 		const std::string& lName,
 		const std::string& qName, 
@@ -594,19 +594,19 @@ namespace xbrlcapi
 			actuate);
 	}
 
-	void XBRLXLinkHandler::endSimpleLink(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
+	void XLinkHandler::endSimpleLink(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
 	{
 		pImpl->endSimpleLink(namespaceURI, 
 			sName, 
 			qName);
 	}
 
-	void XBRLXLinkHandler::setElementState(const ElementState& elementState) 
+	void XLinkHandler::setElementState(const ElementState& elementState) 
 	{
 		pImpl-> setElementState(elementState) ;
 	}
 
-	void XBRLXLinkHandler::error(const std::string& namespaceURI, const std::string& lName, const std::string& qName,
+	void XLinkHandler::error(const std::string& namespaceURI, const std::string& lName, const std::string& qName,
 		const xercesc::Attributes& attrs,const std::string& message)
 	{
 		pImpl->error(namespaceURI, 
@@ -617,7 +617,7 @@ namespace xbrlcapi
 	}
 
 
-	void XBRLXLinkHandler::warning(const std::string& namespaceURI, const std::string& lName, const std::string& qName,
+	void XLinkHandler::warning(const std::string& namespaceURI, const std::string& lName, const std::string& qName,
 		const xercesc::Attributes& attrs,const std::string& message)
 	{
 		pImpl->warning(namespaceURI, 
@@ -627,12 +627,12 @@ namespace xbrlcapi
 			message);
 	}
 
-	void XBRLXLinkHandler::titleCharacters(char* buf, int offset, int len)
+	void XLinkHandler::titleCharacters(char* buf, int offset, int len)
 	{
 		pImpl->titleCharacters(buf, offset, len);
 	}
 
-	void XBRLXLinkHandler::endTitle( const std::string& namespaceURI, 
+	void XLinkHandler::endTitle( const std::string& namespaceURI, 
 			const std::string& sName, 
 			const std::string& qName)
 	{

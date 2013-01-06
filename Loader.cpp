@@ -11,7 +11,8 @@
 #include "Util.h"
 #include "XBRLException.h"
 #include "XLinkProcessor.h"
-#include "XercesStrings.h"
+#include "XercesString.h"
+
 #include "ElementState.h"
 
 #include <algorithm>
@@ -42,14 +43,16 @@
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <xercesc/util/XMLUni.hpp>
 #include <xercesc/validators/common/Grammar.hpp>
+#include <xercesc/util/XMLUni.hpp>
 
 namespace xbrlcapi
 {
 	class ContentHandler;
+	class Loader;
 
 	struct Loader::Impl 
 	{
-		bool _useSchemaLocationAttributes;
+		const Loader* outer;
 		Store store;
 		Cache cache;
 		XLinkProcessor xlinkProcessor;
@@ -63,6 +66,7 @@ namespace xbrlcapi
 		int fragmentId;
 		bool discovering;
 		bool interrupt;
+		bool _useSchemaLocationAttributes;
 		std::shared_ptr<xercesc::DOMDocument> dom;
 		std::stack<ElementState> states;
 		std::stack<Fragment> fragments;
@@ -93,37 +97,41 @@ namespace xbrlcapi
 			//_useSchemaLocationAttributes(rhs._useSchemaLocationAttributes)
 		{}
 
-		Impl(Store& store) : 			
+		Impl(const Loader* loader, const Store& store) :
+			outer(loader),
+			store(store),
 			discovering(false),
 			fragmentId(0),
 			interrupt(false),
-			_useSchemaLocationAttributes(false),
-			store(store)
+			_useSchemaLocationAttributes(false)
 		{
 		}
 
-		Impl(Store& store, 
-			XLinkProcessor& xlinkProcessor, 
-			EntityResolver& entityResolver, 			
-			const Cache& cache) :
+		Impl(const Loader* loader, 
+			const Store& store,
+			const XLinkProcessor& xlinkProcessor, 
+			const EntityResolver& entityResolver)		
+			:
 		discovering(false),
+			outer(loader),
 			fragmentId(0),
 			interrupt(false),
 			_useSchemaLocationAttributes(false),
 			store(store),
 			xlinkProcessor(xlinkProcessor),
-			entityResolver(entityResolver),
-			cache(cache)
+			entityResolver(entityResolver)
 		{
 			initialize();
 		}
 
-		Impl(Store& store, 
-			XLinkProcessor& xlinkProcessor, 
-			EntityResolver& entityResolver,	
+		Impl(const Loader* loader, 
+			const Store& store,
+			const XLinkProcessor& xlinkProcessor, 
+			const EntityResolver& entityResolver,	
 			const Cache& cache,
-			std::vector<Poco::URI>& uris) :
-		discovering(false),
+			const std::vector<Poco::URI>& uris) :
+		outer(loader),
+			discovering(false),
 			fragmentId(0),
 			interrupt(false),
 			_useSchemaLocationAttributes(false),
@@ -140,6 +148,7 @@ namespace xbrlcapi
 		{
 			if (this != &rhs)
 			{
+				outer = rhs.outer;
 				setCache(rhs.cache);
 				discovering = rhs.discovering;
 				documentId = rhs.documentId;
@@ -457,7 +466,7 @@ namespace xbrlcapi
 					} 
 					catch (const xercesc::SAXException& e) 
 					{	
-						logger.error(xerces_util::toNative(e.getMessage()));
+						logger.error(toNative(e.getMessage()));
 						//					this.cleanupFailedLoad(uri,"The document could not be parsed.",e);
 					} 
 					catch (...) 
@@ -866,7 +875,6 @@ namespace xbrlcapi
 		//    
 		//    private transient XMLGrammarPoolImpl grammarPool = new XMLGrammarPoolImpl();
 		//    private transient SymbolTable symbolTable = new SymbolTable(BIG_PRIME);
-
 		void initialize() 
 		{
 
@@ -874,23 +882,30 @@ namespace xbrlcapi
 			xercesc::XMLGrammarPool* grammarPool = new xercesc::XMLGrammarPoolImpl(memMgr);
 			xercesc::SAX2XMLReader* preparser = xercesc::XMLReaderFactory::createXMLReader(memMgr, grammarPool);
 
-			// enable grammar reuse
+			// Cache the grammar in the pool for re-use in subsequent parses.
 			preparser->setFeature(xercesc::XMLUni::fgXercesCacheGrammarFromParse,true);
-			//parser->registerPreparser(XMLGrammarDescription.XML_SCHEMA, null);
+			//preparser->registerPreparser(XMLGrammarDescription.XML_SCHEMA, null);
+			//preparser->setProperty(GRAMMAR_POOL, grammarPool);
 
-			//parser->setProperty(GRAMMAR_POOL, grammarPool);
+			// Perform Namespace processing.  
+			preparser->setFeature(xercesc::XMLUni::fgSAX2CoreNameSpaces, true);
 
-			preparser->setFeature(L"http://xml.org/sax/features/namespaces", true);
-			preparser->setFeature(L"http://xml.org/sax/features/validation", true);
+			//Report all validation errors
+			preparser->setFeature(xercesc::XMLUni::fgSAX2CoreValidation,true);
 
 			// note we can set schema features just in case ...
-			preparser->setFeature(L"http://apache.org/xml/features/validation/schema", true);
-			// Checking of constraints on a schema grammar which are either time-consuming 
-			// or memory intensive such as unique particle attribution
-			preparser->setFeature(L"http://apache.org/xml/features/validation/schema-full-checking", true);
+			// Enable the parser's schema support.
+			preparser->setFeature(xercesc::XMLUni::fgXercesSchema,true);  
+
+
+			//Enable full schema constraint checking, including checking which may be 
+			// time-consuming or memory intensive.
+			preparser->setFeature(xercesc::XMLUni::fgXercesSchemaFullChecking,true);  
+
 			// All schema location hints will be used to locate the 
 			// components for a given target namespace
 			//parser->setFeature(L"http://apache.org/xml/features/honour-all-schemaLocations", true);
+			// fgXercesSchemaExternalNoNameSpaceSchemaLocation  or fgXercesSchemaExternalSchemaLocation  ?
 
 			// Specify the entity resolver to use for the schemas.
 			preparser->setEntityResolver(&entityResolver);
@@ -905,8 +920,11 @@ namespace xbrlcapi
 			try {
 				for (const Poco::URI& schema : schemas) 
 				{
-					// This loads the schemas into the grammar pool TODO
-					preparser->loadGrammar(schema.getScheme().c_str(), xercesc::Grammar::SchemaGrammarType, true);
+					// This loads the schemas into the grammar pool
+					ContentHandler contentHandler(*outer, schema);
+					preparser->setContentHandler(&contentHandler);
+					preparser->loadGrammar(*entityResolver.resolveSchemaURI(schema), xercesc::Grammar::SchemaGrammarType, true);
+				//preparser->loadGrammar(schema.toString().c_str(), xercesc::Grammar::SchemaGrammarType, true);
 				}
 			} 
 			catch (const std::exception& e) 
@@ -915,23 +933,7 @@ namespace xbrlcapi
 			}
 			grammarPool->lockPool();
 		}
-		//
-		//    /** Property identifier: symbol table. */
-		//    public static final std::string SYMBOL_TABLE =
-		//        Constants.XERCES_PROPERTY_PREFIX + Constants.SYMBOL_TABLE_PROPERTY;
-		//
-		//    /** Property identifier: grammar pool. */
-		//    public static final std::string GRAMMAR_POOL =
-		//        Constants.XERCES_PROPERTY_PREFIX + Constants.XMLGRAMMAR_POOL_PROPERTY;
-		//
-		//    // a larg(ish) prime to use for a symbol table to be shared
-		//    // among
-		//    // potentially man parsers.  Start one as close to 2K (20
-		//    // times larger than normal) and see what happens...
-		//    public static final int BIG_PRIME = 2039;
-		//    
-		//    
-		//    
+
 
 		void parse(const Poco::URI& uri, 
 			/*const*/ xercesc::InputSource& inputSource,  
@@ -960,7 +962,7 @@ namespace xbrlcapi
 			parser->setEntityResolver(&entityResolver);
 			parser->setErrorHandler(&contentHandler);        
 			parser->setContentHandler(dynamic_cast<xercesc::ContentHandler*>(&contentHandler));     
-			inputSource.setSystemId(L"file:\\C:\\Users\\marcel\\cache2\\http\\www.xbrl.org\\-1\\2003\\xbrl-instance-2003-12-31.xsd");
+			//			inputSource.setSystemId(L"file:/C:\\Users\\marcel\\cache2\\http\\null\\www.xbrl.org\\-1\\null\\null\\2003\\xbrl-instance-2003-12-31.xsd");
 			parser->parse(inputSource);
 
 		}
@@ -970,10 +972,8 @@ namespace xbrlcapi
 	Loader::Loader() {}
 	Loader::~Loader() {}
 
-	Loader::Loader(const Loader& rhs) 
-	{ 
-		pImpl = rhs.pImpl; 
-	}
+	Loader::Loader(const Loader& rhs) : pImpl(rhs.pImpl)
+	{}
 
 	Loader& Loader::operator=(const Loader& rhs)
 	{
@@ -985,30 +985,31 @@ namespace xbrlcapi
 		return *this;
 	}
 
-	Loader::Loader(Loader&& rhs) 
-	{ 
-		pImpl = std::move(rhs.pImpl); 
-	}
+	Loader::Loader(Loader&& rhs) : pImpl(std::move(rhs.pImpl))
+	{} 
 
-	Loader::Loader(Store& store)
-		: pImpl(store)
+	Loader::Loader(const Store& store) : pImpl(this, store)
 	{}
 
-	Loader::Loader(Store& store, 
-		XLinkProcessor& xlinkProcessor, 
-		EntityResolver& entityResolver,
-		const Cache& cache)
-		: pImpl(store, 
+	Loader::Loader(
+		const Store& store, 
+		const XLinkProcessor& xlinkProcessor, 
+		const EntityResolver& entityResolver)
+		: 
+	pImpl(this, 
+		store, 
 		xlinkProcessor, 
-		entityResolver, 
-		cache)
+		entityResolver)
 	{}
-	Loader::Loader(Store& store, 
-		XLinkProcessor& xlinkProcessor, 
-		EntityResolver& entityResolver, 
+	Loader::Loader(
+		const Store& store, 
+		const XLinkProcessor& xlinkProcessor, 
+		const EntityResolver& entityResolver, 
 		const Cache& cache,
-		std::vector<Poco::URI>& uris)
-		: pImpl(store, 
+		const std::vector<Poco::URI>& uris)
+		: 
+	pImpl(this, 
+		store, 
 		xlinkProcessor, 
 		entityResolver, 
 		cache,

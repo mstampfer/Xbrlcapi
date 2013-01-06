@@ -10,24 +10,24 @@ namespace xbrlcapi
 		Impl(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler)
 		{}
 
-		//void startElement(
-		//String namespaceURI, 
-		//	String lName, 
-		//	String qName,
-		//	Attributes attrs) throws XBRLException {
+		void startElement(
+			const std::string& namespaceURI, 
+			const std::string& lName, 
+			const std::string& qName,
+			const xercesc::Attributes& attrs)
+		{
+			//		Fragment languageFragment = null;
+			//		if (namespaceURI.equals(Constants.XBRLAPILanguagesNamespace.toString())) {
+			//			if (lName.equals("language")) {
+			//				languageFragment = new LanguageImpl();
+			//			}
+			//		}
 
-		//		Fragment languageFragment = null;
-		//		if (namespaceURI.equals(Constants.XBRLAPILanguagesNamespace.toString())) {
-		//			if (lName.equals("language")) {
-		//				languageFragment = new LanguageImpl();
-		//			}
-		//		}
+			//		if (languageFragment != null) {
+			//			this.processFragment(languageFragment,attrs);
+			//		}
 
-		//		if (languageFragment != null) {
-		//			this.processFragment(languageFragment,attrs);
-		//		}
-
-		//}  
+		}  
 	};
 
 	LanguageIdentifier::LanguageIdentifier() {}

@@ -2,7 +2,7 @@
 #include <xercesc/dom/DOMElement.hpp>
 #include <xercesc/dom/DOMNode.hpp>
 #include <xercesc/dom/DOMNodeList.hpp>
-#include "XercesStrings.h"
+
 #include "Matcher.h"
 
 /**
@@ -24,7 +24,7 @@ namespace xbrlcapi
 		//	//for (int i=0; i<nodes->getLength(); i++) 
 		//	//{
 		//	//	std::shared_ptr<xercesc::DOMNode> node = std::shared_ptr<xercesc::DOMNode>(nodes->item(i));
-		//	//	if (node->getNodeType() == xercesc::DOMNode::TEXT_NODE) value = value + " " + xerces_util::toNative(node->getTextContent()).trim() + " ";
+		//	//	if (node->getNodeType() == xercesc::DOMNode::TEXT_NODE) value = value + " " + toNative(node->getTextContent()).trim() + " ";
 		//	//	if (node->getNodeType() == xercesc::DOMNode::ELEMENT_NODE) value = value + getStringValue((Element) node);			
 		//	//}
 

@@ -11,15 +11,15 @@ namespace xbrlcapi
 		boost::filesystem::path path;
 		std::shared_ptr<boost::filesystem::fstream> os;
 
-		Impl(const char* name = "c:\\temp\\default.cache") : path(name)
-		{
-			os = std::unique_ptr<boost::filesystem::fstream>(new boost::filesystem::fstream(path));
-		}
+		Impl(const char* name = "c:\\temp\\default.cache") 
+			: path(name),
+			os(std::unique_ptr<boost::filesystem::fstream>(new boost::filesystem::fstream(path)))
+		{}
 
-		Impl(const std::string& name) : path(name)
-		{
-			os = std::unique_ptr<boost::filesystem::fstream>(new boost::filesystem::fstream(path));
-		}
+		Impl(const std::string& name) 
+			: path(name),
+			os(std::unique_ptr<boost::filesystem::fstream>(new boost::filesystem::fstream(path)))
+		{}
 
 		Impl(const Impl& rhs) : path(rhs.path), os(rhs.os)
 		{}
@@ -52,9 +52,8 @@ namespace xbrlcapi
 	CacheFile::~CacheFile() {} 
 
 	CacheFile::CacheFile(const CacheFile& rhs) 
-	{ 
-		pImpl = rhs.pImpl; 
-	}
+		: pImpl(rhs.pImpl)
+	{}
 
 	CacheFile& CacheFile::operator=(const CacheFile& rhs)
 	{
@@ -67,9 +66,8 @@ namespace xbrlcapi
 	}
 
 	CacheFile::CacheFile(CacheFile&& rhs) 
-	{ 
-		pImpl = std::move(rhs.pImpl); 
-	}
+		: pImpl(std::move(pImpl))
+	{}
 
 	CacheFile& CacheFile::operator=(CacheFile&& rhs)
 	{

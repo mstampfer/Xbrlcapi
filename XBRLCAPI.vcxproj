@@ -114,6 +114,7 @@
     <ClCompile Include="BaseURISAXResolver.cpp" />
     <ClCompile Include="LabelResource.cpp" />
     <ClCompile Include="CustomLinkRecogniser.cpp" />
+    <ClCompile Include="XercesString.cpp" />
     <ClCompile Include="XMLDOMSerializer.cpp" />
     <ClCompile Include="XBRLIdentifier.cpp" />
     <ClCompile Include="XBRLXLinkIdentifier.cpp" />
@@ -166,12 +167,12 @@
     <ClInclude Include="SimpleLink.h" />
     <ClInclude Include="XBRLIdentifier.h" />
     <ClInclude Include="XBRLXLinkIdentifier.h" />
+    <ClInclude Include="XercesString.h" />
     <ClInclude Include="XLinkException.h" />
     <ClInclude Include="XMLDOMSerializer.h" />
     <ClInclude Include="XmlInputStreamWrapper.hpp" />
     <ClInclude Include="XBRLException.h" />
     <ClInclude Include="Logger.h" />
-    <ClInclude Include="XercesStrings.h" />
     <ClInclude Include="XMLDomBuilder.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="Stub.h" />
@@ -203,8 +204,6 @@
     <ClInclude Include="CustomLinkRecogniser.h" />
     <ClInclude Include="XBRLXLinkHandler.h" />
     <ClInclude Include="Xlink.h" />
-    <ClInclude Include="XLinkHandler.h" />
-    <ClInclude Include="XLinkHandlerDefault.h" />
     <ClInclude Include="XLinkProcessor.h" />
     <ClInclude Include="XML.h" />
     <ClInclude Include="XMLImpl.h" />
@@ -221,9 +220,6 @@
     <ClCompile Include="SchemaDeclarationImpl.cpp" />
     <ClCompile Include="Loader.cpp" />
     <ClCompile Include="Store.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

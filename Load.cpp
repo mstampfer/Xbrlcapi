@@ -140,7 +140,7 @@ namespace xbrlcapi
 		std::unordered_map<Poco::URI,Poco::URI> map;
 		initLogger();
 		log4cpp::Category &logger = log4cpp::Category::getInstance( std::string("log_sub1") );
-		std::shared_ptr<XBRLXLinkHandler> xlinkHandler = std::shared_ptr<XBRLXLinkHandler>(new XBRLXLinkHandler());
+		XLinkHandler xlinkHandler;
 		CustomLinkRecogniser customLinkRecogniser; 
 		XLinkProcessor xlinkProcessor(xlinkHandler,customLinkRecogniser);
 
@@ -164,10 +164,9 @@ namespace xbrlcapi
 			map.insert(std::make_pair( Poco::URI("http://www.xbrl.org/2003/linkbase/xlink-2003-12-31.xsd"),
 				Poco::URI("http://www.xbrl.org/2003/xlink-2003-12-31.xsd")));
 
-			CacheFile cacheFile(filename);
-			Cache cache(cacheFile);
-			EntityResolver entityResolver(cacheFile, map);      
-			std::shared_ptr<Loader> loader(new Loader(store, xlinkProcessor, entityResolver, cache));
+			Cache cache(CacheFile(filename), map);
+			EntityResolver entityResolver(cache);      
+			std::shared_ptr<Loader> loader(new Loader(store, xlinkProcessor, entityResolver));
 //			loader->setCache(cache);
 //			loader->setEntityResolver(entityResolver);
 //			xlinkHandler->setLoader(*loader);
@@ -324,6 +323,8 @@ int main(int argv, char * args[])
 
 		// Clean up the data store and exit
 		xbrlcapi::Load::cleanup(store);
+
+		xercesc::XMLPlatformUtils::Terminate();
 	}
 	catch (const xbrlcapi::XBRLException& e)
 	{

@@ -7,7 +7,8 @@
 #include "Winsock2.h"
 #include "XBRLException.h"
 #include "XML.h"
-#include "XercesStrings.h"
+#include "XercesString.h"
+
 #include "XmlInputStreamWrapper.hpp"
 #include "DefaultMatcher.h"
 #include "XBRLException.h"
@@ -78,7 +79,7 @@ namespace xbrlcapi
 		std::shared_ptr<DbEnv> environment;
 		int cacheSize;
 		std::shared_ptr<DbXml::XmlManager> dataManager;
-		long lastSync;
+		std::chrono::time_point<std::chrono::system_clock> lastSync;
 		DbXml::XmlContainer dataContainer;
 		/**
 		* Defines the default evaluation approach.
@@ -203,8 +204,6 @@ namespace xbrlcapi
 
 		void initialize(const std::string& location, const std::string& container)
 		{
-			lastSync = 0;
-
 			computerIdentity = getComputerName();
 
 			if (!location.empty() && location != "") locationName = location;
@@ -297,7 +296,7 @@ namespace xbrlcapi
 
 			if (!dataManager) initManager();
 			try {
- 				if (dataManager->existsContainer(containerName)) {
+				if (dataManager->existsContainer(containerName)) {
 					dataContainer = dataManager->openContainer(containerName);
 				} else {
 					createContainer();
@@ -598,11 +597,11 @@ namespace xbrlcapi
 			} 
 			catch (xercesc::DOMLSException e) 
 			{
-				throw XBRLException("Failed query: Parser busy" + query,xerces_util::toNative(e.getMessage()));
+				throw XBRLException("Failed query: Parser busy" + query,toNative(e.getMessage()));
 			}
 			catch (xercesc::DOMException e) 
 			{
-				throw XBRLException("Failed query: Parser was unable to load the XML document" + query,xerces_util::toNative(e.getMessage()));
+				throw XBRLException("Failed query: Parser was unable to load the XML document" + query,toNative(e.getMessage()));
 			}
 			//} finally {
 			//if (xmlResults != nullptr) delete xmlResults; //TODO
@@ -796,15 +795,18 @@ namespace xbrlcapi
 			throw XBRLException("Failed to create query context.",e);
 			}*/
 		}
-
 		//synchronized 
 		void sync()
 		{
-			dataContainer.sync();
-			//		            lastSync = System.currentTimeMillis();
-			//} catch (XmlException e) {
-			//    throw XBRLException("The database updates could not be flushed to disk using the sync method.",e);
-			//}
+			try
+			{
+				dataContainer.sync();
+				lastSync = std::chrono::system_clock::now();
+			} 
+			catch (const DbXml::XmlException& e) 
+			{
+				throw XBRLException("The database updates could not be flushed to disk using the sync method.",e);
+			}
 		}
 
 		void addIndex(const std::string& Namespace, const std::string& name, const std::string& type)

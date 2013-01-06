@@ -46,7 +46,7 @@ namespace xbrlcapi
 
 		Impl() {}
 		Impl(const Impl& rhs) : cacheFile(rhs.cacheFile), uriMap(rhs.uriMap) {}
-		
+
 		Impl(CacheFile& rhs) : cacheFile(rhs)
 		{
 			if (! exists(cacheFile.getPath())) throw XBRLException("The cache " + cacheFile.getFilename() + " does not exist.");
@@ -152,7 +152,7 @@ namespace xbrlcapi
 				boost::filesystem::path& cacheFilePath = getCacheFile(originalURI);
 				if (!cacheFile)
 				{
-					//copyToCache(originalURI,cacheFile); TODO
+					copyToCache(originalURI,cacheFile); 
 				}
 
 				//TODO generalize using following
@@ -393,87 +393,84 @@ namespace xbrlcapi
 
 		}
 
-		//public void copyToCache(URI originalURI, File cacheFile) 
-		//{
+		void copyToCache(const Poco::URI& originalURI, const CacheFile& cacheFile) 
+		{
 
-		//	// If necessary, create the directory to contain the cached resource
-		//	File parent = cacheFile.getParentFile();
-		//	if (parent != null) parent.mkdirs();
+			//	// If necessary, create the directory to contain the cached resource
+			//	File parent = cacheFile.getParentFile();
+			//	if (parent != null) parent.mkdirs();
 
-		//	try 
-		//{
+			//	try 
+			//{
 
-		//		// Establish the connection to the original CacheURIImpl data source
-		//		InputStream inputStream = null;
+			//		// Establish the connection to the original CacheURIImpl data source
+			//		InputStream inputStream = null;
 
-		//		if (originalURI.getScheme().equals("file")) 
-		//{
-		//			 std::string path = originalURI.getPath();
-		//			File f = new File(path);
-		//			inputStream = new FileInputStream(f);
-		//		} else 
-		//{
-		//			inputStream =  originalURI.toURL().openConnection().getInputStream();
-		//		}
+			//		if (originalURI.getScheme().equals("file")) 
+			//{
+			//			 std::string path = originalURI.getPath();
+			//			File f = new File(path);
+			//			inputStream = new FileInputStream(f);
+			//		} else 
+			//{
+			//			inputStream =  originalURI.toURL().openConnection().getInputStream();
+			//		}
 
-		//		BufferedInputStream bis = new BufferedInputStream(inputStream);
+			//		BufferedInputStream bis = new BufferedInputStream(inputStream);
 
-		//		// Establish the connection to the destination file
-		//		FileOutputStream fos = new FileOutputStream(cacheFile);
-		//		BufferedOutputStream bos = new BufferedOutputStream(fos);
+			//		// Establish the connection to the destination file
+			//		FileOutputStream fos = new FileOutputStream(cacheFile);
+			//		BufferedOutputStream bos = new BufferedOutputStream(fos);
 
-		//		// Write the source file to the destination file
-		//		int bite = bis.read();
-		//		while (bite != -1) 
-		//{
-		//			bos.write(bite);
-		//			bite = bis.read();
-		//		}
+			//		// Write the source file to the destination file
+			//		int bite = bis.read();
+			//		while (bite != -1) 
+			//{
+			//			bos.write(bite);
+			//			bite = bis.read();
+			//		}
 
-		//		// Clean up the reader and writer
-		//		bos.flush();
-		//		bis.close();
-		//		bos.close();
+			//		// Clean up the reader and writer
+			//		bos.flush();
+			//		bis.close();
+			//		bos.close();
 
-		//	} catch (java.net.NoRouteToHostException e) 
-		//{
-		//		logger.debug(e.getMessage());
-		//	} catch (FileNotFoundException e) 
-		//{
-		//		logger.debug(e.getMessage());
-		//	} catch (IOException e) 
-		//{
-		//		logger.debug(e.getMessage());
-		//	}
-		//}
+			//	} catch (java.net.NoRouteToHostException e) 
+			//{
+			//		logger.debug(e.getMessage());
+			//	} catch (FileNotFoundException e) 
+			//{
+			//		logger.debug(e.getMessage());
+			//	} catch (IOException e) 
+			//{
+			//		logger.debug(e.getMessage());
+			//	}
+		}
 
-		///**
-		//* @see org.xbrlapi.cache.Cache#copyToCache(java.net.URI, java.lang.String)
-		//*/
-		//public void copyToCache(URI originalURI,  std::string xml) 
-		//{
+		void copyToCache(const Poco::URI& originalURI,  const std::string& xml) 
+		{
 
-		//	logger.debug("Attempting to cache a string XML document using : " + originalURI);
+			//	logger.debug("Attempting to cache a string XML document using : " + originalURI);
 
-		//	File cacheFile = this.getCacheFile(originalURI);
+			//	File cacheFile = this.getCacheFile(originalURI);
 
-		//	logger.debug("The cache file is : " + cacheFile.toString());
+			//	logger.debug("The cache file is : " + cacheFile.toString());
 
-		//	// If necessary, create the directory to contain the cached resource
-		//	File parent = cacheFile.getParentFile();
-		//	if (parent != null) parent.mkdirs();
+			//	// If necessary, create the directory to contain the cached resource
+			//	File parent = cacheFile.getParentFile();
+			//	if (parent != null) parent.mkdirs();
 
-		//	try 
-		//{
-		//		FileWriter out = new FileWriter(cacheFile);
+			//	try 
+			//{
+			//		FileWriter out = new FileWriter(cacheFile);
 
-		//		out.write(xml);
-		//		out.close();		
-		//	} catch (IOException e) 
-		//{
-		//		throw XBRLException("The  std::string resource could not be cached.",e);
-		//	}
-		//}    
+			//		out.write(xml);
+			//		out.close();		
+			//	} catch (IOException e) 
+			//{
+			//		throw XBRLException("The  std::string resource could not be cached.",e);
+			//	}
+		}    
 
 		///**
 		//* @see org.xbrlapi.cache.Cache#purge(java.net.URI)
@@ -581,10 +578,9 @@ namespace xbrlcapi
 
 	Cache::~Cache() {}
 
-	Cache::Cache(const Cache& rhs)
-	{
-		pImpl = rhs.pImpl;
-	}
+	Cache::Cache(const Cache& rhs) 
+		: pImpl(rhs.pImpl)
+	{}
 
 	Cache& Cache::operator=(const Cache& rhs)
 	{
@@ -596,7 +592,9 @@ namespace xbrlcapi
 		return *this;
 	}
 
-	Cache::Cache(Cache&& rhs) : pImpl(std::move(rhs.pImpl)) {}
+	Cache::Cache(Cache&& rhs) 
+		: pImpl(std::move(rhs.pImpl)) 
+	{}
 
 	Cache& Cache::operator=(Cache&& rhs)
 	{
@@ -606,15 +604,12 @@ namespace xbrlcapi
 	}
 
 	Cache::Cache(CacheFile& cacheFile) 
-	{
-		pImpl->cacheFile = cacheFile;
-	}
+		: pImpl(cacheFile)
+	{}
 
-	Cache::Cache(CacheFile& cacheFile, const std::unordered_map<Poco::URI, Poco::URI>& map)
-	{
-		pImpl->cacheFile = cacheFile;
-		pImpl->uriMap = map;
-	}
+	Cache::Cache(CacheFile& cacheFile, const std::unordered_map<Poco::URI, Poco::URI>& map) 
+		: pImpl(cacheFile, map)
+	{}
 
 	bool Cache::operator==(const Cache& rhs)
 	{

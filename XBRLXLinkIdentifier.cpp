@@ -23,7 +23,7 @@ namespace xbrlcapi
 			return getLoader().getXlinkProcessor();
 		}
 
-		std::shared_ptr<XLinkHandler> getXLinkHandler()
+		XLinkHandler getXLinkHandler()
 		{
 			return getLoader().getXlinkProcessor().getXLinkHandler();
 		}
@@ -38,12 +38,11 @@ namespace xbrlcapi
 			// Set the Element state information in the XBRL XLink handler.
 			//try
 			{
-				std::shared_ptr<XLinkHandler> xlinkHandler = getXLinkHandler();
-				std::shared_ptr<XBRLXLinkHandler> handler(dynamic_cast<XBRLXLinkHandler*>(xlinkHandler.get()));
-				handler->setElementState(getElementState());
+				XLinkHandler xlinkHandler = getXLinkHandler();
+				xlinkHandler.setElementState(getElementState());
 				/*			} catch (ClassCastException e)
 				{
-				throw XBRLException("The XBRLXLinkIdentifier MUST use an XBRLXLinkHandler when parsing " + getContentHandler().getURI(),e);
+				throw XBRLException("The XBRLXLinkIdentifier MUST use an XLinkHandler when parsing " + getContentHandler().getURI(),e);
 				}*/
 
 				// Pass control through to the XLink processor to detect XLink structures

@@ -1,29 +1,29 @@
 #include "EntityResolver.h"
 #include "HashFunctions.h"
 #include "XBRLException.h"
-#include "XercesStrings.h"
 #include <Poco/Exception.h>
 #include <memory>
 #include <unordered_map>  
 #include <xercesc/framework/URLInputSource.hpp>
+#include <xercesc/framework/LocalFileInputSource.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include "Cache.h"
 #include "CacheFile.h"
+#include "XercesString.h"
+
 
 namespace xbrlcapi
 {
 	struct EntityResolver::Impl 
 	{
 		Cache cache;
-		CacheFile cacheFile;
 
-		Impl() : cache(Cache()), cacheFile(CacheFile()) {}
-
-		Impl(Cache& cache) 
-		{}    
-
-		Impl(CacheFile& cacheFile) : cache(Cache(cacheFile))
+		Impl() 
+			: cache(Cache())
 		{}
+
+		Impl(Cache& cache) : cache(cache)
+		{}    
 
 		Impl(CacheFile& cacheFile, std::unordered_map<Poco::URI, Poco::URI> uriMap) 
 			: cache(Cache(cacheFile, uriMap))
@@ -42,16 +42,17 @@ namespace xbrlcapi
 		bool operator==(Impl& rhs)
 		{
 			return ( 
-				cache == rhs.cache &&
-				cacheFile == rhs.cacheFile
+				cache == rhs.cache
 				);
 		}
 
 		xercesc::InputSource* resolveEntity(const XMLCh *const publicId, const XMLCh *const systemId) 
 		{
+					
+
 			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
-			logger.debug("SAX: Resolving the entity for " + xerces_util::toNative(systemId));
-			Poco::URI uri(xerces_util::toNative(systemId));
+			logger.debug("SAX: Resolving the entity for " + toNative(systemId));
+			Poco::URI uri(toNative(systemId));
 			try {
 				if (hasCache()) 
 				{ 
@@ -60,16 +61,16 @@ namespace xbrlcapi
 			} 
 			catch (const XBRLException& e) 
 			{
-				logger.warn("Cache handling for " + xerces_util::toNative(systemId) + "failed.");
+				logger.warn("Cache handling for " + toNative(systemId) + "failed.");
 				//	return new InputSource(systemId);
 			} 
 			catch (Poco::SyntaxException e) 
 			{
-				logger.warn(xerces_util::toNative(systemId) + " is a malformed URI.");
+				logger.warn(toNative(systemId) + " is a malformed URI.");
 				//	return new InputSource(systemId);
 			}
-			auto wc_uri = xercesc::XMLString::transcode(uri.toString().c_str());
-			return new xercesc::URLInputSource(wc_uri);
+			auto wc_uri = XercesString(uri);
+			return new xercesc::URLInputSource(xercesc::XMLURL(wc_uri));
 		}
 
 		bool hasCache() 
@@ -81,16 +82,16 @@ namespace xbrlcapi
 		{
 			//try {
 			//	logger.debug("SCHEMA: Resolving the entity for " + resource.getExpandedSystemId());
-			xercesc::XMLPlatformUtils::Initialize();
-			std::string id = xerces_util::toNative(resource.getSystemId());
+			//xercesc::XMLPlatformUtils::Initialize();
+			std::string id = toNative(resource.getSystemId());
 			Poco::URI uri(id);
 			if (hasCache()) 
 			{
 				uri = cache.getCacheURI(uri);
 			}
 			//			logger.debug("... so resolving the entity for URI " + uri);
-			auto w_uri = xercesc::XMLString::transcode(uri.toString().c_str());
-			return new xercesc::URLInputSource(w_uri);
+			auto wc_uri = XercesString(uri);
+			return new xercesc::URLInputSource(xercesc::XMLURL(wc_uri));
 			//} catch (XBRLException e) {
 			//	logger.warn("Cache handling for " + resource.getExpandedSystemId() + "failed.");
 			//	return new xercesc::XMLInputSource(resource.getPublicId(),resource.getExpandedSystemId(), resource.getBaseSystemId());
@@ -100,26 +101,27 @@ namespace xbrlcapi
 			//}
 		}
 
-		//std::shared_ptr<xercesc::InputSource> resolveSchemaURI(const Poco::URI& uri) 
-		//{
-		//	try {
-
-		//		Poco::URI uri = originalURI;
-		//		if (hasCache()) 
-		//		{
-		//			uri = cache.getCacheURI(originalURI);
-		//		}
-
-		//		return xercesc::XMLInputSource(NULL,uri.toString(), uri.toString());
-
-		//	} 
-
-		//	catch (XBRLException e) 
-		//	{
-		//		logger.warn("Cache handling for " + originalURI.toString() + "failed.");
-		//		return std::shared_ptr(new xercesc::XMLInputSource(NULL, originalURI.toString(), originalURI.toString()));
-		//	}
-		//}
+		std::shared_ptr<xercesc::InputSource> resolveSchemaURI(const Poco::URI& originalURI) 
+		{
+			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
+			auto uri = XercesString(originalURI.toString().c_str());
+			auto xmlUrl = xercesc::XMLURL(uri);
+			try 
+			{
+				if (hasCache()) 
+				{
+					auto basePath = XercesString(cache.getCacheFile(originalURI).generic_string().c_str());
+					uri = XercesString(cache.getCacheURI(originalURI).toString().c_str());
+					return std::make_shared<xercesc::LocalFileInputSource>(basePath, uri);
+				}
+			} 
+			catch (XBRLException e) 
+			{
+				logger.warn("Cache handling for " + originalURI.toString() + "failed.");
+				return std::make_shared<xercesc::URLInputSource>(xmlUrl);
+			}
+			return std::make_shared<xercesc::URLInputSource>(xmlUrl);
+		}
 
 		int hashCode() 
 		{
@@ -180,16 +182,12 @@ namespace xbrlcapi
 		return *this;
 	}
 
-	EntityResolver::EntityResolver(CacheFile& cacheFile) : pImpl(cacheFile)
-	{}
-
 	EntityResolver::EntityResolver(CacheFile& cacheFile, std::unordered_map<Poco::URI,Poco::URI>& map)
 		: pImpl(cacheFile, map)
 	{}
 
 	EntityResolver::EntityResolver(Cache& cache) : pImpl(cache)
 	{}
-
 
 	bool EntityResolver::operator==(const EntityResolver& rhs)
 	{
@@ -211,10 +209,10 @@ namespace xbrlcapi
 		return pImpl->resolveEntity(std::ref(*resourceIdentifier));
 	}
 
-	//xercesc::InputSource* EntityResolver::resolveSchemaURI(const Poco::URI& uri) 
-	//{
-	//	return pImpl->resolveSchemaURI(uri);
-	//}
+	std::shared_ptr<xercesc::InputSource> EntityResolver::resolveSchemaURI(const Poco::URI& uri) 
+	{
+		return pImpl->resolveSchemaURI(uri);
+	}
 
 	bool EntityResolver::hasCache() 
 	{

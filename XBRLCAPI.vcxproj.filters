@@ -138,6 +138,9 @@
     <ClCompile Include="CustomLinkRecogniser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="XercesString.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArcEnd.h">
@@ -272,9 +275,6 @@
     <ClInclude Include="Xlink.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XLinkHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="XLinkProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -300,9 +300,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="XBRLException.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="XercesStrings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DbXmlXerces.hpp">
@@ -371,9 +368,6 @@
     <ClInclude Include="XBRLXLinkIdentifier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XLinkHandlerDefault.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="XMLDOMSerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -395,8 +389,8 @@
     <ClInclude Include="doxygen_dummy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
+    <ClInclude Include="XercesString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

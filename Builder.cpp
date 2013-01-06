@@ -4,7 +4,7 @@
 #include <xercesc/dom/DOMNode.hpp>
 #include "Constants.h"
 #include "XBRLException.h"
-#include "XercesStrings.h"
+
 
 
 namespace xbrlcapi
@@ -139,7 +139,7 @@ namespace xbrlcapi
 
 		void appendProcessingInstruction(const std::string& target, const std::string& data)
 		{
-			//			appendChild(dom->createProcessingInstruction(xerces_util::fromNative(target), xerces_util::fromNative(data)));
+			//			appendChild(dom->createProcessingInstruction(XercesString(target), XercesString(data)));
 		}
 
 		//public void appendComment(String text) throws XBRLException

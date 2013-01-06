@@ -10,22 +10,23 @@ namespace xbrlcapi
 		Impl(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler)
 		{}
 
-		//void startElement(
-		//String namespaceURI, 
-		//	String lName, 
-		//	String qName,
-		//	Attributes attrs) throws XBRLException {
+		void startElement(
+			const std::string& namespaceURI, 
+			const std::string& lName, 
+			const std::string& qName,
+			const xercesc::Attributes& attrs)
+		{
 
-        //if (! getLoader().isBuildingAFragment()) {
-        //    return;
-        //}
-        //
-        //// Handle reference part fragments inside reference resources
-        //Fragment fragment = getLoader().getFragment();
-        //if (fragment.getType().equals("org.xbrlapi.impl.ReferenceResourceImpl")) {
-        //    Fragment referencePartFragment = new ReferencePartImpl();
-        //    processFragment(referencePartFragment,attrs);
-        //}
+			//if (! getLoader().isBuildingAFragment()) {
+			//    return;
+			//}
+			//
+			//// Handle reference part fragments inside reference resources
+			//Fragment fragment = getLoader().getFragment();
+			//if (fragment.getType().equals("org.xbrlapi.impl.ReferenceResourceImpl")) {
+			//    Fragment referencePartFragment = new ReferencePartImpl();
+			//    processFragment(referencePartFragment,attrs);
+		}
 	};
 
 	ReferencePartIdentifier::ReferencePartIdentifier() {}

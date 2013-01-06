@@ -9,19 +9,16 @@ namespace xbrlcapi
 {
 	struct BaseContentHandler::Impl 
 	{
-		Impl() {}
-		Impl(Loader& loader, const Poco::URI& uri) 
-		{
-			this->uri = uri;
-			this->loader = loader;		
-		}
 		Loader loader;
-
 		ElementState state;
-
 		std::list<std::shared_ptr<Identifier>> identifiers;
-
 		Poco::URI uri;
+
+		Impl() {}
+		Impl(const Loader& loader, const Poco::URI& uri) :
+			loader(loader),
+			uri(uri)
+		{}
 
 		Loader getLoader() 
 		{
@@ -63,12 +60,12 @@ namespace xbrlcapi
 			/*if (exception.getMessage().contains("Cannot find the declaration of element"))
 			if (exception.getMessage().contains("'schema'") || exception.getMessage().contains(":schema'"))
 			return;*/
-	//		logger.error(":" + exception.getMessage() + ": on line number " + exception.getLineNumber());
+			//		logger.error(":" + exception.getMessage() + ": on line number " + exception.getLineNumber());
 		}
 
 		void fatalError(const xercesc::SAXParseException& exception) 
 		{
-		//	logger.error(exception.getMessage() + ": on line number " + exception.getLineNumber());
+			//	logger.error(exception.getMessage() + ": on line number " + exception.getLineNumber());
 		}
 
 		void warning(const xercesc::SAXParseException& exception)
@@ -78,7 +75,7 @@ namespace xbrlcapi
 
 	};
 
-	BaseContentHandler::BaseContentHandler(Loader& loader, const Poco::URI& uri) : pImpl(loader,uri)
+	BaseContentHandler::BaseContentHandler(const Loader& loader, const Poco::URI& uri) : pImpl(loader,uri)
 	{}
 
 	BaseContentHandler::BaseContentHandler() : pImpl()

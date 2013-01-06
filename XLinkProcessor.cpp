@@ -18,7 +18,7 @@ namespace xbrlcapi
 
 	struct XLinkProcessor::Impl  //, Serializable 
 	{
-		std::shared_ptr<XLinkHandler> xlinkHandler;
+		XLinkHandler xlinkHandler;
 		CustomLinkRecogniser customLinkRecogniser;
 		std::stack<int> ancestorTypes;
 		//transient private bool insideAnExtendedLink = false;
@@ -34,12 +34,12 @@ namespace xbrlcapi
 
 		Impl() {}
 
-		Impl(const std::shared_ptr<XLinkHandler>& xlinkHandler)
+		Impl(const XLinkHandler& xlinkHandler)
 		{
 			initialize(xlinkHandler);
 		}
 
-		Impl(const std::shared_ptr<XLinkHandler>& xlinkHandler, CustomLinkRecogniser& recogniser) 
+		Impl(const XLinkHandler& xlinkHandler, CustomLinkRecogniser& recogniser) 
 		{
 			initialize(xlinkHandler);
 			setCustomLinkRecogniser(recogniser);
@@ -50,7 +50,7 @@ namespace xbrlcapi
 			customLinkRecogniser = clr;
 		}
 
-		void initialize(const std::shared_ptr<XLinkHandler>& xlinkHandler) 
+		void initialize(const XLinkHandler& xlinkHandler) 
 		{
 			this->xlinkHandler = xlinkHandler; 
 			ancestorTypes.push(NOT_XLINK);
@@ -489,7 +489,7 @@ namespace xbrlcapi
 		//		}
 		//}
 
-		std::shared_ptr<XLinkHandler> getXLinkHandler() 
+		XLinkHandler getXLinkHandler() 
 		{
 			return xlinkHandler;
 		}
@@ -569,7 +569,7 @@ namespace xbrlcapi
 		pImpl = std::move(rhs.pImpl); 
 	}
 
-	XLinkProcessor::XLinkProcessor(const std::shared_ptr<XLinkHandler>& xlh, CustomLinkRecogniser& clr) : pImpl(xlh, clr)
+	XLinkProcessor::XLinkProcessor(const XLinkHandler& xlh, CustomLinkRecogniser& clr) : pImpl(xlh, clr)
 	{}
 
 	XLinkProcessor& XLinkProcessor::operator=(XLinkProcessor&& rhs)
@@ -611,7 +611,7 @@ namespace xbrlcapi
 
 
 	//public void titleCharacters(char buf[], int offset, int len) throws XLinkException;
-	std::shared_ptr<XLinkHandler> XLinkProcessor::getXLinkHandler()
+	XLinkHandler XLinkProcessor::getXLinkHandler()
 	{
 		return pImpl->getXLinkHandler();
 	}
