@@ -1,29 +1,57 @@
-#include "XML.h"
+#include "XMLImpl.h"
 #include <unordered_map>
 #include "Store.h"
 #include "XBRLException.h"
 #include "Builder.h"
-#include "xercesc/dom/DOMElement.hpp"
 
 namespace xbrlcapi
 {    
-	struct XML::Impl
+	struct XMLImpl::Impl
 	{
+
 		Builder builder;
 		Store store;
 		std::shared_ptr<xercesc::DOMElement> rootElement;
+
 		Impl() {}
 
-		//Impl& operator=(Impl&& rhs)
-		//{
-		//	if (this != &rhs)
-		//	{
-		//		builder = std::move(rhs.builder);
-		//		store = std::move(rhs.store);
-		//		rootElement = std::move(rhs.rootElement);
-		//	}
-		//	return *this;
-		//}
+		Impl(const Impl& rhs) :
+			builder(rhs.builder),
+			store(rhs.store),
+			rootElement(rhs.rootElement)
+		{
+
+		}
+
+		Impl(const Impl&& rhs) :
+			builder(std::move(rhs.builder)),
+			store(std::move(rhs.store)),
+			rootElement(std::move(rhs.rootElement))
+		{
+
+		}
+
+		Impl& operator=(Impl& rhs)
+		{
+			if (this != &rhs)
+			{
+				builder = rhs.builder;
+				store = rhs.store;
+				rootElement = rhs.rootElement;
+			}
+			return *this;
+		}
+
+		Impl& operator=(Impl&& rhs)
+		{
+			if (this != &rhs)
+			{
+				builder = std::move(rhs.builder);
+				store = std::move(rhs.store);
+				rootElement = std::move(rhs.rootElement);
+			}
+			return *this;
+		}
 
 		bool operator==(const Impl& rhs)
 		{
@@ -33,70 +61,6 @@ namespace xbrlcapi
 				rootElement == rhs.rootElement
 				);
 		}
-
-		bool isa(const std::string& type)
-		{
-
-			//Class<?> targetClass = FragmentFactory.getClass(type);
-			//Class<?> candidateClass = this->getClass();
-			//while (candidateClass != null) 
-			//{
-			//	if (candidateClass.equals(targetClass)) return true;
-			//	candidateClass = candidateClass.getSuperclass();
-			//}
-
-			return false;
-		}
-
-		//bool isa(Class<?> targetClass) 
-		//{
-		//	//Class<?> candidateClass = this->getClass();
-		//	//while (candidateClass != null) 
-		//	//{
-		//	//	if (candidateClass.equals(targetClass)) return true;
-		//	//	candidateClass = candidateClass.getSuperclass();
-		//	//}
-		//	return false;
-		//}    
-
-		int hashCode() 
-		{
-			//final int prime = 31;
-			int result = 1;
-			return result;
-		}
-
-		//bool xmlimpl::equals(object obj) 
-		//{
-		//	//if (this == obj) 
-		//	//{
-		//	//	return true;
-		//	//}
-		//	//if (obj == null)
-		//	//	return false;
-		//	//if (getclass() != obj.getclass())
-		//	//	return false;
-		//	//xmlimpl other = (xmlimpl) obj;
-
-		//	//if (store == null) 
-		//	//{
-		//	//	if (other.store != null)
-		//	//		return false;
-		//	//} else if (!store.equals(other.store))
-		//	//	return false;
-
-		//	//std::string index = this->getindex();
-		//	//if (index == null) return false;
-		//	//if (!index.equals(other.getindex())) return false;
-
-		//	return true;
-		//}
-
-		//int compareTo(const XML& other) 
-		//{
-		//	//		return this->getIndex().compareTo(other.getIndex());
-		//	return 0;
-		//}
 
 		void setResource(const std::shared_ptr<xercesc::DOMElement>& rootElement)
 		{
@@ -146,6 +110,52 @@ namespace xbrlcapi
 			if (builder.getMetadata().get() != nullptr) return builder.getMetadata();
 			return getResource();
 		}
+
+		void appendMetadataElement(const std::string& eName, const std::unordered_map<std::string,std::string>& attributes)
+		{
+			//if (eName == null) throw new XBRLException("An DOMElement name must be specified.");
+
+			//if (getBuilder() != null) 
+			//{
+			//	getBuilder().appendMetadataElement(eName, attributes);
+			//	return;
+			//}
+
+			//std::shared_ptr<xercesc::DOMElement> root = getMetadataRootElement();
+			//Document document = root.getOwnerDocument();
+			//std::shared_ptr<xercesc::DOMElement> child = document.createElementNS(Constants.XBRLAPINamespace.toString(),Constants.XBRLAPIPrefix + ":" + eName);
+
+			//for (std::string& aName: attributes.keySet()) 
+			//{
+			//	std::string aValue = attributes.get(aName);
+			//	if (aName != null) 
+			//	{
+			//		if (aValue == null) throw new XBRLException("A metadata DOMElement is being added but attribute, " + aName + ", has a null value.");
+			//		child.setAttribute(aName,aValue); 
+			//	} else throw new XBRLException("A metadata DOMElement is being added with an attribute with a null name.");
+			//}
+			//root.appendChild(child);
+			//updateStore();
+		}
+
+		void finalize()
+		{
+			//super.finalize(); 
+		}    
+
+		std::shared_ptr<xercesc::DOMElement> getResource() 
+		{
+			return rootElement;
+		} 
+
+		void updateStore()
+		{
+			//		getStore().persist(this);
+		}
+
+		//    Builder getBuilder();
+
+		//   Element getMetadataRootElement();
 
 		std::string getIndex()
 		{
@@ -214,33 +224,6 @@ namespace xbrlcapi
 			//}
 			//return getMetadataRootElement().hasAttribute(name);
 			return false;
-		}
-
-		void appendMetadataElement(const std::string& eName, const std::unordered_map<std::string,std::string>& attributes)
-		{
-			//if (eName == null) throw new XBRLException("An DOMElement name must be specified.");
-
-			//if (getBuilder() != null) 
-			//{
-			//	getBuilder().appendMetadataElement(eName, attributes);
-			//	return;
-			//}
-
-			//std::shared_ptr<xercesc::DOMElement> root = getMetadataRootElement();
-			//Document document = root.getOwnerDocument();
-			//std::shared_ptr<xercesc::DOMElement> child = document.createElementNS(Constants.XBRLAPINamespace.toString(),Constants.XBRLAPIPrefix + ":" + eName);
-
-			//for (std::string& aName: attributes.keySet()) 
-			//{
-			//	std::string aValue = attributes.get(aName);
-			//	if (aName != null) 
-			//	{
-			//		if (aValue == null) throw new XBRLException("A metadata DOMElement is being added but attribute, " + aName + ", has a null value.");
-			//		child.setAttribute(aName,aValue); 
-			//	} else throw new XBRLException("A metadata DOMElement is being added with an attribute with a null name.");
-			//}
-			//root.appendChild(child);
-			//updateStore();
 		}
 
 		void removeMetadataElement(const std::string& eName, std::unordered_map<std::string,std::string> attributes)
@@ -314,139 +297,153 @@ namespace xbrlcapi
 			//store.persist(this);
 		}
 
-		void finalize()
+		std::shared_ptr<xercesc::DOMDocument> getDocumentNode()
 		{
-			//super.finalize(); 
-		}    
+			//if (builder != null) return getBuilder().getMetadata().getOwnerDocument();
+			//return getResource().getOwnerDocument();
+			return std::shared_ptr<xercesc::DOMDocument>();
+		}   
 
-		//void readObject(ObjectInputStream in)
-		//{
 
-		//in.defaultReadObject();
-		//try 
-		//{
-		//	XMLDOMBuilder builder = new XMLDOMBuilder();
-		//	Document dom = builder.newDocument((std::string) in.readObject());
-		//	rootElement = dom.getDocumentElement();
-		//} catch (XBRLException e) 
-		//{
-		//	throw new IOException("The XML Resource could not be de-serialized.",e);
-		//}
-		//}
-
-		//void writeObject(java.io.ObjectOutputStream out) throws IOException 
-		//{
-		//if (this->getBuilder() != null) 
-		//{
-		//	logger.error(this->getIndex() + " still has a builder.");
-		//	throw new IOException("The XML Resource could not be serialized because it is still being built.");
-		//}
-		//out.defaultWriteObject( );
-		//try 
-		//{
-		//	std::string xml = store.serialize(rootElement);
-		//	out.writeObject(xml);
-		//} catch (XBRLException e) 
-		//{
-		//	throw new IOException("Could not convert the store content to a string representation of the XML.",e);
-		//}
-		//}
-
-		std::shared_ptr<xercesc::DOMElement> getResource() 
-		{
-			return rootElement;
-		} 
-
-		void updateStore()
-		{
-			//		getStore().persist(this);
-		}
 	};
 
-	XML::XML() {}
+	XMLImpl::XMLImpl() {}
+	XMLImpl::~XMLImpl() {} 
 
-	XML::~XML() {} 
-
-	XML::XML(const XML& rhs) 
+	XMLImpl::XMLImpl(const XMLImpl& rhs) 
 	{ 
 		pImpl = rhs.pImpl; 
 	}
 
-	XML& XML::operator=(const XML& rhs)
+	XMLImpl& XMLImpl::operator=(const XMLImpl& rhs)
 	{
 		if (pImpl != rhs.pImpl)
 		{
-			//pImpl->~Impl();
+			pImpl->~Impl();
 			pImpl = rhs.pImpl;
 		}
 		return *this;
 	}
 
-	XML::XML(XML&& rhs) 
+	XMLImpl::XMLImpl(XMLImpl&& rhs) 
 	{ 
 		pImpl = std::move(rhs.pImpl); 
 	}
 
-	XML& XML::operator=(XML&& rhs)
+	XMLImpl& XMLImpl::operator=(XMLImpl&& rhs)
 	{
 		if (pImpl != rhs.pImpl)
 			pImpl = std::move(rhs.pImpl);
 		return *this;
 	}
 
-	bool XML::operator==(const XML& rhs)
+	bool XMLImpl::operator==(const XMLImpl& rhs)
 	{
 		return (pImpl == rhs.pImpl);
 	}
 
-	bool XML::operator!=(const XML& rhs)
+	bool XMLImpl::operator!=(const XMLImpl& rhs)
 	{
 		return !this->operator==(rhs);
 	}
 
-	void XML::setResource(const std::shared_ptr<xercesc::DOMElement>& rootElement)
+	void XMLImpl::setResource(const std::shared_ptr<xercesc::DOMElement>& rootElement)
 	{
 		pImpl->setResource(rootElement);
-	}
+	}    
 
-	std::shared_ptr<xercesc::DOMElement> XML::getMetadataRootElement()
+	std::shared_ptr<xercesc::DOMDocument> XMLImpl::getDocumentNode()
 	{
-		return pImpl->getMetadataRootElement();
-	}
+		return pImpl->getDocumentNode();
+	}   
 
-	void XML::setStore(const Store& store)
+	void XMLImpl::setStore(const Store& store)
 	{
 		pImpl->setStore(store);
 	}
 
-	Store XML::getStore()
+	void XMLImpl::setBuilder(const Builder& builder) 
+	{
+		pImpl->setBuilder(builder);
+	}
+
+	Store XMLImpl::getStore() 
 	{
 		return pImpl->getStore();
 	}
 
-	Builder XML::getBuilder()
+	Builder XMLImpl::getBuilder() 
 	{
 		return pImpl->getBuilder();
 	}
 
-	std::string XML::getIndex()
+	std::shared_ptr<xercesc::DOMElement> XMLImpl::getMetadataRootElement()
+	{
+		return getMetadataRootElement();
+	}
+
+	void XMLImpl::appendMetadataElement(const std::string& eName, const std::unordered_map<std::string,std::string>& attributes)
+	{
+		pImpl->appendMetadataElement(eName,attributes);
+	}
+
+	std::string XMLImpl::getIndex()
 	{
 		return pImpl->getIndex();
 	}
 
-	void XML::setMetaAttribute(const std::string& name, const std::string& value)
+	void XMLImpl::setIndex(const std::string& index)
+	{
+		pImpl->setIndex(index);
+	}
+
+	std::string XMLImpl::getType() 
+	{
+		return pImpl->getType();
+	}
+
+	void XMLImpl::setMetaAttribute(const std::string& name, const std::string& value)
 	{
 		pImpl->setMetaAttribute(name, value);
 	}
 
-	void XML::appendMetadataElement(const std::string& eName, const std::unordered_map<std::string,std::string>& attributes)
+	void XMLImpl::removeMetaAttribute(const std::string& name)
 	{
-		pImpl->appendMetadataElement(eName, attributes);
+		pImpl->removeMetaAttribute(name);
 	}
 
-	std::string XML::getMetaAttribute(const std::string& name)
+	std::string XMLImpl::getMetaAttribute(const std::string& name) 
 	{
 		return pImpl->getMetaAttribute(name);
 	}
 
+	bool XMLImpl::hasMetaAttribute(const std::string& name) 
+	{
+		return pImpl->hasMetaAttribute(name);
+	}
+
+	void XMLImpl::removeMetadataElement(const std::string& eName, std::unordered_map<std::string,std::string> attributes)
+	{
+		pImpl->removeMetadataElement(eName, attributes);
+	}
+
+	//void serialize(File file)
+	//{
+	//	pImpl->serialize(file);
+	//}
+
+	//void serialize(OutputStream outputStream)
+	//{
+	//	pImpl->serialize(outputStream);
+	//}
+
+	std::string XMLImpl::serialize()
+	{
+		return pImpl->serialize();
+	}
+
+	void XMLImpl::updateInStore()
+	{
+		pImpl->updateInStore();
+	}
 }

@@ -8,6 +8,8 @@
 #include "XBRLException.h"
 #include "XML.h"
 #include "XercesString.h"
+#include "HashFunctions.h"
+#include "Analyser.h"
 
 #include "XmlInputStreamWrapper.hpp"
 #include "DefaultMatcher.h"
@@ -49,9 +51,10 @@ namespace xbrlcapi
 
 	struct Store::Impl
 	{
+		const Store* outer;
 		std::shared_ptr<xercesc::DOMImplementationLS> domImplementationRegistry;
 		int loadingStatus;
-		//			std::map<Poco::URI,Loader> loadingRights;
+		//			std::map<Poco::URI,boost::uuids::uuid> loadingRights;
 		std::unordered_set<Poco::URI> uris;
 		std::shared_ptr<xercesc::DOMDocument> storedom;
 		std::shared_ptr<xercesc::DOMImplementationLS> domimplementation;
@@ -62,7 +65,7 @@ namespace xbrlcapi
 		* prevent the same document from being simultaneously
 		* loaded by several of the loaders.
 		*/
-		std::unordered_map<Poco::URI,std::shared_ptr<Loader>> loadingRights;		    	    
+		std::unordered_map<Poco::URI,boost::uuids::uuid> loadingRights;		    	    
 		/**
 		* resource matcher
 		*/
@@ -85,12 +88,14 @@ namespace xbrlcapi
 		* Defines the default evaluation approach.
 		*/
 		int queryEvaluationType;
+		Analyser analyser;
 		static const 	u_int32_t env_flags = DB_CREATE     |  // If the environment does not exist, create it.
 			DB_INIT_LOCK  |  // Initialize locking
 			DB_INIT_LOG   |  // Initialize logging
 			DB_INIT_MPOOL |  // Initialize the cache
 			DB_INIT_TXN	|  // Initialize transactions
 			DB_THREAD ;	   // 
+		boost::uuids::uuid loader;
 
 		Impl() {}
 
@@ -100,12 +105,13 @@ namespace xbrlcapi
 		* @param container The name of the container to hold the data in the store.
 		* @throws XBRLException
 		*/
-		Impl(const std::string& location, const std::string& container) 
-			: locationName(location), 
+		Impl(const Store* store, const std::string& location, const std::string& container, const boost::uuids::uuid& loader) :
+			outer(store),
+			locationName(location), 
 			containerName(container),
 			cacheSize(1024 * 1024 * 1024),
-			queryEvaluationType(DbXml::XmlQueryContext::Eager)
-
+			queryEvaluationType(DbXml::XmlQueryContext::Eager),
+			loader(loader)
 		{
 			initialize(location,container);
 		}
@@ -116,8 +122,42 @@ namespace xbrlcapi
 		* @param cacheSize The number of megabytes to use for the cache size.
 		* @throws XBRLException
 		*/
-		Impl(const std::string& location, const std::string& container, int cacheSize) 
-			: locationName(location), 
+		Impl(const Store* store, const std::string& location, const std::string& container, int cacheSize, const boost::uuids::uuid& loader) :
+			outer(store),
+			locationName(location), 
+			containerName(container),
+			cacheSize(cacheSize * 1024*1024),
+			queryEvaluationType(DbXml::XmlQueryContext::Eager),
+			loader(loader)
+		{
+			initialize(location,container);
+		} 
+
+		/**
+		* This uses the default 1 GB cache size.
+		* @param location The location of the database (The path to where the database exists)
+		* @param container The name of the container to hold the data in the store.
+		* @throws XBRLException
+		*/
+		Impl(const Store* store, const std::string& location, const std::string& container) :
+			outer(store),
+			locationName(location), 
+			containerName(container),
+			cacheSize(1024 * 1024 * 1024),
+			queryEvaluationType(DbXml::XmlQueryContext::Eager)
+		{
+			initialize(location,container);
+		}
+
+		/**
+		* @param location The location of the database (The path to where the database exists)
+		* @param container The name of the container to hold the data in the store.
+		* @param cacheSize The number of megabytes to use for the cache size.
+		* @throws XBRLException
+		*/
+		Impl(const Store* store, const std::string& location, const std::string& container, int cacheSize) :
+			outer(store),
+			locationName(location), 
 			containerName(container),
 			cacheSize(cacheSize * 1024*1024),
 			queryEvaluationType(DbXml::XmlQueryContext::Eager)
@@ -142,13 +182,17 @@ namespace xbrlcapi
 			namespaceBindings(rhs.namespaceBindings),
 			queryEvaluationType(rhs.queryEvaluationType),
 			storedom(rhs.storedom),
-			uris(rhs.uris)
-		{}
+			uris(rhs.uris),
+			loader(rhs.loader)
+		{
+			//		outer = rhs.outer;
+		}
 
 		//Impl& operator=(Impl&& rhs)
 		//{
 		//	if (this != &rhs)
 		//	{
+		//		outer = std::move(rhs.outer);
 		//		cacheSize = std::move(rhs.cacheSize);
 		//		computerIdentity = std::move(rhs.computerIdentity);
 		//		containerName = std::move(rhs.containerName);
@@ -167,10 +211,15 @@ namespace xbrlcapi
 		//		queryEvaluationType = std::move(rhs.queryEvaluationType);
 		//		storedom = std::move(rhs.storedom);
 		//		uris = std::move(rhs.uris);
+		//		loader = rhs.loader
 		//	}
 		//	return *this;
 		//}
 
+		void setLoader( const boost::uuids::uuid& rhs)
+		{
+			loader = rhs;
+		}
 		std::string getComputerName()
 		{
 			//try
@@ -529,10 +578,11 @@ namespace xbrlcapi
 			//            throw XBRLException("The fragment " + index + " could not be retrieved from the store.",e);
 			//        }
 			//
+			return F();
 		}
 
 		//synchronized 
-		void remove(XML fragment)
+		void remove(XML& fragment)
 		{
 			remove(fragment.getIndex());
 		}
@@ -722,7 +772,7 @@ namespace xbrlcapi
 			std::string roots = "collection('" + dataContainer.getName() + "')/*" + getURIFilteringPredicate();
 			std::string expr("#roots#");
 			size_t pos = myQuery.find(expr);
-			myQuery.replace(pos, expr.size(), roots);
+			myQuery.replace(pos, expr.size(), roots);//TODO use boost::algorithm::replace here
 			DbXml::XmlQueryContext xmlQueryContext = createQueryContext();
 			xmlQueryContext.setEvaluationType(evaluationType);
 			xmlQueryExpression = dataManager->prepare(myQuery,xmlQueryContext);
@@ -974,35 +1024,45 @@ namespace xbrlcapi
 		//	    ;
 		//	}
 		//	
+		/*
+		//* @see org.xbrlapi.data.Store#persistLoaderState(Map)
+		*/
+		void persistLoaderState(std::unordered_map<const Poco::URI,std::string>& documents) 
+		{
+			std::vector<std::pair<Poco::URI, std::string>> kvpairs(documents.begin(), documents.end());
+			try {
+				for (std::pair<Poco::URI, std::string>& kv : kvpairs) 
+				{
+					persistStub(kv.first, documents[kv.first]);
+				}
+			} 
+			catch (XBRLException e) 
+			{
+				throw XBRLException("The loader state could not be stored.",e);
+			}
+		}
 
-		//     * @see org.xbrlapi.data.Store#persistLoaderState(Map)
-		//     */
-		//    public synchronized void persistLoaderState(Map<URI,String> documents) {
-		//        try {
-		//            for (URI uri: documents.keySet()) {
-		//                persistStub(uri,documents.get(uri));
-		//            }
-		//        } catch (XBRLException e) {
-		//            throw XBRLException("The loader state could not be stored.",e);
-		//        }
-		//    }
-		//
 
-		//     * @see Store#persistStub(URI,String)
-		//     */
-		//    public void persistStub(URI uri,  std::string reason) {
-		//
-		//        try {
-		//            deleteDocument(uri);
-		//        } catch (XBRLException e) {
-		//            reason += " (NB: Failed to delete the document from the data store. " + e.getMessage()+")";
-		//        }
-		//
-		//         std::string documentId = getId(uri.toString() + "_stub");
-		//        Stub stub = new Stub(documentId,uri,reason);
-		//        persist(stub);
-		//    }
-		//    
+		/*
+		* @see Store#persistStub(URI,String)
+		*/
+		void persistStub(const Poco::URI& uri,  std::string& reason) {
+
+			try 
+			{
+				deleteDocument(uri);
+			} 
+			catch (const XBRLException& e) 
+			{
+				reason += " (NB: Failed to delete the document from the data store. " + e.getMessage() + ")";
+			}
+
+			std::string documentId = getId(uri.toString() + "_stub");
+			Stub stub(documentId, uri, reason);
+			persist(stub, *outer);
+		}
+
+		/*
 
 		//     * Default implementation does nothing.
 		//     * @see Store#sync()
@@ -1041,6 +1101,7 @@ namespace xbrlcapi
 			return std::string(s);
 		}
 		//    
+		/*
 
 		//     * Generate a random string.
 		//     * @return a randomly generated string consisting of digits and
@@ -1101,6 +1162,7 @@ namespace xbrlcapi
 
 
 
+		/*
 
 		/* @see Store#serialize(xercesc::DOMElement)
 		*/
@@ -1113,56 +1175,66 @@ namespace xbrlcapi
 		}
 
 
+		/*
+		* Algorithm:
+		* <ol>
+		*  <li>Check if the matcher indicate that the URI has matching URIs.</li>
+		*  <li>If the URI has matching URIs:
+		*   <li>If the URI is the one used for the document in the data store:
+		*    <li>Delete the URI from the matcher, getting the new matching URI back as
+		*    a result of the deletion operation and update the document fragments to use 
+		*    the new matching URI instead of the deleted URI.</li>
+		*   </li>
+		*   <li>Otherwise, just delete the URI from the matcher and we are done.</li>
+		*  </li>
+		*  <li>Otherwise, the URI does not have matching URIs so just delete the
+		*  URI from the matcher and delete the relevant fragments from the data store.</li>
+		* </ol>
+		* @see org.xbrlapi.data.Store#deleteDocument(URI)
+		*/
+		void deleteDocument(const Poco::URI& uri) 
+		{
+			log4cpp::Category& logger = log4cpp::Category::getInstance( std::string("log_sub1") );
+			logger.debug("Deleting " + uri.toString() + " from the data store.");
 
-		//     * Algorithm:
-		//     * <ol>
-		//     *  <li>Check if the matcher indicate that the URI has matching URIs.</li>
-		//     *  <li>If the URI has matching URIs:
-		//     *   <li>If the URI is the one used for the document in the data store:
-		//     *    <li>Delete the URI from the matcher, getting the new matching URI back as
-		//     *    a result of the deletion operation and update the document fragments to use 
-		//     *    the new matching URI instead of the deleted URI.</li>
-		//     *   </li>
-		//     *   <li>Otherwise, just delete the URI from the matcher and we are done.</li>
-		//     *  </li>
-		//     *  <li>Otherwise, the URI does not have matching URIs so just delete the
-		//     *  URI from the matcher and delete the relevant fragments from the data store.</li>
-		//     * </ol>
-		//	 * @see org.xbrlapi.data.Store#deleteDocument(URI)
-		//     */
-		//    public void deleteDocument(URI uri) {
-		//
-		//        logger.debug("Deleting " + uri + " from the data store.");
-		//        URI matchURI = getMatcher().getMatch(uri);
-		//        URI newMatchURI = getMatcher().delete(uri);
-		//        
-		//         std::string query = "for $fragment in #roots# where $fragment/@uri='"+ matchURI + "' return $fragment";
-		//
-		//        if (newMatchURI == null) {
-		//            Set<String> indices = this.queryForIndices(query);
-		//            for ( std::string index: indices) {
-		//                remove(index);
-		//            }
-		//            return;
-		//        } else if (matchURI.equals(newMatchURI)) {
-		//            return;
-		//        }
-		//
-		//        Set<String> indices = this.queryForIndices(query);
-		//        for ( std::string index: indices) {
-		//            Fragment fragment = this.<Fragment>getXMLResource(index);
-		//            fragment.setURI(newMatchURI);
-		//            persist(fragment);
-		//        }
-		//
-		//        // Eliminate any document stub
-		//        std::vector<Stub> stubs = this.getStubs(uri);
-		//        for (Stub stub: stubs) {
-		//            this.removeStub(stub);
-		//        }
-		//        
-		//    }
-		//
+			Poco::URI matchURI = getMatcher().getMatch(uri);
+			Poco::URI newMatchURI = getMatcher().del(uri);
+
+			std::string query = "for $fragment in #roots# where $fragment/@uri='" 
+				+ matchURI.toString()
+				+ "' return $fragment";
+
+			if (newMatchURI.empty()) 
+			{
+				std::unordered_set<std::string> indices = queryForIndices(query);
+				for ( std::string index: indices) 
+				{
+					remove(index);
+				}
+				return;
+			} 
+			else if (matchURI == newMatchURI) 
+			{
+				return;
+			}
+
+			std::unordered_set<std::string> indices = queryForIndices(query);
+			for ( const std::string& index : indices) 
+			{
+				Fragment fragment = getXMLResource<Fragment>(index);
+				fragment.setURI(newMatchURI);
+				persist(fragment, *outer);
+			}
+
+			// Eliminate any document stub
+			std::vector<std::shared_ptr<Stub>> stubs = getStubs(/*uri*/);
+			for (const std::shared_ptr<Stub>& stub : stubs) 
+			{
+				removeStub(*stub);
+			}
+
+		}
+
 
 		//     * @see Store#deleteRelatedDocuments(URI)
 		//     */
@@ -1490,13 +1562,15 @@ namespace xbrlcapi
 		//        return this.<Stub>queryForXMLResources("#roots#[@type='org.xbrlapi.impl.StubImpl' and @resourceURI='" + uri + "']");
 		//    }
 		//    
+		/*
+		* @see Store#removeStub(Stub)
+		*/
+		void removeStub(Stub& stub) 
+		{
+			if ( hasXMLResource(stub.getIndex()) )
+				remove(stub);
+		}
 
-		//     * @see Store#removeStub(Stub)
-		//     */
-		//    public void removeStub(Stub stub) {
-		//        if (hasXMLResource(stub.getIndex())) remove(stub);
-		//    }
-		//    
 
 		//     * @see org.xbrlapi.data.Store#remove(XML)
 		//     */
@@ -2779,12 +2853,14 @@ namespace xbrlcapi
 		//    }
 		//    
 
-		//     * @see Store#isPersistingRelationships()
-		//     */
-		//    public bool isPersistingRelationships() {
-		//        return (analyser != null);
-		//    }
-		//
+		/*
+		* @see Store#isPersistingRelationships()
+		*/
+		bool isPersistingRelationships() 
+		{
+			return (analyser);
+		}
+
 
 		//     * @see org.xbrlapi.data.Store#getNetworksFrom(java.lang.String, String)
 		//     */
@@ -2840,28 +2916,25 @@ namespace xbrlcapi
 		//public synchronized 
 		bool requestLoadingRightsFor(const Poco::URI& document) 
 		{
-			//if (loadingRights.find(document) == loadingRights.end()) 
-			//{
-			//	loadingRights.insert(std::make_pair(document, std::shared_ptr<Loader>(&loader)));
-			//	return true;
-			//}
+			if (loadingRights.find(document) == loadingRights.end()) 
+			{
+				loadingRights.insert(std::make_pair(document, loader));
+				return true;
+			}
 
-			//if (*loadingRights[document].get() == loader) 
-			//{
-			//	return true;
-			//}
-			//log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
-			//logger.debug("Two loaders have been seeking loading rights for " + document.toString());
-			//return false;
-
-			return true; //TODO implement this using work queues
+			if (loadingRights[document] == loader) 
+			{
+				return true;
+			}
+			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
+			logger.debug("Two loaders have been seeking loading rights for " + document.toString());
+			return false;
 		}
 
-		//TODO 
 		void recindLoadingRightsFor(const Poco::URI& document) 
 		{
-			//if (loadingRights.find(document) == loadingRights.end()) return;
-			//if (*loadingRights[document].get() == loader) loadingRights.erase(document); 
+			if (loadingRights.find(document) == loadingRights.end()) return;
+			if (loadingRights[document] == loader) loadingRights.erase(document); //TODO remove erase??
 		}
 
 		//    
@@ -2927,11 +3000,13 @@ namespace xbrlcapi
 		//    }
 		//
 
-		//     * @see Store#isLoading()
-		//     */
-		//    public synchronized bool isLoading() {
-		//        return (loadingStatus > 0);
-		//    }
+		/*
+		* @see Store#isLoading()
+		*/
+		bool isLoading() 
+		{
+			return (loadingStatus > 0);
+		}
 
 		void startLoading() 
 		{
@@ -2939,7 +3014,7 @@ namespace xbrlcapi
 		}
 
 		//synchronized
-		void stopLoading() 
+		void stopLoading()
 		{
 			loadingStatus--;
 		}
@@ -3088,17 +3163,29 @@ namespace xbrlcapi
 		//    }    
 		//    
 	};
-	Store::Store() {}
+
+	Store::Store()  {}
 	Store::Store(const std::string& database, const std::string& container) 
-		: pImpl(database,container)
+		: pImpl(this, database,container)
 	{}
 	Store::Store(const std::string& database, const std::string& container, const int size) 
-		: pImpl(database,container,size)
+		: pImpl(this,database,container,size)
+	{}
+	Store::Store(const std::string& database, const std::string& container,  const boost::uuids::uuid& loader) 
+		: pImpl(this, database,container, loader)
+	{}
+	Store::Store(const std::string& database, const std::string& container, const int size,  const boost::uuids::uuid& loader) 
+		: pImpl(this,database,container,size, loader)
 	{}
 	Store::~Store() {} 
 	Store::Store(const Store& rhs) : pImpl(rhs.pImpl)
 	{}
 
+	void Store::setLoader( const boost::uuids::uuid& loader)
+	{
+		pImpl->setLoader(loader);
+
+	}
 	Store& Store::operator=(const Store& rhs)
 	{
 		if (pImpl != rhs.pImpl)
@@ -3286,13 +3373,12 @@ namespace xbrlcapi
 	{
 		return pImpl->hasDocument(uri);
 	}
-	//
 
-	//		void Store::persistLoaderState(std::unordered_map<Poco::URI,std::string> documents)
-	//		{
-	//			pImpl->persistLoaderState(documents);
-	//		}    
-	//
+	void Store::persistLoaderState(std::unordered_map<const Poco::URI,std::string> documents)
+	{
+		pImpl->persistLoaderState(documents);
+	}    
+
 
 	//		int getSize()
 	//		{
@@ -3402,11 +3488,11 @@ namespace xbrlcapi
 	//		//} 
 	//
 
-	//		bool Store::isPersistingRelationships()
-	//		{
-	//			pImpl->isPersistingRelationships();
-	//		}    
-	//
+	bool Store::isPersistingRelationships()
+	{
+		return pImpl->isPersistingRelationships();
+	}    
+
 
 	//		//std::vector<F> getFragmentsFromDocument (const Poco::URI&  uri, const std::string& interfaceName)
 	//		//{
@@ -3496,11 +3582,11 @@ namespace xbrlcapi
 	//		}
 	//
 
-	//		DefaultMatcher getMatcher()
-	//		{
-	//			pImpl->getMatcher();
-	//		}
-	//
+	DefaultMatcher Store::getMatcher()
+	{
+		return pImpl->getMatcher();
+	}
+
 
 	//		std::vector<Poco::URI> getReferencingDocuments(const Poco::URI& uri)
 	//		{
@@ -3905,17 +3991,17 @@ namespace xbrlcapi
 	}
 
 
-	//		void Store::stopLoading(const Loader& loader)
-	//		{
-	//			pImpl->stopLoading(loader);
-	//		}
-	//
+	void Store::stopLoading()
+	{
+		pImpl->stopLoading();
+	}
 
-	//		bool Store::isLoading()
-	//		{
-	//			pImpl->isLoading();
-	//		}    
-	//
+
+	bool Store::isLoading()
+	{
+		return pImpl->isLoading();
+	}    
+
 
 	//		//F getSchemaContent(const std::string& Namespace, const std::string& name)
 	//		//{

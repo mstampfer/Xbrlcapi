@@ -7,7 +7,6 @@
 #include "Loader.h"
 #include "Store.h"
 #include "Storer.h"
-#include "StorerImpl.h"
 #include "Util.h"
 #include "XBRLException.h"
 #include "XLinkProcessor.h"
@@ -34,7 +33,6 @@
 #include <xercesc/framework/BinOutputStream.hpp>
 #include <xercesc/framework/MemoryManager.hpp>
 #include <xercesc/framework/URLInputSource.hpp>
-#include <xercesc/framework/XMLGrammarPool.hpp>
 #include <xercesc/framework/XMLGrammarPoolImpl.hpp>
 #include <xercesc/internal/BinFileOutputStream.hpp>
 #include <xercesc/internal/MemoryManagerImpl.hpp>
@@ -44,6 +42,7 @@
 #include <xercesc/util/XMLUni.hpp>
 #include <xercesc/validators/common/Grammar.hpp>
 #include <xercesc/util/XMLUni.hpp>
+#include <boost/uuid/uuid_generators.hpp>
 
 namespace xbrlcapi
 {
@@ -52,9 +51,8 @@ namespace xbrlcapi
 
 	struct Loader::Impl 
 	{
-		const Loader* outer;
+		std::shared_ptr<const Loader> outer;
 		Store store;
-		Cache cache;
 		XLinkProcessor xlinkProcessor;
 		EntityResolver entityResolver;
 		std::deque<Poco::URI> documentQueue;
@@ -70,77 +68,76 @@ namespace xbrlcapi
 		std::shared_ptr<xercesc::DOMDocument> dom;
 		std::stack<ElementState> states;
 		std::stack<Fragment> fragments;
+		boost::uuids::uuid uuid;
 
-		Impl() : 
+		Impl() :
 			discovering(false),
-			fragmentId(0),
-			interrupt(false),
-			_useSchemaLocationAttributes(false)
-		{
-		}
-
-		Impl(const Impl& rhs) //: 
-			//cache(rhs.cache), 
-			//discovering(rhs.discovering),
-			//documentId(rhs.documentId),
-			//documentQueue(rhs.documentQueue),
-			//documentURI(rhs.documentURI),
-			//dom(rhs.dom),
-			//entityResolver(rhs.entityResolver),
-			//failures(rhs.failures),
-			//fragmentId(rhs.fragmentId),
-			//history(rhs.history),
-			//interrupt(rhs.interrupt),
-			//store(rhs.store),
-			//successes(rhs.successes),
-			//xlinkProcessor(rhs.xlinkProcessor),
-			//_useSchemaLocationAttributes(rhs._useSchemaLocationAttributes)
-		{}
-
-		Impl(const Loader* loader, const Store& store) :
-			outer(loader),
-			store(store),
-			discovering(false),
-			fragmentId(0),
-			interrupt(false),
-			_useSchemaLocationAttributes(false)
-		{
-		}
-
-		Impl(const Loader* loader, 
-			const Store& store,
-			const XLinkProcessor& xlinkProcessor, 
-			const EntityResolver& entityResolver)		
-			:
-		discovering(false),
-			outer(loader),
 			fragmentId(0),
 			interrupt(false),
 			_useSchemaLocationAttributes(false),
-			store(store),
-			xlinkProcessor(xlinkProcessor),
-			entityResolver(entityResolver)
+			uuid(boost::uuids::random_generator()())
 		{
-			initialize();
 		}
 
-		Impl(const Loader* loader, 
+		Impl(const Impl& rhs) : 
+			discovering(rhs.discovering),
+			documentId(rhs.documentId),
+			documentQueue(rhs.documentQueue),
+			documentURI(rhs.documentURI),
+			dom(rhs.dom),
+			entityResolver(rhs.entityResolver),
+			failures(rhs.failures),
+			fragmentId(rhs.fragmentId),
+			history(rhs.history),
+			interrupt(rhs.interrupt),
+			store(rhs.store),
+			successes(rhs.successes),
+			xlinkProcessor(rhs.xlinkProcessor),
+			_useSchemaLocationAttributes(rhs._useSchemaLocationAttributes),
+			uuid(rhs.uuid)
+		{
+		}
+
+		Impl(const Store& store) :
+			store(store),
+			discovering(false),
+			fragmentId(0),
+			interrupt(false),
+			_useSchemaLocationAttributes(false),
+			uuid(boost::uuids::random_generator()())
+		{
+		}
+
+		Impl(
 			const Store& store,
 			const XLinkProcessor& xlinkProcessor, 
-			const EntityResolver& entityResolver,	
-			const Cache& cache,
-			const std::vector<Poco::URI>& uris) :
-		outer(loader),
-			discovering(false),
+			const EntityResolver& entityResolver)
+			:
+		discovering(false),
 			fragmentId(0),
 			interrupt(false),
 			_useSchemaLocationAttributes(false),
 			store(store),
 			xlinkProcessor(xlinkProcessor),
 			entityResolver(entityResolver),
-			cache(cache)
+			uuid(boost::uuids::random_generator()())
 		{
-			initialize();
+		}
+
+		Impl(
+			const Store& store,
+			const XLinkProcessor& xlinkProcessor, 
+			const EntityResolver& entityResolver,	
+			const std::vector<Poco::URI>& uris) :
+		discovering(false),
+			fragmentId(0),
+			interrupt(false),
+			_useSchemaLocationAttributes(false),
+			store(store),
+			xlinkProcessor(xlinkProcessor),
+			entityResolver(entityResolver),
+			uuid(boost::uuids::random_generator()())
+		{
 			stashURIs(uris);								
 		}
 
@@ -149,7 +146,6 @@ namespace xbrlcapi
 			if (this != &rhs)
 			{
 				outer = rhs.outer;
-				setCache(rhs.cache);
 				discovering = rhs.discovering;
 				documentId = rhs.documentId;
 				documentQueue = rhs.documentQueue;
@@ -163,6 +159,7 @@ namespace xbrlcapi
 				successes = rhs.successes;
 				xlinkProcessor = std::move(rhs.xlinkProcessor);
 				_useSchemaLocationAttributes = rhs._useSchemaLocationAttributes;
+				uuid = rhs.uuid;
 			}
 			return *this;
 		}
@@ -186,12 +183,12 @@ namespace xbrlcapi
 			//	//_useSchemaLocationAttributes == rhs._useSchemaLocationAttributes)
 			//	//	return true;
 			return false;
-		}
+		}  
 
-		//    public void requestInterrupt() {
-		//        interrupt = true;
-		//    }
-		//    
+		boost::uuids::uuid tag()
+		{
+			return uuid;
+		}
 
 		bool interruptRequested()
 		{
@@ -203,31 +200,12 @@ namespace xbrlcapi
 			interrupt = false;
 		}
 
-		void setCache(Cache& cache)
-		{
-			this->cache = cache;
-		}
-
-		void setCache(Cache&& cache)
-		{
-			this->cache = cache;
-		}
-
-		Cache getCache() 
-		{
-			//        if (this.cache == null)
-			//            throw XBRLException(
-			//                    "The loader cache is null and so cannot be used.");
-			return cache;
-		}
-
 		std::shared_ptr<xercesc::DOMDocument> getBuilderDOM() {
 			//        if (this.dom == null) {
 			//            this.dom = (new XMLDOMBuilder()).newDocument();
 			//        }
 			return dom;
 		}
-
 
 		void setDiscovering(bool value) 
 		{
@@ -290,11 +268,14 @@ namespace xbrlcapi
 			xlinkProcessor = xlp;
 		}
 
-
 		XLinkProcessor getXlinkProcessor() {
 			return xlinkProcessor;
 		}
 
+		void setOuter(const std::shared_ptr<Loader>& loader)
+		{
+			outer = std::shared_ptr<Loader>(loader);
+		}
 		void updateState(const ElementState& state) 
 		{
 
@@ -308,7 +289,6 @@ namespace xbrlcapi
 		//        return this.states;
 		//    }        
 
-
 		Fragment getFragment() 
 		{
 			if (fragments.empty()) return Fragment();
@@ -321,9 +301,10 @@ namespace xbrlcapi
 		//        fragments.push(replacement);
 		//    }    
 
-		//    public bool isBuildingAFragment() {
-		//        return (!fragments.isEmpty());
-		//    }
+		bool isBuildingAFragment() 
+		{
+			return (!fragments.empty());
+		}
 
 		void add(const Fragment& fragment, const ElementState& state)
 		{
@@ -356,9 +337,6 @@ namespace xbrlcapi
 			//
 		}
 
-
-
-
 		Fragment removeFragment() 
 		{
 			//try {
@@ -372,7 +350,6 @@ namespace xbrlcapi
 			//}
 			return Fragment();
 		}
-
 
 		void discover(const std::vector<Poco::URI>& startingURIs, Loader& loader)
 		{
@@ -405,13 +382,12 @@ namespace xbrlcapi
 		//        return documents;
 		//    }
 
-
 		void discover(Loader& loader)
 		{
 			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
 			store.startLoading();
 
-			std::set<Poco::URI> newDocuments;
+			std::vector<Poco::URI> newDocuments;
 
 			int discoveryCount = 1;
 
@@ -456,7 +432,7 @@ namespace xbrlcapi
 							+ std::to_string(fragmentId-1) + " fragments in " + uri.toString());
 						discoveryCount++;
 						markDocumentAsExplored(uri);
-						newDocuments.insert(uri);
+						newDocuments.push_back(uri);
 						store.sync();
 					} 
 					catch (const XBRLException& e) 
@@ -490,54 +466,56 @@ namespace xbrlcapi
 				uri = getNextDocumentToExplore();
 			}
 
-			//storeDocumentsToAnalyse();
-			//setDiscovering(false);
+			storeDocumentsToAnalyse();
+			setDiscovering(false);
 
-			//if (documentQueue.size() == 0 && failures.size() == 0) 
-			//{
-			//	//		logger.debug("Document discovery completed successfully.");
-			//} else 
-			//{
-			//	if (failures.size() > 0) 
-			//	{
-			//		//			logger.warn("Some documents failed to load.");
-			//	}
-			//	if (documentQueue.size() > 0) 
-			//	{
-			//		//		logger.info("Document discovery exited without completing.");
-			//	}
-			//}
-
-			//		store.stopLoading(*this); //TODO
-
-			//	try {
-			//if (store.isPersistingRelationships() && (newDocuments.size() > 0)) 
-			//{
-
-			//	// Wait till other loaders using the store have finished with their loading activities.
-			//	while (store.isLoading()) 
-			//	{
-			//		//	logger.debug("Still doing some loading into the store ... ");
-			//		//					Thread.sleep(10000); //TODO
-			//	}
-			//	StorerImpl storer(store);
-			//	storer.storeRelationships(newDocuments);
-			//}
-			/*	} catch (InterruptedException e) 
+			if (documentQueue.size() == 0 && failures.size() == 0) 
 			{
-			logger.error("Failed to persist relationships.");
-			std::unordered_map<Poco::URI,std::string> map = new HashMap<Poco::URI,std::string>();
-			for (const Poco::URI& document : newDocuments) 
+				logger.debug("Document discovery completed successfully.");
+			} else 
 			{
-			map.put(store.getMatcher().getMatch(document),"Failed to store relationships.");
+				if (failures.size() > 0) 
+				{
+					//			logger.warn("Some documents failed to load.");
+				}
+				if (documentQueue.size() > 0) 
+				{
+					//		logger.info("Document discovery exited without completing.");
+				}
 			}
-			store.persistLoaderState(map);
-			}*/
+
+			store.stopLoading(); 
+
+			//try {
+			if (store.isPersistingRelationships() && (newDocuments.size() > 0)) 
+			{
+
+				// Wait till other loaders using the store have finished with their loading activities.
+				while (store.isLoading()) 
+				{
+					//	logger.debug("Still doing some loading into the store ... ");
+					//					Thread.sleep(10000); //TODO
+				}
+				Storer storer(store);
+				storer.storeRelationships(newDocuments); 
+			}
+			//} catch (InterruptedException e) 
+			//{
+			//	logger.error("Failed to persist relationships.");
+			//	std::unordered_map<Poco::URI,std::string> map = new HashMap<Poco::URI,std::string>();
+			//	for (const Poco::URI& document : newDocuments) 
+			//	{
+			//		map.put(store.getMatcher().getMatch(document),"Failed to store relationships.");
+			//	}
+			//	store.persistLoaderState(map);
+			//}
 
 			std::map<Poco::URI,std::string> failures;
 			std::deque<Poco::URI> documentQueue;
 
 		}
+
+
 
 		//    public void discoverNext() {
 		//
@@ -720,41 +698,51 @@ namespace xbrlcapi
 		{
 			return entityResolver;
 		}
-		//
-		//    private bool useSchemaLocationAttributes = false;
-		//
-		//    /**
-		//     * @see org.xbrlapi.loader.Loader#useSchemaLocationAttributes()
-		//     */
-		//    public bool useSchemaLocationAttributes() {
-		//        return this.useSchemaLocationAttributes;
-		//    }
-		//
+
+		/**
+		* @see org.xbrlapi.loader.Loader#useSchemaLocationAttributes()
+		*/
+		bool useSchemaLocationAttributes() 
+		{
+			return _useSchemaLocationAttributes;
+		}
+
 		//    /**
 		//     * @see org.xbrlapi.loader.Loader#setSchemaLocationAttributeUsage(bool)
 		//     */
 		//    public void setSchemaLocationAttributeUsage(bool useThem) {
 		//        this.useSchemaLocationAttributes = useThem;
 		//    }
-		//
-		//    /**
-		//     * @see org.xbrlapi.loader.Loader#storeDocumentsToAnalyse()
-		//     */
-		//    public void storeDocumentsToAnalyse() {
-		//        Map<Poco::URI,std::string> map = new HashMap<Poco::URI,std::string>();
-		//        for (const Poco::URI& document : documentQueue) {
-		//            if (document.equals(store.getMatcher().getMatch(document))) {
-		//                map.put(document,"Document has not yet been analysed");
-		//            }
-		//        }
-		//        for (const Poco::URI& document : failures.keySet()) {
-		//            map.put(document,failures.get(document));
-		//        }
-		//        if (map.size() > 0)  {
-		//            logger.warn("Storing details of " + map.size() + " documents that are yet to be loaded.");
-		//            store.persistLoaderState(map);
-		//        }
-		//    }
+
+		/**
+		* @see org.xbrlapi.loader.Loader#storeDocumentsToAnalyse()
+		*/
+		void storeDocumentsToAnalyse() 
+		{
+			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
+
+			std::unordered_map<const Poco::URI,std::string> map;
+			for (const Poco::URI& document : documentQueue) 
+			{
+				if (document == store.getMatcher().getMatch(document))
+				{
+					map[document] = "Document has not yet been analysed";
+				}
+			}
+
+			std::vector<std::pair<Poco::URI, std::string>> kvpairs(failures.begin(), failures.end());			
+			for (std::pair<Poco::URI, std::string>& document : kvpairs) 
+			{
+				map[document.first] = failures[document.first];
+			}
+
+			if (map.size() > 0)  
+			{
+				logger.warn("Storing details of " + std::to_string(map.size()) + " documents that are yet to be loaded.");
+				store.persistLoaderState(map);
+			}
+		}
+
 		//    
 		//    private void cleanupFailedLoad(const Poco::URI& uri, const std::string& reason, Exception e) {
 		//        logger.error(getDocumentURI() + " encountered a loading problem: " + e.getMessage());
@@ -877,10 +865,10 @@ namespace xbrlcapi
 		//    private transient SymbolTable symbolTable = new SymbolTable(BIG_PRIME);
 		void initialize() 
 		{
-
-			xercesc::MemoryManager *memMgr = new xercesc::MemoryManagerImpl();
-			xercesc::XMLGrammarPool* grammarPool = new xercesc::XMLGrammarPoolImpl(memMgr);
-			xercesc::SAX2XMLReader* preparser = xercesc::XMLReaderFactory::createXMLReader(memMgr, grammarPool);
+			auto memMgr = std::shared_ptr<xercesc::MemoryManager>(new xercesc::MemoryManagerImpl());
+			auto grammarPool = std::shared_ptr<xercesc::XMLGrammarPoolImpl>(new xercesc::XMLGrammarPoolImpl(memMgr.get()));
+			auto preparser = std::shared_ptr<xercesc::SAX2XMLReader>(xercesc::XMLReaderFactory::createXMLReader(
+				memMgr.get(), grammarPool.get()));
 
 			// Cache the grammar in the pool for re-use in subsequent parses.
 			preparser->setFeature(xercesc::XMLUni::fgXercesCacheGrammarFromParse,true);
@@ -897,10 +885,15 @@ namespace xbrlcapi
 			// Enable the parser's schema support.
 			preparser->setFeature(xercesc::XMLUni::fgXercesSchema,true);  
 
-
 			//Enable full schema constraint checking, including checking which may be 
 			// time-consuming or memory intensive.
 			preparser->setFeature(xercesc::XMLUni::fgXercesSchemaFullChecking,true);  
+
+			// Validate the document even if a grammar is not specified
+			preparser->setFeature(XMLUni::fgXercesDynamic, false);
+
+			// Enable grammar caching 
+			preparser->setFeature(XMLUni::fgXercesCacheGrammarFromParse, true);
 
 			// All schema location hints will be used to locate the 
 			// components for a given target namespace
@@ -908,7 +901,7 @@ namespace xbrlcapi
 			// fgXercesSchemaExternalNoNameSpaceSchemaLocation  or fgXercesSchemaExternalSchemaLocation  ?
 
 			// Specify the entity resolver to use for the schemas.
-			preparser->setEntityResolver(&entityResolver);
+			//preparser->setEntityResolver(&entityResolver);
 
 			// parse the grammars
 			std::vector<Poco::URI> schemas;
@@ -917,14 +910,21 @@ namespace xbrlcapi
 			schemas.push_back(Poco::URI("http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd"));
 			schemas.push_back(Poco::URI("http://www.xbrl.org/2003/xl-2003-12-31.xsd"));
 			schemas.push_back(Poco::URI("http://www.xbrl.org/2003/xlink-2003-12-31.xsd"));
+
 			try {
 				for (const Poco::URI& schema : schemas) 
 				{
 					// This loads the schemas into the grammar pool
 					ContentHandler contentHandler(*outer, schema);
 					preparser->setContentHandler(&contentHandler);
-					preparser->loadGrammar(*entityResolver.resolveSchemaURI(schema), xercesc::Grammar::SchemaGrammarType, true);
-				//preparser->loadGrammar(schema.toString().c_str(), xercesc::Grammar::SchemaGrammarType, true);
+					preparser->setErrorHandler(&contentHandler);
+					auto inputSource = entityResolver.resolveSchemaURI(schema);
+					preparser->loadGrammar(*inputSource, xercesc::Grammar::SchemaGrammarType, true);
+					//preparser->loadGrammar("http://www.xbrlapi.org/xml/schemas/s4s.xsd", xercesc::Grammar::SchemaGrammarType, true);
+					entityResolver.setGrammarPool(grammarPool);
+					if (entityResolver.hasCache())
+						entityResolver.copyToCache(schema);
+					preparser->parse(*inputSource);
 				}
 			} 
 			catch (const std::exception& e) 
@@ -939,9 +939,10 @@ namespace xbrlcapi
 			/*const*/ xercesc::InputSource& inputSource,  
 			xercesc::ErrorHandler& contentHandler)
 		{
-			xercesc::MemoryManager *memMgr = new xercesc::MemoryManagerImpl();
-			xercesc::XMLGrammarPool* grammarPool = new xercesc::XMLGrammarPoolImpl(memMgr);
-			xercesc::SAX2XMLReader* parser = xercesc::XMLReaderFactory::createXMLReader(memMgr, grammarPool);
+			auto memMgr = std::shared_ptr<xercesc::MemoryManager>(new xercesc::MemoryManagerImpl());
+			auto grammarPool = std::shared_ptr<xercesc::XMLGrammarPoolImpl>(new xercesc::XMLGrammarPoolImpl(memMgr.get()));
+			auto parser = std::shared_ptr<xercesc::SAX2XMLReader>(xercesc::XMLReaderFactory::createXMLReader(
+				memMgr.get(), grammarPool.get()));
 
 			// now must reset features for actual parsing:
 			try
@@ -970,6 +971,7 @@ namespace xbrlcapi
 	};
 
 	Loader::Loader() {}
+
 	Loader::~Loader() {}
 
 	Loader::Loader(const Loader& rhs) : pImpl(rhs.pImpl)
@@ -988,33 +990,40 @@ namespace xbrlcapi
 	Loader::Loader(Loader&& rhs) : pImpl(std::move(rhs.pImpl))
 	{} 
 
-	Loader::Loader(const Store& store) : pImpl(this, store)
-	{}
+	Loader::Loader(const Store& store) : pImpl(store)
+	{
+		pImpl->setOuter(getPtr());
+		pImpl->initialize();
+	}
 
 	Loader::Loader(
 		const Store& store, 
 		const XLinkProcessor& xlinkProcessor, 
 		const EntityResolver& entityResolver)
 		: 
-	pImpl(this, 
+	pImpl( 
 		store, 
 		xlinkProcessor, 
-		entityResolver)
-	{}
+		entityResolver) 
+	{
+		pImpl->setOuter(getPtr());	
+		pImpl->initialize();
+	}
 	Loader::Loader(
 		const Store& store, 
 		const XLinkProcessor& xlinkProcessor, 
 		const EntityResolver& entityResolver, 
-		const Cache& cache,
 		const std::vector<Poco::URI>& uris)
 		: 
-	pImpl(this, 
+	pImpl(
 		store, 
 		xlinkProcessor, 
 		entityResolver, 
-		cache,
 		uris)
-	{}
+	{
+		pImpl->setOuter(getPtr());
+		pImpl->initialize();
+	}
 
 	Loader& Loader::operator=(Loader&& rhs)
 	{
@@ -1041,16 +1050,6 @@ namespace xbrlcapi
 	void Loader::setEntityResolver(EntityResolver& resolver)
 	{
 		pImpl->setEntityResolver(resolver);
-	}
-
-	void Loader::setCache(Cache& cache)
-	{
-		pImpl->setCache(cache);
-	}
-
-	Cache Loader::getCache()
-	{
-		return pImpl->getCache();
 	}
 
 	std::shared_ptr<xercesc::DOMDocument> Loader::getBuilderDOM()
@@ -1113,10 +1112,10 @@ namespace xbrlcapi
 	//pImpl->replaceCurrentFragment(replacement);
 	//}	
 
-	//bool Loader::isBuildingAFragment()
-	//{
-	//	pImpl->isBuildingAFragment();
-	//}
+	bool Loader::isBuildingAFragment()
+	{
+		return pImpl->isBuildingAFragment();
+	}
 
 	bool Loader::isDiscovering()
 	{
@@ -1158,10 +1157,10 @@ namespace xbrlcapi
 		return pImpl->getEntityResolver();
 	}
 
-	//bool Loader::useSchemaLocationAttributes()
-	//{
-	//	pImpl->useSchemaLocationAttributes();
-	//}
+	bool Loader::useSchemaLocationAttributes()
+	{
+		return pImpl->useSchemaLocationAttributes();
+	}
 
 	//void Loader::setSchemaLocationAttributeUsage(bool useThem)
 	//{
@@ -1198,4 +1197,16 @@ namespace xbrlcapi
 	//{
 	//	pImpl->hasHistory();
 	//}
+
+	boost::uuids::uuid Loader::tag()
+	{
+		return pImpl->tag();
+	}
+
+	std::shared_ptr<Loader> Loader::getPtr()
+	{
+		std::shared_ptr<Loader> p(this);
+		return shared_from_this();
+	}
+
 }

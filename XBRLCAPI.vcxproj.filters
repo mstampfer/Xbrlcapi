@@ -45,9 +45,6 @@
     <ClCompile Include="BaseMatcherImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StubImpl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Loader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -76,9 +73,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="XML.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Builder.cpp">
@@ -139,6 +133,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="XercesString.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Stub.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NonFragmentXML.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Analyser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Networks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Storer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -254,16 +266,7 @@
     <ClInclude Include="Store.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Storer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StorerImpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Stub.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StubImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Unit.h">
@@ -390,6 +393,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="XercesString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Analyser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Networks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Storer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

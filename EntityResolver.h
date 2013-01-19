@@ -1,7 +1,9 @@
 #pragma once
 #include "PimplImpl.h"
+#include "XercesString.h"
 #include <xercesc/sax/EntityResolver.hpp>
 #include <xercesc/util/XMLEntityResolver.hpp>
+#include <xercesc/framework/XMLGrammarPool.hpp>
 #include <Poco/URI.h>
 #include <unordered_map>
 
@@ -34,6 +36,8 @@ namespace xbrlcapi
 		virtual xercesc::InputSource* resolveEntity(const XMLCh *const publicId, const XMLCh *const systemId) override;
 		virtual xercesc::InputSource* resolveEntity(xercesc::XMLResourceIdentifier* resourceIdentifier) override;
 		std::shared_ptr<xercesc::InputSource> resolveSchemaURI(const Poco::URI& uri);
+		void setGrammarPool(const std::shared_ptr<xercesc::XMLGrammarPoolImpl>&pool);
+		XercesString  copyToCache(const Poco::URI& uri);
 		bool hasCache();
 	};
 }

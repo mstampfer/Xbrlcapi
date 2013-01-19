@@ -12,6 +12,7 @@
 #include "XercesString.h"
 
 
+
 namespace xbrlcapi
 {
 	struct EntityResolver::Impl 
@@ -46,9 +47,15 @@ namespace xbrlcapi
 				);
 		}
 
+
+		void setGrammarPool(const std::shared_ptr<xercesc::XMLGrammarPoolImpl>& pool)
+		{
+			cache.setGrammarPool(pool);
+		}
+
 		xercesc::InputSource* resolveEntity(const XMLCh *const publicId, const XMLCh *const systemId) 
 		{
-					
+			return new xercesc::URLInputSource(systemId);
 
 			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
 			logger.debug("SAX: Resolving the entity for " + toNative(systemId));
@@ -56,7 +63,7 @@ namespace xbrlcapi
 			try {
 				if (hasCache()) 
 				{ 
-					uri = cache.getCacheURI(uri);
+					//						uri = cache.getCacheURI(uri);
 				}
 			} 
 			catch (const XBRLException& e) 
@@ -87,7 +94,7 @@ namespace xbrlcapi
 			Poco::URI uri(id);
 			if (hasCache()) 
 			{
-				uri = cache.getCacheURI(uri);
+				//	uri = cache.getCacheURI(uri);
 			}
 			//			logger.debug("... so resolving the entity for URI " + uri);
 			auto wc_uri = XercesString(uri);
@@ -104,53 +111,33 @@ namespace xbrlcapi
 		std::shared_ptr<xercesc::InputSource> resolveSchemaURI(const Poco::URI& originalURI) 
 		{
 			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
-			auto uri = XercesString(originalURI.toString().c_str());
-			auto xmlUrl = xercesc::XMLURL(uri);
+			auto xmlUrl = xercesc::XMLURL(XercesString(originalURI.toString()));
 			try 
 			{
-				if (hasCache()) 
+				boost::filesystem::path fullPath = cache.getCachePath(originalURI);
+				if (hasCache() && exists(fullPath) && boost::filesystem::file_size(fullPath) != 0) 
 				{
-					auto basePath = XercesString(cache.getCacheFile(originalURI).generic_string().c_str());
-					uri = XercesString(cache.getCacheURI(originalURI).toString().c_str());
-					return std::make_shared<xercesc::LocalFileInputSource>(basePath, uri);
+					return std::make_shared<xercesc::LocalFileInputSource>(fullPath.c_str());
+				}
+				else
+				{
+					return std::make_shared<xercesc::URLInputSource>(xmlUrl);
 				}
 			} 
-			catch (XBRLException e) 
+			catch (const boost::filesystem::filesystem_error& e) 
 			{
 				logger.warn("Cache handling for " + originalURI.toString() + "failed.");
 				return std::make_shared<xercesc::URLInputSource>(xmlUrl);
 			}
-			return std::make_shared<xercesc::URLInputSource>(xmlUrl);
 		}
 
-		int hashCode() 
+		XercesString copyToCache(const Poco::URI& uri)
 		{
-			//final int prime = 31;
-			//int result = 1;
-			//result = prime 		//return result;
-			return 0;
+				return cache.copyToCache(uri);
 		}
-
-
-
-		//		   public:
-		//			   bool equals(Object obj) {
-		//if (this == obj)
-		//    return true;
-		//if (obj == null)
-		//    return false;
-		//if (getClass() != obj.getClass())
-		//    return false;
-		//EntityResolver::Impl other = (EntityResolver::Impl) obj;
-		//if (cache == null) {
-		//    if (other.cache != null)
-		//        return false;
-		//} else if (!cache.equals(other.cache))
-		//    return false;
-		//return true;
-		//		   }
 
 	};
+
 
 	EntityResolver::EntityResolver() {}
 	EntityResolver::~EntityResolver() {}
@@ -217,5 +204,15 @@ namespace xbrlcapi
 	bool EntityResolver::hasCache() 
 	{
 		return pImpl->hasCache();
+	}
+
+	void EntityResolver::setGrammarPool(const std::shared_ptr<xercesc::XMLGrammarPoolImpl>& pool)
+	{
+		pImpl->setGrammarPool(pool);
+	}
+
+	XercesString EntityResolver::copyToCache(const Poco::URI& uri)
+	{
+		return pImpl->copyToCache(uri);
 	}
 }

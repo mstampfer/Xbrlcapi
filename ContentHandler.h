@@ -47,7 +47,7 @@ namespace xbrlcapi
 		* @throws XBRLException if any of the parameters
 		* are null.
 		*/
-	//	ContentHandler(const Loader& loader, const Poco::URI& uri, const std::string& xml);
+	//	ContentHandler(const Loader& loader, const Poco::URI& uri, const XMLCh* const xml);
 
 		ContentHandler();
 		~ContentHandler(); 
@@ -63,7 +63,7 @@ namespace xbrlcapi
 		* set up with the documents absolute URI.  The fragment identifiers
 		* are also instantiated and initialised.
 		*/
-		void startDocument();
+		void startDocument() override;
 
 		/**
 		* Sets the element state.
@@ -77,10 +77,10 @@ namespace xbrlcapi
 		* @see org.xml.sax.ContentHandler#startElement(std::string, std::string, std::string, Attributes)
 		*/
 		void startElement(
-			const std::string& namespaceURI,
-			const std::string& lName,
-			const std::string& qName,
-			const xercesc::Attributes& attrs);
+			const   XMLCh* const    namespaceURI,
+			const   XMLCh* const    lName,
+			const   XMLCh* const    qName,
+			const	xercesc::Attributes&	attrs) override;
 
 		/**
 		* The end of an element triggers processing of an extended link
@@ -89,30 +89,30 @@ namespace xbrlcapi
 		* unless the element that is ending did not ever become the current element.
 		*/
 		void endElement(
-			const std::string& namespaceURI,
-			const std::string& lName,
-			const std::string& qName);
+			const XMLCh* const namespaceURI,
+			const XMLCh* const lName,
+			const XMLCh* const qName) override;
 
 		/**
 		* Ignore ignorable whitespace
 		*/
-		void ignorableWhitespace(char buf[], int offset, int len);
+		void ignorableWhitespace(const XMLCh* const, const XMLSize_t) override;
 
 		/**
 		* Copy across processing instructions to the DTSImpl
 		*/
-		void processingInstruction(const std::string& target, const std::string& data);
+		void processingInstruction(const XMLCh* const target, const XMLCh* const data) override;
 
 		/**
 		* Copy characters (trimming white space as required) to the DTSImpl.
 		*/
-		void characters(char buf[], int offset, int len);
+		void characters(const XMLCh* const, const XMLSize_t) override;
 
 		/**
 		* The locator for a document is stored to facilitate resolution
 		* of CacheURIImpl's relative to that location.
 		*/
-		void setDocumentLocator(const std::shared_ptr<xercesc::Locator>& locator);
+		void setDocumentLocator(const xercesc::Locator* const locator) override;
 
 	protected:
 

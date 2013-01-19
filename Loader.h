@@ -2,6 +2,7 @@
 #include "PimplImpl.h"
 #include <Poco/URI.h>
 #include <xercesc/dom/DOMDocument.hpp>
+#include <boost/uuid/uuid.hpp>
 
 /**
 * Loader defines the functions required to get a DTS
@@ -26,7 +27,7 @@ namespace xbrlcapi
 	class Store;
 	struct Fragment;
 
-	class Loader // Serializable 
+	class Loader :  public std::enable_shared_from_this<Loader>
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;
@@ -40,7 +41,6 @@ namespace xbrlcapi
 		Loader(const Store& store, 
 			const XLinkProcessor& xlinkProcessor, 
 			const EntityResolver& entityResolver, 
-			const Cache& cache, 
 			const std::vector<Poco::URI>& uris);
 		Loader(const Loader& rhs);
 		Loader& operator=(const Loader& rhs);
@@ -48,6 +48,8 @@ namespace xbrlcapi
 		Loader& operator=(Loader&& rhs);
 		bool operator==(const Loader& rhs);
 		bool operator!=(const Loader& rhs);
+		boost::uuids::uuid tag();
+		std::shared_ptr<Loader> getPtr();
 
 		/**
 		* Get the DTS storage implementation
@@ -69,28 +71,6 @@ namespace xbrlcapi
 		* allow for caching.
 		*/
 		void setEntityResolver(EntityResolver& resolver);
-
-		/**
-		* This method specifies a cache to use when loading 
-		* data into the data store.  The cache is only useful (and
-		* thus only needs to be specified) when discovering XML that
-		* is provided as a string rather than a resource that actually
-		* exists at a specified URI.  This is because generally the
-		* caching mechanism available via the entityResolver will handle
-		* caching for documents that actually exist at the specified URI.
-		* care must be taken to ensure that the cache used by the loader 
-		* is using the same local root folder as the cache used by the 
-		* entityResolver.  This is because the documents cached by the 
-		* loader can then be sought in the cache by the entity resolver.
-		* @param cache The cache to use in the loader.
-		*/
-		void setCache(Cache& cache);
-
-		/**
-		* @return The cache to be used by the loader.
-		* @throws XBRLException if the cache is null.
-		*/
-		Cache getCache();
 
 		/**
 		* @return The document node of the XML DOM used

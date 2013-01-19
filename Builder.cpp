@@ -147,19 +147,19 @@ namespace xbrlcapi
 		//	appendChild(getDOM().createComment(text));
 		//}
 
-		//public void appendElement(
-		//		String namespaceURI, 
-		//		String lName, 
-		//		String qName, 
-		//		Attributes attrs) throws XBRLException	
-		//{
+		void appendElement(
+			const std::string& namespaceURI, 
+			const std::string& lName, 
+			const std::string& qName, 
+			const xercesc::Attributes& attrs)
+		{
 
-		//       std::shared_ptr<xercesc::DOMElement>  newElement = createElement(namespaceURI, lName, qName, attrs);
-		//	if (newElement == null) {
-		//		throw new XBRLException("Could not create element: " + namespaceURI + " " + lName);
-		//	}
-		//	appendChild(newElement);
-		//}
+			//std::shared_ptr<xercesc::DOMElement>  newElement = createElement(namespaceURI, lName, qName, attrs);
+			//if (newElement == null) {
+			//	throw new XBRLException("Could not create element: " + namespaceURI + " " + lName);
+			//}
+			//appendChild(newElement);
+		}
 
 		//   private String getPrefixFromQName(String qname) {
 		//       // Get the required namespace prefix from the QName
@@ -460,6 +460,14 @@ namespace xbrlcapi
 			qName);
 	}
 
+	void Builder::appendElement(
+		const std::string& namespaceURI, 
+		const std::string& lName, 
+		const std::string& qName, 
+		const xercesc::Attributes& attrs)
+	{
+		pImpl->appendElement(namespaceURI,lName,qName,attrs);
+	}
 	void Builder::appendProcessingInstruction(const std::string& target, const std::string& data)
 	{
 		pImpl->appendProcessingInstruction(target, data);

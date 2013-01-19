@@ -23,9 +23,9 @@ namespace xbrlcapi
 	struct ElementState::Impl
 	{
 
-		const std::shared_ptr<ElementState> parent;
+		std::shared_ptr<ElementState> parent;
 
-		const std::shared_ptr<xercesc::Attributes> attributes;
+		std::shared_ptr<const xercesc::Attributes> attributes;
 
 		long order;// = 1;
 
@@ -35,9 +35,9 @@ namespace xbrlcapi
 
 		Impl(){}
 
-		Impl(const ElementState& p, const std::shared_ptr<xercesc::Attributes>& attrs) :
-			parent(std::make_shared<ElementState>(p)), 
-			attributes(attrs)
+		Impl(ElementState& p, const xercesc::Attributes& attrs) :
+			parent(std::shared_ptr<ElementState>(&p)),
+			attributes(std::shared_ptr<const xercesc::Attributes>(&attrs))
 		{
 			if (hasParent()) 
 			{
@@ -46,7 +46,7 @@ namespace xbrlcapi
 			}
 		}
 
-		std::shared_ptr<xercesc::Attributes> getAttributes() 
+		std::shared_ptr<const xercesc::Attributes> getAttributes() 
 		{
 			return attributes;
 		}
@@ -174,13 +174,13 @@ namespace xbrlcapi
 		return !this->operator==(rhs);
 	}
 
-	std::shared_ptr<xercesc::Attributes> ElementState::getAttributes() 
+	std::shared_ptr<const xercesc::Attributes> ElementState::getAttributes() 
 	{
 		return pImpl->getAttributes();
 	}
 
-	ElementState::ElementState(const ElementState& parent, 
-		const std::shared_ptr<xercesc::Attributes>& attrs) : pImpl(parent,attrs)
+	ElementState::ElementState(ElementState& parent, 
+		const xercesc::Attributes& attrs) : pImpl(parent,attrs)
 	{}
 
 	bool ElementState::hasParent() 

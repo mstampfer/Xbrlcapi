@@ -66,7 +66,7 @@ namespace xbrlcapi
 		/**
 		* @param state The element state
 		*/
-		void setElementState(const ElementState& state);
+		void setElementState(ElementState& state);
 
 		/**
 		* @return the state for the element currently being parsed.

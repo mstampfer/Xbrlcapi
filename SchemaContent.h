@@ -1,11 +1,4 @@
-
-
 #pragma once
-
-/**
-
-*/
-
 #include "Fragment.h"
 namespace xbrlcapi
 {

@@ -1,15 +1,10 @@
 #pragma once
-#include <xercesc/sax/Locator.hpp>
-
-#include <string>
-#include <vector>
-#include <unordered_set>
-#include <string>
-#include <vector>
-
-#include "XML.h"
-
+#include "PimplImpl.h"
 #include <xercesc/dom/impl/DOMElementImpl.hpp>
+#include <xercesc/sax/Locator.hpp>
+#include <Poco/URI.h>
+#include "XMLImpl.h"
+#include <unordered_set>
 
 /**
 * Defines the functionality exposed by any fragment.
@@ -23,7 +18,7 @@ namespace xbrlcapi
 	class LabelResource;
 	class ReferenceResource;
 
-	class Fragment : public XML 
+	class Fragment : public XMLImpl
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;

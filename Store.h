@@ -5,6 +5,8 @@
 #include <xercesc/dom/DOMElement.hpp>
 #include "LabelResource.h"
 #include "ReferenceResource.h"
+#include "DefaultMatcher.h"
+#include <boost/uuid/uuid.hpp>
 
 
 namespace xbrlcapi
@@ -40,7 +42,11 @@ namespace xbrlcapi
 		bool operator!=(const Store& rhs);
 		Store(const std::string& database, const std::string& container);
 		Store(const std::string& database, const std::string& container, const int size); 
+		Store(const std::string& database, const std::string& container,  const boost::uuids::uuid& loader);
+		Store(const std::string& database, const std::string& container, const int size, const boost::uuids::uuid& loader); 
 
+		//TODO document this function
+		void setLoader(const boost::uuids::uuid& loader);
 
 		/**
 		* Close the data store.
@@ -207,35 +213,35 @@ namespace xbrlcapi
 		//		* query result is not a single string.
 		//		*/
 		//		std::string queryForString(const std::string& query);
-		
-				/**
-				* Serialize the specified XML DOM to the specified destination.
-				* @param what the root element of the DOM to be serialised.
-				* @param destination The destination output stream to be serialised to.
-				* @throws XBRLException if the DOM cannot be serialised
-				* because the destination cannot be written to or some other
-				* different problem occurs during serialisation.
-				*/
-				void serialize(const xercesc::DOMElement& what, std::ofstream& destination);
-		
-				/**
-				* Serialize the specified XML DOM to the specified destination.
-				* @param what the root element of the DOM to be serialised.
-				* @param destination The destination file to be serialised to.
-				* @throws XBRLException if the DOM cannot be serialised
-				* because the destination cannot be written to or some other
-				* different problem occurs during serialisation.
-				*/
-				//void serialize(const xercesc::DOMElement& what, const File& destination);
-		
-				/**
-				* Serialize the specified XML DOM node.
-				* @param what the root element of the DOM to be serialised.
-				* @return a string containing the serialized XML.
-				* @throws XBRLException
-				*/
-				std::string serialize(const xercesc::DOMElement& what);
-		
+
+		/**
+		* Serialize the specified XML DOM to the specified destination.
+		* @param what the root element of the DOM to be serialised.
+		* @param destination The destination output stream to be serialised to.
+		* @throws XBRLException if the DOM cannot be serialised
+		* because the destination cannot be written to or some other
+		* different problem occurs during serialisation.
+		*/
+		void serialize(const xercesc::DOMElement& what, std::ofstream& destination);
+
+		/**
+		* Serialize the specified XML DOM to the specified destination.
+		* @param what the root element of the DOM to be serialised.
+		* @param destination The destination file to be serialised to.
+		* @throws XBRLException if the DOM cannot be serialised
+		* because the destination cannot be written to or some other
+		* different problem occurs during serialisation.
+		*/
+		//void serialize(const xercesc::DOMElement& what, const File& destination);
+
+		/**
+		* Serialize the specified XML DOM node.
+		* @param what the root element of the DOM to be serialised.
+		* @return a string containing the serialized XML.
+		* @throws XBRLException
+		*/
+		std::string serialize(const xercesc::DOMElement& what);
+
 		//		/**
 		//		* Get a single document in the store as a DOM.
 		//		* @param uri The URI of the document to be retrieved.
@@ -331,16 +337,16 @@ namespace xbrlcapi
 		* @throws XBRLException.
 		*/
 		bool hasDocument(const Poco::URI& uri);
-		//
-		//		/**
-		//		* Stores the state of the document discovery process.
-		//		* @param documents The map from URIs of the documents 
-		//		* remaining to be discovered to the textual reason why 
-		//		* the document has not yet been discovered.
-		//		* @throws XBRLException
-		//		*/
-		//		void persistLoaderState(std::unordered_map<Poco::URI,std::string> documents);
-		//
+
+		/**
+		* Stores the state of the document discovery process.
+		* @param documents The map from URIs of the documents 
+		* remaining to be discovered to the textual reason why 
+		* the document has not yet been discovered.
+		* @throws XBRLException
+		*/
+		void persistLoaderState(std::unordered_map<const Poco::URI, std::string> documents);
+
 		//		/**
 		//		* @return the number of fragments in the data store.
 		//		* @throws XBRLException if the number of fragments cannot be determined.
@@ -506,15 +512,15 @@ namespace xbrlcapi
 		//		* and null otherwise.
 		//		*/
 		//		//Analyser getAnalyser();
-		//
-		//		/**
-		//		* @return true if the store is using
-		//		* persisted network information rather than using the 
-		//		* raw network information embodied in XBRL fragments. Returns
-		//		* false otherwise.
-		//		* @see org.xbrlapi.networks.Analyser
-		//		*/
-		//		bool isPersistingRelationships();
+
+		/**
+		* @return true if the store is using
+		* persisted network information rather than using the 
+		* raw network information embodied in XBRL fragments. Returns
+		* false otherwise.
+		* @see org.xbrlapi.networks.Analyser
+		*/
+		bool isPersistingRelationships();
 		//
 		//		/**
 		//		* Utility method to return a list of fragments in a data store
@@ -667,11 +673,11 @@ namespace xbrlcapi
 		//		* @throws XBRLException if the matcher is null;
 		//		*/
 		//		void setMatcher(const Matcher& matcher);
-		//
-		//		/**
-		//		* @return the matcher used by the store to identify identical resources.
-		//		*/
-		//		DefaultMatcher getMatcher();
+
+		/**
+		* @return the matcher used by the store to identify identical resources.
+		*/
+		DefaultMatcher getMatcher();
 		//
 		//		/**
 		//		* @param uri The URI of the referenced document.
@@ -1152,7 +1158,7 @@ namespace xbrlcapi
 		//		* @return the set of labels matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-				std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& linkRole, const std::string& resourceRole, const std::string& language);
+		std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& linkRole, const std::string& resourceRole, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getLabels(const std::string&,std::string,std::string,String)}.
@@ -1162,7 +1168,7 @@ namespace xbrlcapi
 		//		* @return the set of labels matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-				std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& resourceRole, const std::string& language);
+		std::vector<LabelResource> getLabels(const std::string& fragment, const std::string& resourceRole, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getLabels(const std::string&,std::string,std::string,String)}.
@@ -1171,7 +1177,7 @@ namespace xbrlcapi
 		//		* @return the set of labels matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-				std::vector<LabelResource> getLabelsWithLanguage(const std::string& fragment, const std::string& language);
+		std::vector<LabelResource> getLabelsWithLanguage(const std::string& fragment, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getLabels(const std::string&,std::string,std::string,String)}.
@@ -1179,7 +1185,7 @@ namespace xbrlcapi
 		//		* @return the set of labels matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-				std::vector<LabelResource> getLabels(const std::string& fragment);
+		std::vector<LabelResource> getLabels(const std::string& fragment);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getLabels(const std::string&,std::string,std::string,String)}.
@@ -1221,7 +1227,7 @@ namespace xbrlcapi
 		//		* @return the set of references matching the specified criteria.
 		//		* @throws XBRLException
 		//		*/
-				std::vector<ReferenceResource> getReferencesWithLanguage(const std::string& fragment, const std::string& language);
+		std::vector<ReferenceResource> getReferencesWithLanguage(const std::string& fragment, const std::string& language);
 		//
 		//		/**
 		//		* Implemented by {@link Store#getReferences(const std::string&,std::string,std::string,String)}.
@@ -1278,17 +1284,17 @@ namespace xbrlcapi
 		*/
 		void startLoading();
 
-		//		/**
-		//		* @param loader The loader that has stopped using
-		//		* this store for data loading.
-		//		*/
-		//		void stopLoading(const Loader& loader);
-		//
-		//		/**
-		//		* @return true if the store is currently being 
-		//		* used by any loader for loading data.
-		//		*/
-		//		bool  isLoading();
+		/**
+		* @param loader The loader that has stopped using
+		* this store for data loading.
+		*/
+		void stopLoading();
+
+		/**
+		* @return true if the store is currently being 
+		* used by any loader for loading data.
+		*/
+		bool  isLoading();
 		//
 		//		/**
 		//		* @param namespace The target namespace of the schema with the desired content.

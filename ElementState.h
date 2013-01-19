@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <xercesc/sax2/Attributes.hpp>
+#include <type_traits>
 
 
 /**
@@ -41,7 +42,7 @@ namespace xbrlcapi
 		/**
 		* @return the attributes of the element.
 		*/
-		std::shared_ptr<xercesc::Attributes> getAttributes(); 
+		std::shared_ptr<const xercesc::Attributes> getAttributes(); 
 
 		/**
 		* @param parent The state of the parent element
@@ -51,8 +52,8 @@ namespace xbrlcapi
 		* Use the org.xml.sax.helpers.AttributesImpl(Attributes); constructor to clone the
 		* originals.
 		*/
-		ElementState(const ElementState& parent, 
-			const std::shared_ptr<xercesc::Attributes>& attrs); 
+		ElementState(ElementState& parent, 
+			const xercesc::Attributes& attrs); 
 
 		bool hasParent(); 
 

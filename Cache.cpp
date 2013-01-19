@@ -5,11 +5,16 @@
 #include "XBRLException.h"
 #include <Poco/Exception.h>
 #include <boost/algorithm/string/replace.hpp>
+#include "XercesString.h"
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <map>
 #include <memory>
 #include <regex>
-
+#include <xercesc/internal/BinFileOutputStream.hpp>
+#include <boost/network/protocol/http/client.hpp>
+#include <boost/network/uri.hpp>
+#include <fstream>
 
 /**
 * Translates 
@@ -43,15 +48,25 @@ namespace xbrlcapi
 
 		CacheFile cacheFile;
 		std::unordered_map<Poco::URI, Poco::URI> uriMap;
+		std::shared_ptr<xercesc::XMLGrammarPoolImpl> grammarPool;
 
 		Impl() {}
-		Impl(const Impl& rhs) : cacheFile(rhs.cacheFile), uriMap(rhs.uriMap) {}
+
+		Impl(const Impl& rhs) : 
+			cacheFile(rhs.cacheFile), 
+			uriMap(rhs.uriMap) 
+		{}
 
 		Impl(CacheFile& rhs) : cacheFile(rhs)
 		{
-			if (! exists(cacheFile.getPath())) throw XBRLException("The cache " + cacheFile.getFilename() + " does not exist.");
+			if (! exists(cacheFile.getPath())) 
+				throw XBRLException("The cache " + cacheFile.getFilename() + " does not exist.");
 		}
-		Impl(const CacheFile& cf, const std::unordered_map<Poco::URI, Poco::URI>& map) : cacheFile(cf), uriMap(map)
+
+		Impl(const CacheFile& cf, 
+			const std::unordered_map<Poco::URI, Poco::URI>& map) : 
+		cacheFile(cf), 
+			uriMap(map)
 		{}	
 
 		Impl& operator=(Impl&& rhs)
@@ -79,9 +94,14 @@ namespace xbrlcapi
 		operator bool() 
 		{
 			return ( 
-				cacheFile.getFilename().empty() &&
-				uriMap.empty()
+				!cacheFile.getFilename().empty() &&
+				!uriMap.empty()
 				);
+		}
+
+		void setGrammarPool(const std::shared_ptr<xercesc::XMLGrammarPoolImpl>& pool)
+		{
+			grammarPool = pool;
 		}
 
 		bool isCacheURI(const Poco::URI& uri) 
@@ -149,10 +169,10 @@ namespace xbrlcapi
 			// so that we can try to cache it if that is necessary.
 			try 
 			{
-				boost::filesystem::path& cacheFilePath = getCacheFile(originalURI);
+				boost::filesystem::path& cacheFilePath = getCachePath(originalURI);
 				if (!cacheFile)
 				{
-					copyToCache(originalURI,cacheFile); 
+					//	copyToCache(originalURI,cacheFile); 
 				}
 
 				//TODO generalize using following
@@ -347,9 +367,7 @@ namespace xbrlcapi
 
 		//}    
 
-
-
-		boost::filesystem::path getCacheFile(const Poco::URI& uri)
+		boost::filesystem::path getCachePath(const Poco::URI& uri)
 		{
 			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
 			logger.debug("Getting the cache file for " + uri.toString());
@@ -361,90 +379,61 @@ namespace xbrlcapi
 			std::string query = uri.getQuery();
 			std::string fragment = uri.getFragment();
 
-			boost::filesystem::path absolutePath = cacheFile.getPath();
-			absolutePath /= boost::filesystem::path(user);
+			boost::filesystem::path absolutePath = cacheFile.getBasePath();
+			absolutePath /= boost::filesystem::path(scheme);
 			absolutePath /= boost::filesystem::path(user);
 			absolutePath /= boost::filesystem::path(host);
 			absolutePath /= boost::filesystem::path(port);
-			absolutePath /= boost::filesystem::path(query);
-			absolutePath /= boost::filesystem::path(fragment);
 
 			std::vector<std::string> parts = split(path, "/");
-			std::regex pattern("\w\Q:\E"); 
+			//std::regex pattern("\w\Q:\E"); 
+			std::regex pattern("\.x[[sd|ml]"); 
 			std::smatch results;
 
 			for (auto & part : parts)
 			{
-				if ( std::regex_search(part, results, pattern))
-					part += part.substr(0,1) + "_drive"; 
-				absolutePath /=  boost::filesystem::path(part);
+				if (std::regex_search(part, results, pattern))
+				{
+					if (!exists(absolutePath))
+						cacheFile.makeDir(absolutePath.generic_string());
+					absolutePath /= path.substr(path.find_last_of("/\\")+1);
+				}
+				else
+				{
+					absolutePath /=  boost::filesystem::path(part);
+				}
 			}
+			//absolutePath /= boost::filesystem::path(query);
+			//absolutePath /= boost::filesystem::path(fragment);
 
-			try 
-			{
-				log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
-				logger.debug("Got cacheFile" + cacheFile);
-				return absolutePath;
-			} 
-			catch (std::exception& e) 
-			{
-				throw XBRLException(uri.toString() + " cannot be translated into a location in the cache", e.what());
-			}
+			logger.debug("Got cache path " + toNative(absolutePath.c_str()));
+			cacheFile.setPath(absolutePath.generic_string());
+			return absolutePath;
 
 		}
 
-		void copyToCache(const Poco::URI& originalURI, const CacheFile& cacheFile) 
+		XercesString copyToCache(const Poco::URI& uri) 
 		{
 
-			//	// If necessary, create the directory to contain the cached resource
-			//	File parent = cacheFile.getParentFile();
-			//	if (parent != null) parent.mkdirs();
+			boost::filesystem::path p = cacheFile.getPath();
+			std::string fullPath = toNative(p.make_preferred().native());
 
-			//	try 
-			//{
+			if (!exists(p)) 
+			{
+				try {
+					boost::network::http::client client;
+					boost::network::http::client::request request(uri.toString());
+					boost::network::http::client::response response = client.get(request);
 
-			//		// Establish the connection to the original CacheURIImpl data source
-			//		InputStream inputStream = null;
-
-			//		if (originalURI.getScheme().equals("file")) 
-			//{
-			//			 std::string path = originalURI.getPath();
-			//			File f = new File(path);
-			//			inputStream = new FileInputStream(f);
-			//		} else 
-			//{
-			//			inputStream =  originalURI.toURL().openConnection().getInputStream();
-			//		}
-
-			//		BufferedInputStream bis = new BufferedInputStream(inputStream);
-
-			//		// Establish the connection to the destination file
-			//		FileOutputStream fos = new FileOutputStream(cacheFile);
-			//		BufferedOutputStream bos = new BufferedOutputStream(fos);
-
-			//		// Write the source file to the destination file
-			//		int bite = bis.read();
-			//		while (bite != -1) 
-			//{
-			//			bos.write(bite);
-			//			bite = bis.read();
-			//		}
-
-			//		// Clean up the reader and writer
-			//		bos.flush();
-			//		bis.close();
-			//		bos.close();
-
-			//	} catch (java.net.NoRouteToHostException e) 
-			//{
-			//		logger.debug(e.getMessage());
-			//	} catch (FileNotFoundException e) 
-			//{
-			//		logger.debug(e.getMessage());
-			//	} catch (IOException e) 
-			//{
-			//		logger.debug(e.getMessage());
-			//	}
+					std::cout << "Saving to: " << fullPath << std::endl;
+					std::ofstream ofs(fullPath);
+					ofs << static_cast<std::string>(body(response)) << std::endl;
+				}
+				catch (std::exception &e) {
+					std::cerr << e.what() << std::endl;
+				}
+			}
+			return fullPath;
 		}
 
 		void copyToCache(const Poco::URI& originalURI,  const std::string& xml) 
@@ -452,7 +441,7 @@ namespace xbrlcapi
 
 			//	logger.debug("Attempting to cache a string XML document using : " + originalURI);
 
-			//	File cacheFile = this.getCacheFile(originalURI);
+			//	File cacheFile = this.getCachePath(originalURI);
 
 			//	logger.debug("The cache file is : " + cacheFile.toString());
 
@@ -477,7 +466,7 @@ namespace xbrlcapi
 		//*/
 		//public void purge(URI uri) 
 		//{
-		//	File file = this.getCacheFile(uri);
+		//	File file = this.getCachePath(uri);
 		//	file.delete();
 		//	logger.debug("Purged " + file);
 		//}
@@ -497,7 +486,7 @@ namespace xbrlcapi
 		//{
 
 		//	// Get the relevant directory in the cache.
-		//	File file = this.getCacheFile(uri);
+		//	File file = this.getCachePath(uri);
 		//	while (!file.isDirectory() && file.getParentFile() != null) 
 		//{
 		//		file = file.getParentFile();
@@ -627,19 +616,29 @@ namespace xbrlcapi
 		return pImpl->operator bool();
 	}
 
-	Poco::URI Cache::getCacheURI(const Poco::URI& uri)
-	{
-		return pImpl->getCacheURI(uri);
-	}
+	//Poco::URI Cache::getCacheURI(const Poco::URI& uri)
+	//{
+	//	return pImpl->getCacheURI(uri);
+	//}
 
 	bool Cache::isCacheURI(const Poco::URI& uri) 
 	{
 		return pImpl->isCacheURI(uri);
 	}
 
-	boost::filesystem::path Cache::getCacheFile(const Poco::URI& uri)
+	boost::filesystem::path Cache::getCachePath(const Poco::URI& uri)
 	{
-		return pImpl->getCacheFile(uri);
+		return pImpl->getCachePath(uri);
+	}
+
+	void Cache::setGrammarPool(const std::shared_ptr<xercesc::XMLGrammarPoolImpl>& pool)
+	{
+		pImpl->setGrammarPool(pool);
+	}
+
+	XercesString Cache::copyToCache(const Poco::URI& uri) 
+	{
+		return pImpl->copyToCache(uri);
 	}
 
 }

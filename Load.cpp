@@ -18,6 +18,8 @@
 #include "log4cpp/PropertyConfigurator.hh"
 #include <memory>
 #include <Poco/Exception.h>
+#include <boost/uuid/uuid.hpp>
+
 
 using Poco::URI;
 namespace xbrlcapi
@@ -93,7 +95,10 @@ namespace xbrlcapi
 	* @return the new store.
 	* @throws XBRLException if the store cannot be initialised.
 	*/
-	Store Load::createStore(const std::string& database, const std::string& container, const std::string& cacheSize) 
+	Store Load::createStore(const std::string& database, 
+		const std::string& container, 
+		const std::string& cacheSize
+		) 
 	{
 		if (cacheSize.empty()) 
 		{
@@ -167,9 +172,9 @@ namespace xbrlcapi
 			Cache cache(CacheFile(filename), map);
 			EntityResolver entityResolver(cache);      
 			std::shared_ptr<Loader> loader(new Loader(store, xlinkProcessor, entityResolver));
-//			loader->setCache(cache);
-//			loader->setEntityResolver(entityResolver);
-//			xlinkHandler->setLoader(*loader);
+			//			loader->setEntityResolver(entityResolver);
+			//			xlinkHandler->setLoader(*loader);
+			store.setLoader(loader->tag());
 			return loader;
 		}
 		catch (Poco::SyntaxException) 

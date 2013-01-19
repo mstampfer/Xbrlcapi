@@ -54,7 +54,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\ProgramData\Poco\poco-1.4.5\Foundation\include;C:\Program Files (x86)\Oracle\Berkeley DB XML 2.5.16\include;C:\ProgramData\boost\boost_1_52_0;C:\ProgramData\log4cpp\include;C:\ProgramData\xerces-c\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\ProgramData\Poco\poco-1.4.5\Foundation\include;C:\Program Files (x86)\Oracle\Berkeley DB XML 2.5.16\include;C:\ProgramData\boost\boost_1_52_0;C:\ProgramData\log4cpp\include;C:\ProgramData\cpp-netlib\cpp-netlib-0.9.4;C:\ProgramData\xerces-c\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CallingConvention>Cdecl</CallingConvention>
       <BrowseInformation>true</BrowseInformation>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -63,7 +63,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libboost_filesystem-vc110-mt-gd-1_52.lib;PocoFoundationd.lib;xerces-c_3D.lib;libdbxml25.lib;libdb48.lib;Ws2_32.lib;log4cppD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libboost_filesystem-vc110-mt-gd-1_52.lib;PocoFoundationd.lib;xerces-c_3D.lib;libdbxml25.lib;libdb48.lib;Ws2_32.lib;log4cppD.lib;C:\ProgramData\cpp-netlib\cpp-netlib-0.9.4\libs\network\src\Debug\cppnetlib-uri.lib;C:\ProgramData\cpp-netlib\cpp-netlib-0.9.4\libs\network\src\Debug\cppnetlib-client-connections.lib;C:\ProgramData\cpp-netlib\cpp-netlib-0.9.4\libs\network\src\Debug\cppnetlib-server-parsers.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Link>
@@ -92,6 +92,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Analyser.cpp" />
     <ClCompile Include="Cache.cpp" />
     <ClCompile Include="CacheFile.cpp" />
     <ClCompile Include="ContentHandler.cpp" />
@@ -104,6 +105,8 @@
     <ClCompile Include="MD5Signer.cpp" />
     <ClCompile Include="DefaultMatcher.cpp" />
     <ClCompile Include="BaseContentHandler.cpp" />
+    <ClCompile Include="Networks.cpp" />
+    <ClCompile Include="NonFragmentXML.cpp" />
     <ClCompile Include="ReferencePartIdentifier.cpp" />
     <ClCompile Include="ReferenceResource.cpp" />
     <ClCompile Include="Signer.cpp" />
@@ -119,9 +122,10 @@
     <ClCompile Include="XBRLIdentifier.cpp" />
     <ClCompile Include="XBRLXLinkIdentifier.cpp" />
     <ClCompile Include="XLinkProcessor.cpp" />
-    <ClCompile Include="XML.cpp" />
-    <ClCompile Include="StubImpl.cpp" />
+    <ClCompile Include="XMLImpl.cpp" />
+    <ClCompile Include="Stub.cpp" />
     <ClCompile Include="XBRLXLinkHandler.cpp" />
+    <ClInclude Include="Analyser.h" />
     <ClInclude Include="ArcEnd.h" />
     <ClInclude Include="BaseURIResolver.h" />
     <ClInclude Include="Cache.h" />
@@ -156,6 +160,7 @@
     <ClInclude Include="LabelResource.h" />
     <ClInclude Include="LanguageIdentifier.h" />
     <ClInclude Include="Identifier.h" />
+    <ClInclude Include="Networks.h" />
     <ClInclude Include="NonFragmentXML.h" />
     <ClInclude Include="Builder.h" />
     <ClInclude Include="Pimpl.h" />
@@ -197,9 +202,10 @@
     <ClInclude Include="Store.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClCompile Include="Storer.cpp">
+      <FileType>CppHeader</FileType>
+    </ClCompile>
     <ClInclude Include="Storer.h" />
-    <ClInclude Include="StorerImpl.h" />
-    <ClInclude Include="StubImpl.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="CustomLinkRecogniser.h" />
     <ClInclude Include="XBRLXLinkHandler.h" />

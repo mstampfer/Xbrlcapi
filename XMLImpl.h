@@ -1,180 +1,93 @@
-
 #pragma once
-
-#include <string>
+#include "PimplImpl.h"
 #include "XML.h"
-#include <memory>
+#include "xercesc/dom/DOMElement.hpp"
+#include <unordered_map>
+
 namespace xbrlcapi
 {
 	class Store;
-	struct XMLImpl 
+	class Builder;
+	class XMLImpl : public XML
 	{
-
-
-	private:
+		struct Impl;
+		Pimpl<Impl> pImpl;
+	public:
 		XMLImpl();
-
-	protected:
-		void finalize();
-
-		/**
-		* @see org.xbrlapi.XML#isa(const std::string& )
-		*/
-		bool isa(const std::string& type);
-
-		/**
-		* @see org.xbrlapi.XML#isa(Class)
-		*/
-		template <typename T>
-		bool isa(T targetClass); 
-
-		/**
-		* @see java.lang.Object#hashCode()
-		*/
-		int hashCode();
-
-		/**
-		* @see java.lang.Object#equals(java.lang.Object)
-		*/
-		//    bool equals(Object obj);
-
-		/**
-		* Comparison is based upon the fragment index.
-		* @see java.lang.Comparable#compareTo(Object o)
-		*/
-		int compareTo(const XML& other);
-
-		/**
-		* @see org.xbrlapi.XML#setResource(Element)
-		*/
-		//    void setResource(Element rootElement);
-
-		/**
-		* @see org.xbrlapi.XML#getDocumentNode()
-		*/
-		//   Document getDocumentNode();
-
-		/**
-		* Get the XML resource that is the fragment from the data store.
-		* @return the DOM root element of the fragment or null if the resource
-		* has not been initialised to a DOM root element.
-		*/
-		//    private Element getResource();
-
-		/**
-		* @see org.xbrlapi.XML#setStore(Store)
-		*/
-		void setStore(Store store);
-
-		/**
-		* @see org.xbrlapi.XML#setBuilder(Builder)
-		*/
-		//    void setBuilder(Builder builder);
-
-		/**
-		* @see org.xbrlapi.XML#getStore()
-		*/
-		std::unique_ptr<Store> getStore();
-
+		~XMLImpl();
+		XMLImpl(const XMLImpl& rhs);
+		XMLImpl& operator=(const XMLImpl& rhs);
+		XMLImpl(XMLImpl&& rhs);
+		XMLImpl& operator=(XMLImpl&& rhs);
+		bool operator==(const XMLImpl& rhs);
+		bool operator!=(const XMLImpl& rhs);
 		/**
 		* Update this fragment in the data store by storing it again.
 		* @throws XBRLException if this fragment cannot be updated in the data store.
 		*/
-	private:
-		void updateStore();
+		std::string XMLImpl::getIndex() override;
+		Builder XMLImpl::getBuilder() override; 
 
-		/**
-		* @see org.xbrlapi.XML#getBuilder()
-		*/
-		//    Builder getBuilder();
-
-		/**
-		* @see org.xbrlapi.XML#getMetadataRootElement()
-		*/
-		//   Element getMetadataRootElement();
-
-		/**
-		* @see org.xbrlapi.XML#getIndex()
-		*/
-		std::string getIndex();
-
-		/**
-		* @see org.xbrlapi.XML#setIndex(const std::string& )
-		*/
-		void setIndex(const std::string& index);
-
-		/**
-		* @see org.xbrlapi.XML#getType()
-		*/
-		std::string getType();
-
-		/**
-		* @see org.xbrlapi.XML#setMetaAttribute(const std::string& , const std::string& )
-		*/
-		void setMetaAttribute(const std::string& name, const std::string& value);
-
-		/**
-		* @see org.xbrlapi.XML#removeMetaAttribute(const std::string& )
-		*/
-		void removeMetaAttribute(const std::string& name);
-
-		/**
-		* @see org.xbrlapi.XML#getMetaAttribute(const std::string& )
-		*/
-		std::string getMetaAttribute(const std::string& name);
-
-		/**
-		* @see org.xbrlapi.XML#getMetaAttribute(const std::string& )
-		*/
-		bool hasMetaAttribute(const std::string& name);
-
-		/**
-		* @see org.xbrlapi.XML#appendMetadataElement(const std::string& , Map)
-		*/
-		void appendMetadataElement(const std::string& eName,  std::unordered_map<std::string ,std::string > attributes);
-
-		/**
-		* @see org.xbrlapi.XML#removeMetadataElement(const std::string& , HashMap)
-		*/
-		void removeMetadataElement(const std::string& eName, std::unordered_map<std::string ,std::string > attributes);
-
+	protected:
+		void finalize();
 
 
 		/**
-		* @see org.xbrlapi.XML#serialize(File)
+		* @see org.xbrlapi.XML#setResource(Element)
 		*/
-		//    void serialize(File file);
+		void setResource(const std::shared_ptr<xercesc::DOMElement>& rootElement) override;
 
 		/**
-		* @see org.xbrlapi.XML#serialize(OutputStream)
+		* @see org.xbrlapi.XML#getDocumentNode()
 		*/
-		//    void serialize(OutputStream outputStream);
+		std::shared_ptr<xercesc::DOMDocument> XMLImpl::getDocumentNode() override;
 
 		/**
-		* @see org.xbrlapi.XML#serialize()
+		* @see org.xbrlapi.XML#setStore(Store)
 		*/
-		std::string serialize();
+		void setStore(const Store& store) override;
 
 		/**
-		* @see org.xbrlapi.XML#updateInStore()
+		* @see org.xbrlapi.XML#setBuilder(Builder)
 		*/
-		void updateInStore();
+		   void setBuilder(const Builder& builder) override;
 
 		/**
-		* Handles serialization for XML resources that have been fully built.
-		* @param out The input object stream used to store the serialization of the object.
-		* @throws IOException if the object is still being built.
+		* @see org.xbrlapi.XML#getStore()
 		*/
-	private:
-		//		void writeObject(java.io.ObjectOutputStream out);
+		Store getStore() override;
+		
+		void XMLImpl::setIndex(const std::string& index) override;
 
-		/**
-		* Handles object inflation.
-		* @param in The input object stream used to access the object's serialization.
-		* @throws IOException
-		* @throws ClassNotFoundException
-		*/
-	private:
-		//		void readObject(ObjectInputStream in);
+		std::string XMLImpl::getType() override;
+
+		void XMLImpl::setMetaAttribute(const std::string& name, const std::string& value) override;
+
+		void XMLImpl::removeMetaAttribute(const std::string& name) override;
+
+		std::string XMLImpl::getMetaAttribute(const std::string& name) override;
+
+		bool XMLImpl::hasMetaAttribute(const std::string& name) override;
+
+		void XMLImpl::removeMetadataElement(const std::string& eName, std::unordered_map<std::string,std::string> attributes) override;
+
+		//void serialize(File file)
+		//{
+		//	pImpl->serialize(file) override;
+		//}
+
+		//void serialize(OutputStream outputStream)
+		//{
+		//	pImpl->serialize(outputStream) override;
+		//}
+
+		std::string XMLImpl::serialize() override;
+
+		void XMLImpl::updateInStore() override;
+	
+		std::shared_ptr<xercesc::DOMElement> XMLImpl::getMetadataRootElement() override;
+
+		void XMLImpl::appendMetadataElement(const std::string& eName, 
+			const std::unordered_map<std::string,std::string>& attributes) override;
 	};
 }

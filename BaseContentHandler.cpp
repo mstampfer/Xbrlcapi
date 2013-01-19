@@ -137,7 +137,7 @@ namespace xbrlcapi
 		pImpl->setURI(uri);
 	}
 
-	void BaseContentHandler::setElementState(const ElementState& state)
+	void BaseContentHandler::setElementState(ElementState& state)
 	{
 		pImpl->setElementState(state);
 	}

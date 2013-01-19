@@ -1,5 +1,6 @@
+#include "ContentHandler.h"
 #include "BaseURISAXResolver.h"
-#include "BaseURISAXResolver.h"
+#include "BaseContentHandler.h"
 #include "Builder.h"
 #include "Constants.h"
 #include "ContentHandler.h"
@@ -17,16 +18,14 @@
 #include "XLinkProcessor.h"
 #include "XercesString.h"
 
-
 #include <iostream>
 #include <xercesc/sax/Locator.hpp>
 #include <xercesc/sax/SAXException.hpp>
 #include <xercesc/sax2/Attributes.hpp>
-#include <xercesc/sax2/Attributes.hpp>
+#include <xercesc/dom/DOMElement.hpp>
 
 namespace xbrlcapi
 {
-
 	struct ContentHandler::Impl :  public BaseContentHandler 
 	{
 
@@ -37,14 +36,18 @@ namespace xbrlcapi
 		*/
 		std::list<std::shared_ptr<Identifier>> identifiers;
 
-		Impl() {}
+		Impl() 
+		{
+		}
 
 		Impl(const Loader& loader, const Poco::URI& uri) : BaseContentHandler(loader, uri)
-		{}
+		{
+//			identifiers = getIdentifiers();
+		}
 
 		Impl(const Loader& loader, const Poco::URI& uri, const std::string& xml)  : BaseContentHandler(loader, uri)
 		{
-			//identifiers = getIdentifiers();
+//			identifiers = getIdentifiers();
 			setXML(xml);
 		}
 
@@ -77,112 +80,112 @@ namespace xbrlcapi
 		}
 
 		void startElement(
-			const std::string& namespaceURI,
-			const std::string& lName,
-			const std::string& qName,
+			const std::string& namespaceURI, 
+			const std::string& lName, 
+			const std::string& qName, 
 			const xercesc::Attributes& attrs)
 		{
 
-			//Loader loader = getLoader();
+			Loader loader = getLoader();
 
-			//// Update the information about the state of the current element (tracks ancestor attributes)
-			//setElementState(ElementState(getElementState(), xercesc::Attributes( attrs )));
+			// Update the information about the state of the current element (tracks ancestor attributes)
+			setElementState( ElementState(getElementState(), attrs ));
 
-			//// Stash new URIs in xsi:schemaLocation attributes if desired
-			//if (loader.useSchemaLocationAttributes()) 
-			//{
-			//	std::string schemaLocations = attrs.getValue(XMLConstants::XMLSchemaInstanceNamespace,"schemaLocation");
-			//	if (!schemaLocations.empty()) 
-			//	{
-			//		//logger.debug("Processing schema locations: " + schemaLocations);
-			//		std::string[] fields = schemaLocations.trim().split("\\s+");
-			//		for (int i=1; i<fields.length; i=i+2) 
-			//		{
-			//			try 
-			//			{
-			//				URI uri = getBaseURISAXResolver().getBaseURI().resolve(new URI(fields[i]));
-			//				logger.debug("Working on: " + uri);
-			//				loader.stashURI(uri);
-			//			}
-			//			catch (URISyntaxException e) 
-			//			{
-			//				logger.warn("Ignoring malformed XSI schemaLocation URI in: " + schemaLocations);
-			//			}
-			//			catch (XBRLException e) 
-			//			{
-			//				logger.warn("A problem occurred when stashing the schemaLocation URI: " + fields[i]);
-			//			}
-			//			catch (XMLBaseException e) 
-			//			{
-			//				logger.warn("A problem occurred when getting the base URI so schemaLocation URIs were not stashed from: " + schemaLocations);
-			//			}
-			//		}
-			//	}
-			//}
+			// Stash new URIs in xsi:schemaLocation attributes if desired
+			if (loader.useSchemaLocationAttributes()) 
+			{
+				std::string schemaLocations = toNative(attrs.getValue(XS(XMLConstants::XMLSchemaInstanceNamespace),XS("schemaLocation")));
+				if (!schemaLocations.empty()) 
+				{
+					//logger.debug("Processing schema locations: " + schemaLocations);
+					//std::string[] fields = schemaLocations.trim().split("\\s+");
+					//for (int i=1; i<fields.length; i=i+2) 
+					{
+						//try 
+						//{
+						//	Poco::URI uri = getBaseURISAXResolver().getBaseURI().resolve(Poco::URI(fields[i]));
+						//	logger.debug("Working on: " + uri);
+						//	loader.stashURI(uri);
+						//}
+						//catch (URISyntaxException e) 
+						//{
+						//	logger.warn("Ignoring malformed XSI schemaLocation URI in: " + schemaLocations);
+						//}
+						//catch (XBRLException e) 
+						//{
+						//	logger.warn("A problem occurred when stashing the schemaLocation URI: " + fields[i]);
+						//}
+						//catch (XMLBaseException e) 
+						//{
+						//	logger.warn("A problem occurred when getting the base URI so schemaLocation URIs were not stashed from: " + schemaLocations);
+						//}
+					}
+				}
+			}
 
-			//// Identify the fragments
-			//for (Identifier identifier: getIdentifiers()) 
-			//{
-			//	try 
-			//	{
-			//		identifier.startElement(namespaceURI,lName,qName,attrs);
-			//		if (loader.isBuildingAFragment()) 
-			//		{
-			//			if (loader.getFragment().isNewFragment()) 
-			//			{
-			//				break;
-			//			}
-			//		}
-			//	}
-			//	catch (XBRLException e) 
-			//	{
-			//		logger.error(this->getURI() + " : " + e.getMessage());
-			//		throw xercesc::SAXException("Fragment identification failed.",e);
-			//	}
-			//}
+			// Identify the fragments
+			for (const std::shared_ptr<Identifier>& identifier : identifiers) 
+			{
+				try 
+				{
+					identifier->startElement(namespaceURI, lName, qName, attrs);
+					if (loader.isBuildingAFragment()) 
+					{
+						if (loader.getFragment().isNewFragment()) 
+						{
+							break;
+						}
+					}
+				}
+				catch (XBRLException e) 
+				{
+					//	logger.error(this->getURI() + " : " + e.getMessage());
+					throw xercesc::SAXException(strcat("Fragment identification failed. ", + e.getMessage().c_str()));
+				}
+			}
 
-			//if (! loader.isBuildingAFragment()) 
-			//{
-			//	throw xercesc::SAXException("Some element has not been placed in a fragment.");
-			//}
+			if (! loader.isBuildingAFragment()) 
+			{
+				throw xercesc::SAXException("Some element has not been placed in a fragment.");
+			}
 
-			//// Insert the current element into the fragment being built
-			//try 
-			//{
-			//	Fragment fragment = getLoader().getFragment();
-			//	if (fragment == null) throw xercesc::SAXException("A fragment should be being built.");
-			//	Builder builder = fragment.getBuilder();
-			//	if (builder == null) throw xercesc::SAXException("A fragment that is being built needs a builder.");
-			//	builder.appendElement(namespaceURI, lName, qName, attrs);
+			// Insert the current element into the fragment being built
+			try 
+			{
+				Fragment fragment = getLoader().getFragment();
+				//if (fragment == NULL) throw xercesc::SAXException("A fragment should be being built.");
+				Builder builder = fragment.getBuilder();
+				//if (builder == null) throw xercesc::SAXException("A fragment that is being built needs a builder.");
+				builder.appendElement(namespaceURI, lName, qName, attrs);
 
-			//	// Hardwire XLink resource language code inheritance to
-			//	// improve query performance based on language selections.
-			//	if (attrs.getIndex(Constants.XLinkNamespace.toString(),"type") > -1) 
-			//	{
-			//		try 
-			//		{
-			//			Element element = fragment.getDataRootElement();
-			//			if (!element.hasAttributeNS(Constants.XMLNamespace,"lang")) 
-			//			{
-			//				std::string code = getElementState().getLanguageCode();
-			//				if (code != null) 
-			//				{
-			//					element.setAttribute("xml:lang",code);
-			//				}
-			//			}
-			//		}
-			//		catch (Throwable t) 
-			//		{
-			//			logger.info("bugger");
-			//		}
-			//	}
+				// Hardwire XLink resource language code inheritance to
+				// improve query performance based on language selections.
+				if (attrs.getIndex(XS(XMLConstants::XLinkNamespace),XS("type")) > -1) 
+				{
+					//try 
+					//{
+					std::shared_ptr<DOMElement> element = fragment.getDataRootElement();
+					if (!element->hasAttributeNS(XS(XMLConstants::XMLNamespace),XS("lang"))) 
+					{
+						std::string code = getElementState().getLanguageCode();
+						//if (code != null) 
+						//{
+						element->setAttribute(XS("xml:lang"),XS(code));
+						//}
+					}
+					//}
+					//catch (Throwable t) 
+					//{
+					//	logger.info("bugger");
+					//}
+				}
 
-			//}
-			//catch (XBRLException e) 
-			//{
-			//	logger.error(this->getURI() + " : " + e.getMessage());
-			//	throw xercesc::SAXException("The element could not be appended to the fragment.",e);
-			//}
+			}
+			catch (XBRLException e) 
+			{
+				//	logger.error(this->getURI() + " : " + e.getMessage());
+				throw xercesc::SAXException(strcat("The element could not be appended to the fragment.",e.getMessage().c_str()));
+			}
 
 		}
 
@@ -193,77 +196,77 @@ namespace xbrlcapi
 		* unless the element that is ending did not ever become the current element.
 		*/
 		void endElement(
-			const std::string& namespaceURI,
-			const std::string& lName,
-			const std::string& qName)
+			const   XMLCh* const    namespaceURI,
+			const   XMLCh* const    lName,
+			const   XMLCh* const    qName)
 		{
 
 			// Get the attributes of the element being ended.
-			std::shared_ptr<xercesc::Attributes> attrs = getElementState().getAttributes();
+			std::shared_ptr<const xercesc::Attributes> attrs = getElementState().getAttributes();
 
 			// Handle the ending of an element in the fragment builder
-			try 
-			{
-				getLoader().getFragment().getBuilder().endElement(namespaceURI, lName, qName);
-			}
-			catch (XBRLException e) 
-			{
-				throw xercesc::SAXException(("The XBRLAPI fragment endElement failed. " + 
-					e.getMessage()).c_str());			
-			}
+			//try 
+			//{
+			//	getLoader().getFragment().getBuilder().endElement(namespaceURI, lName, qName);
+			//}
+			//catch (XBRLException e) 
+			//{
+			//	throw xercesc::SAXException(("The XBRLAPI fragment endElement failed. " + 
+			//		e.getMessage()).c_str());			
+			//}
 
-			// Handle the ending of an element in the XLink processor
-			try 
-			{
-				getLoader().getXlinkProcessor().endElement(namespaceURI, 
-					lName, 
-					qName, 
-					*attrs);
-			}
-			catch (XLinkException e) 
-			{
-				throw xercesc::SAXException(("The XLink processor endElement failed. " + 
-					e.getMessage()).c_str());
-			}
+			//// Handle the ending of an element in the XLink processor
+			//try 
+			//{
+			//	getLoader().getXlinkProcessor().endElement(namespaceURI, 
+			//		lName, 
+			//		qName, 
+			//		*attrs);
+			//}
+			//catch (XLinkException e) 
+			//{
+			//	throw xercesc::SAXException(("The XLink processor endElement failed. " + 
+			//		e.getMessage()).c_str());
+			//}
 
-			// Update the states of the fragment identifiers
-			for (std::shared_ptr<Identifier>& id : getIdentifiers()) 
-			{
-				try 
-				{
-					id->endElement(namespaceURI,lName,qName,*attrs);
-				}
-				catch (XBRLException e) 
-				{
-					throw xercesc::SAXException(("Fragment identifier state update failed at the end of an element failed." + 
-						e.getMessage()).c_str());
-				}
-			}
+			//// Update the states of the fragment identifiers
+			//for (std::shared_ptr<Identifier>& id : getIdentifiers()) 
+			//{
+			//	try 
+			//	{
+			//		id->endElement(namespaceURI,lName,qName,*attrs);
+			//	}
+			//	catch (XBRLException e) 
+			//	{
+			//		throw xercesc::SAXException(("Fragment identifier state update failed at the end of an element failed." + 
+			//			e.getMessage()).c_str());
+			//	}
+			//}
 
-			// Update the state of the loader.
-			try 
-			{
-				getLoader().updateState(getElementState());
-			}
-			catch (XBRLException e) 
-			{
-				throw xercesc::SAXException(("The state of the loader could not be updated at the end of element " + 
-					namespaceURI + 
-					":" + 
-					lName + 
-					"." + 
-					e.getMessage()).c_str());
-			}
+			//// Update the state of the loader.
+			//try 
+			//{
+			//	getLoader().updateState(getElementState());
+			//}
+			//catch (XBRLException e) 
+			//{
+			//	throw xercesc::SAXException(("The state of the loader could not be updated at the end of element " + 
+			//		namespaceURI + 
+			//		":" + 
+			//		lName + 
+			//		"." + 
+			//		e.getMessage()).c_str());
+			//}
 
-			// Update the information about the state of the current element
-			setElementState(*getElementState().getParent());
+			//// Update the information about the state of the current element
+			//setElementState(*getElementState().getParent());
 
 		}
 
 		/**
 		* Ignore ignorable whitespace
 		*/
-		void ignorableWhitespace(char buf[], int offset, int len)
+		void ignorableWhitespace(const   XMLCh* const buf, const XMLSize_t offset)
 		{
 			/*		try 
 			{
@@ -282,45 +285,44 @@ namespace xbrlcapi
 		/**
 		* Copy across processing instructions to the DTSImpl
 		*/
-		void processingInstruction(const std::string& target, const std::string& data)
-
+		void processingInstruction(const   XMLCh* const target, const XMLCh* const data)
 		{
-			try 
-			{
-				Fragment fragment = getLoader().getFragment();
-				fragment.getBuilder().appendProcessingInstruction(target,data);
-			}
-			catch (XBRLException e) 
-			{
-				// Need to store processing instructions for incorporation into the fragment being created.
-			}
+			//try 
+			//{
+			//	Fragment fragment = getLoader().getFragment();
+			//	fragment.getBuilder().appendProcessingInstruction(target,data);
+			//}
+			//catch (XBRLException e) 
+			//{
+			//	// Need to store processing instructions for incorporation into the fragment being created.
+			//}
 		}
 
 		/**
 		* Copy characters (trimming white space as required) to the DTSImpl.
 		*/
-		void characters(char buf[], int offset, int len)
+		void characters(const   XMLCh* const buf, const  XMLSize_t offset)
 		{
-			try 
-			{
-				std::string s(buf, offset, len);
-				getLoader().getFragment().getBuilder().appendText(s);
-			}
-			catch (XBRLException e) 
-			{
-				throw xercesc::SAXException(("The characters could not be appended to the fragment." + 
-					getInputErrorInformation() + 
-					e.getMessage()).c_str());
-			}
+			//try 
+			//{
+			//	std::string s(buf, offset, len);
+			//	getLoader().getFragment().getBuilder().appendText(s);
+			//}
+			//catch (XBRLException e) 
+			//{
+			//	throw xercesc::SAXException(("The characters could not be appended to the fragment." + 
+			//		getInputErrorInformation() + 
+			//		e.getMessage()).c_str());
+			//}
 		}
 
 		/**
 		* The locator for a document is stored to facilitate resolution
 		* of CacheURIImpl's relative to that location.
 		*/
-		void setDocumentLocator(const std::shared_ptr<xercesc::Locator>& locator) 
+		void setDocumentLocator(const xercesc::Locator* locator) 
 		{
-			this->locator = locator;
+			//this->locator = locator;
 		}
 
 		/**
@@ -438,7 +440,9 @@ namespace xbrlcapi
 		return *this;
 	}
 
-	ContentHandler::ContentHandler(const Loader& loader, const Poco::URI& uri) : pImpl(loader, uri)
+	ContentHandler::ContentHandler(const Loader& loader, const Poco::URI& uri) : 
+		BaseContentHandler(loader,uri), 
+		pImpl(loader, uri)
 	{}
 
 	ContentHandler::ContentHandler(ContentHandler&& rhs) 
@@ -469,22 +473,22 @@ namespace xbrlcapi
 	}
 
 	void ContentHandler::startElement(
-		const std::string& namespaceURI,
-		const std::string& lName,
-		const std::string& qName,
-		const xercesc::Attributes& attrs)
+		const   XMLCh* const    namespaceURI,
+		const   XMLCh* const    lName,
+		const   XMLCh* const    qName,
+		const	xercesc::Attributes&	attrs)
 	{
 		pImpl->startElement(
-			namespaceURI,
-			lName,
-			qName,
+			toNative(namespaceURI),
+			toNative(lName),
+			toNative(qName),
 			attrs);
 	}
 
 	void ContentHandler::endElement(
-		const std::string& namespaceURI,
-		const std::string& lName,
-		const std::string& qName)
+		const   XMLCh* const    namespaceURI,
+		const   XMLCh* const    lName,
+		const   XMLCh* const    qName)
 	{
 		pImpl->endElement(
 			namespaceURI,
@@ -492,23 +496,23 @@ namespace xbrlcapi
 			qName);
 	}
 
-	void ContentHandler::ignorableWhitespace(char buf[], int offset, int len)
+	void ContentHandler::ignorableWhitespace(const   XMLCh* const buf, const XMLSize_t offset)
 	{
-		pImpl->ignorableWhitespace(buf, offset, len);
+		pImpl->ignorableWhitespace(buf, offset);
 	}
 
-	void ContentHandler::processingInstruction(const std::string& target, const std::string& data)
+	void ContentHandler::processingInstruction(const   XMLCh* const target, const XMLCh* const data)
 	{
 		pImpl->processingInstruction(target, data);
 	}
 
-	void ContentHandler::characters(char buf[], int offset, int len)
+	void ContentHandler::characters(const   XMLCh* const buf, const  XMLSize_t offset)
 	{
-		pImpl->characters(buf, offset, len);
+		pImpl->characters(buf, offset);
 	}
 
 
-	void ContentHandler::setDocumentLocator(const std::shared_ptr<xercesc::Locator>& locator) 
+	void ContentHandler::setDocumentLocator(const xercesc::Locator* locator) 
 	{
 		pImpl->setDocumentLocator(locator) ;
 	}

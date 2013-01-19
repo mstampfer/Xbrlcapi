@@ -1,8 +1,4 @@
-
-
 #pragma once
-
-
 #include "Fragment.h"
 #include <string>
 #include <vector>

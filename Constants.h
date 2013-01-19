@@ -1,15 +1,10 @@
-
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
+#include <string>
 /**
 * Defines a range of constants (namespaces etc) that are used throughout the
 * XBRLAPI implementation
-* 
-
 */
-
-#include <string>
-
 namespace xbrlcapi 
 {
 	struct XMLConstants 

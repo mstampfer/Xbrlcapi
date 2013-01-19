@@ -3,6 +3,9 @@
 #include <unordered_map>
 #include <Poco/URI.h>
 #include <boost/filesystem/path.hpp>
+#include <xercesc/validators/common/Grammar.hpp>
+#include <xercesc/framework/XMLGrammarPoolImpl.hpp>
+#include "XercesString.h"
 
 namespace xbrlcapi
 {
@@ -40,6 +43,9 @@ namespace xbrlcapi
 		bool operator==(const Cache& rhs);
 		bool operator!=(const Cache& rhs);
 		operator bool();
+
+		void setGrammarPool(const std::shared_ptr<xercesc::XMLGrammarPoolImpl>& pool);
+
 		///**
 		// * Tests if a URI is a URI of a resource in the local cache.
 		// * @param uri The URI to be tested to see if it identifies a 
@@ -57,7 +63,7 @@ namespace xbrlcapi
 		* @return the cache URI corresponding to the provided URI.
 		* @throws XBRLException if the resource cannot be cached.
 		*/
-		Poco::URI getCacheURI(const Poco::URI& uri);
+	//	Poco::URI getCacheURI(const Poco::URI& uri);
 
 		///**
 		// * @param uri The URI to be translated into an original URI (if necessary).
@@ -84,7 +90,7 @@ namespace xbrlcapi
 		// * @throws XBRLException if the URI cannot be translated into
 		// * a location in the local cache.
 		// */
-		boost::filesystem::path getCacheFile(const Poco::URI& uri);
+		boost::filesystem::path getCachePath(const Poco::URI& uri);
 
 		///**
 		// * Copy the original resource into the local cache if the resource exists and is
@@ -93,7 +99,8 @@ namespace xbrlcapi
 		// * @param originalURI the URI of the resource to be copied into the cache.
 		// * @param cacheFile The file to be used to store the cache version of the resource.
 		// */
-		//public abstract void copyToCache(URI originalURI, File cacheFile);
+		XercesString copyToCache(const Poco::URI& uri);
+
 
 		///**
 		// * Copy the original resource into the local cache.

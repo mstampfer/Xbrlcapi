@@ -68,7 +68,9 @@ namespace xbrlcapi
 		* @return the new store.
 		* @throws XBRLException if the store cannot be initialised.
 		*/
-		static Store createStore(const std::string& database, const std::string& container, const std::string& cacheSize = ""); 
+		static Store createStore(const std::string& database, 
+			const std::string& container, 
+			const std::string& cacheSize = ""); 
 
 		/**
 		* @param store The store to use for the loader.

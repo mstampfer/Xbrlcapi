@@ -1,15 +1,12 @@
 #include "Fragment.h"
-#include "Builder.h"
 #include "Store.h"
-#include "LabelResource.h"
-#include "ReferenceResource.h"
 #include "SimpleLink.h"
 
 namespace xbrlcapi
 {
 
 
-	struct Fragment::Impl : public XML
+	struct Fragment::Impl : public XMLImpl
 	{
 		Impl() {}
 
@@ -123,7 +120,7 @@ namespace xbrlcapi
 
 		void setURI(const Poco::URI& uri)
 		{
-			setMetaAttribute("uri",uri.toString());
+			setMetaAttribute("uri", uri.toString());
 		}
 
 		std::vector<xercesc::Locator> getReferencingLocators()

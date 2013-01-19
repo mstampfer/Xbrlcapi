@@ -26,6 +26,10 @@ namespace xbrlcapi
 		operator bool() const;
 		std::string getFilename();
 		boost::filesystem::path& getPath();
+		void setPath(const boost::filesystem::path& p);
+		boost::filesystem::path& getUriPath();
+		boost::filesystem::path& getBasePath();
+		void makeDir(const std::string& newPath);
 		operator bool();
 	};
 }

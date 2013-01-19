@@ -35,7 +35,7 @@ namespace xbrlcapi
 		* is application dependent.
 		* @throws XBRLException if no declarations can be found in the data store.
 		*/
-		ElementDeclaration getDeclaration();
+//		ElementDeclaration getDeclaration();
 
 
 	};

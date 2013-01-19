@@ -1,6 +1,7 @@
 #pragma once
 #include "PimplImpl.h"
 #include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/sax2/Attributes.hpp>
 #include <string>
 /**
 * Class defining the SAX event handlers that
@@ -91,21 +92,21 @@ namespace xbrlcapi
 		//	 * @throws XBRLException if the node cannot be appended.
 		//	 */
 		//	void appendComment(const std::string& text)		//;
-		//
-		//	/**
-		//	 * Append an element node.
-		//	 * @param namespaceURI The namespace of the element found by the SAX parser.
-		//	 * @param lName The local name of the element found by the SAX parser.
-		//	 * @param qName The QName of the element found by the SAX parser.
-		//	 * @param attrs The set of attributes found by the SAX parser.
-		//	 * @throws XBRLException if the node cannot be appended.
-		//	 */
-		//	void appendElement(
-		//			const std::string& namespaceURI, 
-		//			const std::string& lName, 
-		//			const std::string& qName, 
-		//			Attributes attrs)	
-		//	{
+		
+			/**
+			 * Append an element node.
+			 * @param namespaceURI The namespace of the element found by the SAX parser.
+			 * @param lName The local name of the element found by the SAX parser.
+			 * @param qName The QName of the element found by the SAX parser.
+			 * @param attrs The set of attributes found by the SAX parser.
+			 * @throws XBRLException if the node cannot be appended.
+			 */
+			void appendElement(
+					const std::string& namespaceURI, 
+					const std::string& lName, 
+					const std::string& qName, 
+					const xercesc::Attributes& attrs);
+			
 		//
 		//	/**
 		//	 * Insert a new element without attributes.

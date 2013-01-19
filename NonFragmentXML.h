@@ -1,28 +1,20 @@
 #pragma once
-#include "XML.h"
+#include "XMLImpl.h"
 
 namespace xbrlcapi
 {
-
-	class NonFragmentXMLImpl : public XMLImpl  
+	class NonFragmentXML : public XMLImpl  
 	{
-
+		struct Impl;
+		Pimpl<Impl> pImpl;
 	public:
-		NonFragmentXML() : XML()
-		{}
-
-
-	protected:
-		/**
-		* Used to eliminate the builder once the XML resource has been constructed.
-		* Call this method at the end of constructors for XML resources that 
-		* extend this class.
-		* @throws XBRLException
-		*/
-		void finalizeBuilder()
-		{
-			setResource(getBuilder().getMetadata());
-			setBuilder(NULL);
-		}
+		NonFragmentXML();
+		~NonFragmentXML();
+		NonFragmentXML(const NonFragmentXML& rhs);
+		NonFragmentXML& operator=(const NonFragmentXML& rhs);
+		NonFragmentXML(NonFragmentXML&& rhs);
+		NonFragmentXML& operator=(NonFragmentXML&& rhs);
+		bool operator==(const NonFragmentXML& rhs);
+		bool operator!=(const NonFragmentXML& rhs);
 	};
 }
