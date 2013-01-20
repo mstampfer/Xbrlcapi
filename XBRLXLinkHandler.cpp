@@ -55,7 +55,7 @@ namespace xbrlcapi
 			baseURIResolver = resolver;
 		}
 
-		void xmlBaseStart(const std::string& value)
+		void xmlBaseStart(const XMLCh* value)
 		{
 			//try 
 			//{
@@ -68,7 +68,7 @@ namespace xbrlcapi
 		}
 
 
-		void startTitle(const std::string& namespaceURI, const std::string& lName, const std::string& qName,
+		void startTitle(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName,
 			const xercesc::Attributes& attrs) 
 		{
 			/*		try 
@@ -96,12 +96,12 @@ namespace xbrlcapi
 
 
 		void startExtendedLink(
-			const std::string& namespaceURI, 
-			const std::string& lName,
-			const std::string& qName, 
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName,
+			const XMLCh* qName, 
 			const xercesc::Attributes& attrs, 
-			const std::string& role, 
-			const std::string& title)
+			const XMLCh* role, 
+			const XMLCh* title)
 		{
 
 			//try 
@@ -114,17 +114,17 @@ namespace xbrlcapi
 			//}
 		}
 
-		void endExtendedLink(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
+		void endExtendedLink(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName)
 		{}
 
 		void startResource(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs, 
-			const std::string& role, 
-			const std::string& title, 
-			const std::string& label)
+			const XMLCh* role, 
+			const XMLCh* title, 
+			const XMLCh* label)
 		{
 			//try 
 			//{
@@ -182,18 +182,18 @@ namespace xbrlcapi
 			//}
 		}
 
-		void endResource(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
+		void endResource(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName)
 		{}
 
 		void startLocator(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs, 
-			const std::string& href, 
-			const std::string& role, 
-			const std::string& title,
-			const std::string& label) 
+			const XMLCh* href, 
+			const XMLCh* role, 
+			const XMLCh* title,
+			const XMLCh* label) 
 		{
 			/*			try 
 			{
@@ -225,20 +225,20 @@ namespace xbrlcapi
 			}    */       
 		}
 
-		void endLocator(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
+		void endLocator(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName)
 		{}
 
 		void startArc(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs, 
-			const std::string& from, 
-			const std::string& to, 
-			const std::string& arcrole,
-			const std::string& title, 
-			const std::string& show, 
-			const std::string& actuate)
+			const XMLCh* from, 
+			const XMLCh* to, 
+			const XMLCh* arcrole,
+			const XMLCh* title, 
+			const XMLCh* show, 
+			const XMLCh* actuate)
 		{
 			//try 
 			//{
@@ -254,20 +254,20 @@ namespace xbrlcapi
 			//}
 		}
 
-		void endArc(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
+		void endArc(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName)
 		{}
 
 		void startSimpleLink(
-			const std::string& namespaceURI, 
-			const std::string& lName,
-			const std::string& qName, 
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName,
+			const XMLCh* qName, 
 			const xercesc::Attributes& attrs, 
-			const std::string& href, 
-			const std::string& role,
-			const std::string& arcrole, 
-			const std::string& title, 
-			const std::string& show, 
-			const std::string& actuate)
+			const XMLCh* href, 
+			const XMLCh* role,
+			const XMLCh* arcrole, 
+			const XMLCh* title, 
+			const XMLCh* show, 
+			const XMLCh* actuate)
 		{
 			//SimpleLink fragment = SimpleLinkImpl();
 			//try 
@@ -334,7 +334,7 @@ namespace xbrlcapi
 
 		}
 
-		void endSimpleLink(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
+		void endSimpleLink(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName)
 		{}
 
 		Loader getLoader()
@@ -353,8 +353,8 @@ namespace xbrlcapi
 			//return elementState; 
 		}	
 
-		void error(const std::string& namespaceURI, const std::string& lName, const std::string& qName,
-			const xercesc::Attributes& attrs,const std::string& message)
+		void error(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName,
+			const xercesc::Attributes& attrs,const XMLCh* message)
 		{
 
 			//if (message.endsWith(" is not defined in the XLink namespace.")) 
@@ -367,8 +367,8 @@ namespace xbrlcapi
 		}
 
 
-		void warning(const std::string& namespaceURI, const std::string& lName, const std::string& qName,
-			const xercesc::Attributes& attrs,const std::string& message)
+		void warning(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName,
+			const xercesc::Attributes& attrs,const XMLCh* message)
 		{
 			//logger.warn(message);
 		}
@@ -379,9 +379,9 @@ namespace xbrlcapi
 
 		}
 
-		void endTitle( const std::string& namespaceURI, 
-			const std::string& sName, 
-			const std::string& qName)
+		void endTitle( const XMLCh* namespaceURI, 
+			const XMLCh* sName, 
+			const XMLCh* qName)
 		{
 			//not Implemeted
 		}
@@ -438,15 +438,15 @@ namespace xbrlcapi
 		pImpl->setBaseURISAXResolver(resolver);
 	}
 
-	void XLinkHandler::xmlBaseStart(const std::string& value)
+	void XLinkHandler::xmlBaseStart(const XMLCh* value)
 	{
 		pImpl->xmlBaseStart(value);
 	}
 
 
-	void XLinkHandler::startTitle(const std::string& namespaceURI, 
-		const std::string& lName, 
-		const std::string& qName,
+	void XLinkHandler::startTitle(const XMLCh* namespaceURI, 
+		const XMLCh* lName, 
+		const XMLCh* qName,
 		const xercesc::Attributes& attrs)
 	{
 		pImpl-> startTitle(namespaceURI,
@@ -463,12 +463,12 @@ namespace xbrlcapi
 
 
 	void XLinkHandler::startExtendedLink(
-		const std::string& namespaceURI, 
-		const std::string& lName,
-		const std::string& qName, 
+		const XMLCh* namespaceURI, 
+		const XMLCh* lName,
+		const XMLCh* qName, 
 		const xercesc::Attributes& attrs, 
-		const std::string& role, 
-		const std::string& title)
+		const XMLCh* role, 
+		const XMLCh* title)
 	{
 		pImpl-> startExtendedLink(namespaceURI,
 			lName,
@@ -478,7 +478,7 @@ namespace xbrlcapi
 			title);
 	}
 
-	void XLinkHandler::endExtendedLink(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
+	void XLinkHandler::endExtendedLink(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName)
 	{
 		pImpl->endExtendedLink(namespaceURI, 
 			sName,
@@ -486,13 +486,13 @@ namespace xbrlcapi
 	}
 
 	void XLinkHandler::startResource(
-		const std::string& namespaceURI, 
-		const std::string& lName, 
-		const std::string& qName,
+		const XMLCh* namespaceURI, 
+		const XMLCh* lName, 
+		const XMLCh* qName,
 		const xercesc::Attributes& attrs, 
-		const std::string& role, 
-		const std::string& title, 
-		const std::string& label)
+		const XMLCh* role, 
+		const XMLCh* title, 
+		const XMLCh* label)
 	{
 		pImpl->startResource(namespaceURI,
 			lName,
@@ -503,7 +503,7 @@ namespace xbrlcapi
 			label);
 	}
 
-	void XLinkHandler::endResource(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
+	void XLinkHandler::endResource(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName)
 	{
 		pImpl->endResource(namespaceURI, 
 			sName, 
@@ -511,14 +511,14 @@ namespace xbrlcapi
 	}
 
 	void XLinkHandler::startLocator(
-		const std::string& namespaceURI, 
-		const std::string& lName, 
-		const std::string& qName,
+		const XMLCh* namespaceURI, 
+		const XMLCh* lName, 
+		const XMLCh* qName,
 		const xercesc::Attributes& attrs, 
-		const std::string& href, 
-		const std::string& role, 
-		const std::string& title,
-		const std::string& label) 
+		const XMLCh* href, 
+		const XMLCh* role, 
+		const XMLCh* title,
+		const XMLCh* label) 
 	{
 		pImpl->startLocator(namespaceURI,
 			lName,
@@ -530,9 +530,9 @@ namespace xbrlcapi
 			label);
 	}
 
-	void XLinkHandler::endLocator(const std::string& namespaceURI, 
-		const std::string& sName, 
-		const std::string& qName)
+	void XLinkHandler::endLocator(const XMLCh* namespaceURI, 
+		const XMLCh* sName, 
+		const XMLCh* qName)
 	{
 		pImpl-> endLocator(namespaceURI,
 			sName,
@@ -540,16 +540,16 @@ namespace xbrlcapi
 	}
 
 	void XLinkHandler::startArc(
-		const std::string& namespaceURI, 
-		const std::string& lName, 
-		const std::string& qName,
+		const XMLCh* namespaceURI, 
+		const XMLCh* lName, 
+		const XMLCh* qName,
 		const xercesc::Attributes& attrs, 
-		const std::string& from, 
-		const std::string& to, 
-		const std::string& arcrole,
-		const std::string& title, 
-		const std::string& show, 
-		const std::string& actuate)
+		const XMLCh* from, 
+		const XMLCh* to, 
+		const XMLCh* arcrole,
+		const XMLCh* title, 
+		const XMLCh* show, 
+		const XMLCh* actuate)
 	{
 		pImpl->startArc(namespaceURI, 
 			lName, 
@@ -563,7 +563,7 @@ namespace xbrlcapi
 			actuate);
 	}
 
-	void XLinkHandler::endArc(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
+	void XLinkHandler::endArc(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName)
 	{
 		pImpl->endArc(namespaceURI, 
 			sName, 
@@ -571,16 +571,16 @@ namespace xbrlcapi
 	}
 
 	void XLinkHandler::startSimpleLink(
-		const std::string& namespaceURI, 
-		const std::string& lName,
-		const std::string& qName, 
+		const XMLCh* namespaceURI, 
+		const XMLCh* lName,
+		const XMLCh* qName, 
 		const xercesc::Attributes& attrs, 
-		const std::string& href, 
-		const std::string& role,
-		const std::string& arcrole, 
-		const std::string& title, 
-		const std::string& show, 
-		const std::string& actuate)
+		const XMLCh* href, 
+		const XMLCh* role,
+		const XMLCh* arcrole, 
+		const XMLCh* title, 
+		const XMLCh* show, 
+		const XMLCh* actuate)
 	{
 		pImpl->startSimpleLink(namespaceURI, 
 			lName,
@@ -594,7 +594,7 @@ namespace xbrlcapi
 			actuate);
 	}
 
-	void XLinkHandler::endSimpleLink(const std::string& namespaceURI, const std::string& sName, const std::string& qName)
+	void XLinkHandler::endSimpleLink(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName)
 	{
 		pImpl->endSimpleLink(namespaceURI, 
 			sName, 
@@ -606,8 +606,8 @@ namespace xbrlcapi
 		pImpl-> setElementState(elementState) ;
 	}
 
-	void XLinkHandler::error(const std::string& namespaceURI, const std::string& lName, const std::string& qName,
-		const xercesc::Attributes& attrs,const std::string& message)
+	void XLinkHandler::error(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName,
+		const xercesc::Attributes& attrs,const XMLCh* message)
 	{
 		pImpl->error(namespaceURI, 
 			lName, 
@@ -617,8 +617,8 @@ namespace xbrlcapi
 	}
 
 
-	void XLinkHandler::warning(const std::string& namespaceURI, const std::string& lName, const std::string& qName,
-		const xercesc::Attributes& attrs,const std::string& message)
+	void XLinkHandler::warning(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName,
+		const xercesc::Attributes& attrs,const XMLCh* message)
 	{
 		pImpl->warning(namespaceURI, 
 			lName, 
@@ -632,9 +632,9 @@ namespace xbrlcapi
 		pImpl->titleCharacters(buf, offset, len);
 	}
 
-	void XLinkHandler::endTitle( const std::string& namespaceURI, 
-			const std::string& sName, 
-			const std::string& qName)
+	void XLinkHandler::endTitle( const XMLCh* namespaceURI, 
+		const XMLCh* sName, 
+		const XMLCh* qName)
 	{
 		pImpl->endTitle(namespaceURI, sName, qName);
 	}

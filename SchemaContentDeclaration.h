@@ -14,7 +14,8 @@ namespace xbrlcapi
 
 	*/
 
-	struct SchemaContentDeclaration : public SchemaDeclaration {
+	struct SchemaContentDeclaration : public SchemaDeclaration 
+	{
 
 		/**
 		* @return true iff the element declaration is global rather than

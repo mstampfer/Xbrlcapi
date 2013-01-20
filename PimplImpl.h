@@ -20,10 +20,17 @@ Pimpl<T>::~Pimpl() {}
 template<typename T>
 T* Pimpl<T>::operator->() { return p.get(); }
 
+// const dereference operator-> 
+template<typename T>
+T* Pimpl<T>::operator->() const { return p.get(); }
 
 // dereference operator* 
 template<typename T>
 T& Pimpl<T>::operator*() { return *p.get(); }
+
+// const dereference operator* 
+template<typename T>
+T& Pimpl<T>::operator*() const { return *p.get(); }
 
 // copy ctor
 template <typename T>

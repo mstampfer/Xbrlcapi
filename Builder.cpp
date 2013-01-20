@@ -148,9 +148,9 @@ namespace xbrlcapi
 		//}
 
 		void appendElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName, 
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName, 
 			const xercesc::Attributes& attrs)
 		{
 
@@ -239,9 +239,9 @@ namespace xbrlcapi
 		//
 
 		void endElement(
-			const std::string& namespaceURI,
-			const std::string& lName,
-			const std::string& qName)
+			const XMLCh* namespaceURI,
+			const XMLCh* lName,
+			const XMLCh* qName)
 		{
 			//	
 			//	// Make sure that the insertion point is stepping up from an element node (to an element or document node)
@@ -449,9 +449,9 @@ namespace xbrlcapi
 	}
 
 	void Builder::endElement(
-		const std::string& namespaceURI,
-		const std::string& lName,
-		const std::string& qName
+		const XMLCh* namespaceURI,
+		const XMLCh* lName,
+		const XMLCh* qName
 		)
 	{
 		pImpl->endElement(
@@ -461,9 +461,9 @@ namespace xbrlcapi
 	}
 
 	void Builder::appendElement(
-		const std::string& namespaceURI, 
-		const std::string& lName, 
-		const std::string& qName, 
+		const XMLCh* namespaceURI, 
+		const XMLCh* lName, 
+		const XMLCh* qName, 
 		const xercesc::Attributes& attrs)
 	{
 		pImpl->appendElement(namespaceURI,lName,qName,attrs);

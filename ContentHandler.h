@@ -21,7 +21,7 @@ namespace xbrlcapi
 {
 	class BaseURISAXResolver;
 	class Loader;
-	class ContentHandler : public BaseContentHandler 
+	class ContentHandler : public BaseContentHandler, public std::enable_shared_from_this<ContentHandler>
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;
@@ -35,7 +35,7 @@ namespace xbrlcapi
 		* @throws XBRLException if any of the parameters
 		* are null.
 		*/
-		ContentHandler(const Loader& loader, const Poco::URI& uri);
+		ContentHandler::ContentHandler( std::shared_ptr<Loader>& loader, const Poco::URI& uri);
 
 		/**
 		* Creates the content handler, starting out by
@@ -47,7 +47,7 @@ namespace xbrlcapi
 		* @throws XBRLException if any of the parameters
 		* are null.
 		*/
-	//	ContentHandler(const Loader& loader, const Poco::URI& uri, const XMLCh* const xml);
+		//	ContentHandler(const Loader& loader, const Poco::URI& uri, const XMLCh* const xml);
 
 		ContentHandler();
 		~ContentHandler(); 
@@ -57,6 +57,8 @@ namespace xbrlcapi
 		ContentHandler& operator=(ContentHandler&& rhs);
 		bool operator==(const ContentHandler& rhs);
 		bool operator!=(const ContentHandler& rhs);
+
+		std::weak_ptr<ContentHandler> getPtr();
 
 		/**
 		* On starting to parse a document the Base URI resolver is
@@ -114,6 +116,10 @@ namespace xbrlcapi
 		*/
 		void setDocumentLocator(const xercesc::Locator* const locator) override;
 
+		std::shared_ptr<Loader> getLoader();
+
+		void initialize();
+
 	protected:
 
 		/**
@@ -134,13 +140,12 @@ namespace xbrlcapi
 		* @param identifier The identifier to add to the list of
 		* fragment identifiers used by the content handler.
 		*/
-//		void addIdentifier(int index, const Identifier& identifier);
+		//		void addIdentifier(int index, const Identifier& identifier);
 
 		/**
 		* @param index The index of the identifier to remove from the list of
 		* fragment identifiers used by the content handler.
 		*/
 		void removeIdentifier(int index);
-
 	};
 }

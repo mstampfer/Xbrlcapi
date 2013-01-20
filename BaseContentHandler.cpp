@@ -1,5 +1,4 @@
 #include "BaseContentHandler.h"
-#include "Loader.h"
 #include <list>
 #include <Poco/URI.h>
 #include "ElementState.h"
@@ -9,28 +8,16 @@ namespace xbrlcapi
 {
 	struct BaseContentHandler::Impl 
 	{
-		Loader loader;
 		ElementState state;
 		std::list<std::shared_ptr<Identifier>> identifiers;
 		Poco::URI uri;
 
 		Impl() {}
-		Impl(const Loader& loader, const Poco::URI& uri) :
-			loader(loader),
+		Impl(const Poco::URI& uri) :
 			uri(uri)
 		{}
 
-		Loader getLoader() 
-		{
-			return loader;
-		}
-
-		void setLoader(const Loader& loader) 
-		{
-			this->loader = loader;
-		}
-
-		Poco::URI getURI() 
+		const Poco::URI getURI() const 
 		{
 			return uri;
 		}
@@ -75,7 +62,7 @@ namespace xbrlcapi
 
 	};
 
-	BaseContentHandler::BaseContentHandler(const Loader& loader, const Poco::URI& uri) : pImpl(loader,uri)
+	BaseContentHandler::BaseContentHandler(const Poco::URI& uri) : pImpl(uri)
 	{}
 
 	BaseContentHandler::BaseContentHandler() : pImpl()
@@ -117,17 +104,7 @@ namespace xbrlcapi
 		return !this->operator==(rhs);
 	}
 
-	Loader BaseContentHandler::getLoader()
-	{
-		return pImpl->getLoader();
-	}
-
-	void BaseContentHandler::setLoader(const Loader& loader)
-	{
-		pImpl->setLoader(loader);
-	}
-
-	Poco::URI BaseContentHandler::getURI()
+	const Poco::URI BaseContentHandler::getURI() const
 	{
 		return pImpl->getURI();
 	}

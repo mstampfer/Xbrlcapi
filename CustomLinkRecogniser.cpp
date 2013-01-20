@@ -1,5 +1,6 @@
 #include "CustomLinkRecogniser.h"
 #include "Constants.h"
+#include "XercesString.h"
 
 namespace xbrlcapi {
 
@@ -7,26 +8,25 @@ namespace xbrlcapi {
 	{
 		Impl() {}
 
-		bool isLink( const std::string& namespaceURI,  
-			const std::string& lName,  
-			const std::string& qName, 
+		bool isLink( const XMLCh* namespaceURI,  
+			const XMLCh* lName,  
+			const XMLCh* qName, 
 			const xercesc::Attributes& attrs) 
 		{
 			bool result = false;
-			if (namespaceURI == XMLConstants::XMLSchemaNamespace &&
-				((lName == "import") || (lName == "include")))
+			if (namespaceURI == XS(XMLConstants::XMLSchemaNamespace) &&
+				((lName == L"import") || (lName == L"include")))
 				result = true;
 			return result;
 		}
 
-		//const std::string getHref( const std::string& namespaceURI, 
-		//	const std::string& lName, 
-		//	const std::string& qName,
-		//	const xercesc::Attributes& attrs) 
-		//{
-		//	const XMLCh* const schemaLocation = L"schemaLocation";
-		//	return attrs.getValue(schemaLocation);
-		//}
+		const XMLCh* getHref( const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
+			const xercesc::Attributes& attrs) 
+		{
+			return attrs.getValue(L"schemaLocation");
+		}
 
 	};
 
@@ -70,20 +70,49 @@ namespace xbrlcapi {
 		return !this->operator==(rhs);
 	}
 
-	bool CustomLinkRecogniser::isLink( const std::string& namespaceURI,  
-		const std::string& lName,  
-		const std::string& qName, 
+	bool CustomLinkRecogniser::isLink(const XMLCh* namespaceURI,  
+		const XMLCh* lName,  
+		const XMLCh* qName, 
 		const xercesc::Attributes& attrs) 
 	{
 		return pImpl->isLink(namespaceURI, lName, qName, attrs);
 	}
 
-	std::string CustomLinkRecogniser::getHref( const std::string& namespaceURI, 
-		const std::string& lName, 
-		const std::string& qName,
+	const XMLCh* CustomLinkRecogniser::getHref(const XMLCh* namespaceURI, 
+		const XMLCh* lName, 
+		const XMLCh* qName,
 		const xercesc::Attributes& attrs) 
 	{
-//		return pImpl->getHref(namespaceURI, lName, qName, attrs);
-		return std::string();
+		return pImpl->getHref(namespaceURI, lName, qName, attrs);
 	}	
+
+	const XMLCh* CustomLinkRecogniser::getRole(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName, const xercesc::Attributes& attrs) 
+	{
+		return L"";
+	}
+
+	const XMLCh* CustomLinkRecogniser::getArcrole(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName, const xercesc::Attributes& attrs) 
+	{
+
+		return L"";
+	}
+
+	const XMLCh* CustomLinkRecogniser::getTitle(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName, const xercesc::Attributes& attrs) 
+	{
+
+		return L"";
+	}
+
+	const XMLCh* CustomLinkRecogniser::getShow(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName, const xercesc::Attributes& attrs) 
+	{
+
+		return L"";
+	}
+
+	const XMLCh* CustomLinkRecogniser::getActuate(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName, const xercesc::Attributes& attrs) 
+	{
+
+		return L"";
+	}
+
 }

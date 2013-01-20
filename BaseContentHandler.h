@@ -33,8 +33,8 @@ namespace xbrlcapi
 		* @param uri The URI of the document being parsed.
 		* @throws XBRLException if any of the parameters are null.
 		*/
-		BaseContentHandler(const Loader& loader, const Poco::URI& uri);
-		~BaseContentHandler();
+		BaseContentHandler(const Poco::URI& uri);
+		virtual ~BaseContentHandler();
 		BaseContentHandler(const BaseContentHandler& rhs);
 		BaseContentHandler& operator=(const BaseContentHandler& rhs);
 		BaseContentHandler(BaseContentHandler&& rhs);
@@ -43,19 +43,9 @@ namespace xbrlcapi
 		bool operator!=(const BaseContentHandler& rhs);
 
 		/**
-		* @see org.xbrlapi.sax.ContentHandler#getLoader()
-		*/
-		Loader getLoader();
-
-		/**
-		* @see org.xbrlapi.sax.ContentHandler#setLoader(Loader)
-		*/
-		void setLoader(const Loader& loader);
-
-		/**
 		* @see org.xbrlapi.sax.ContentHandler#getURI()
 		*/
-		Poco::URI getURI();
+		const Poco::URI getURI() const;
 
 		/**
 		* @see org.xbrlapi.sax.ContentHandler#setURI(URI)

@@ -10,7 +10,9 @@ namespace xbrlcapi
 	* Identifies XML Schema fragments.
 	*/
 
-	class GenericDocumentRootIdentifier : public BaseIdentifier 
+	class GenericDocumentRootIdentifier : 
+		public BaseIdentifier, 
+		public std::enable_shared_from_this<GenericDocumentRootIdentifier> 
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;
@@ -27,7 +29,9 @@ namespace xbrlcapi
 		/**
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#BaseIdentifier(ContentHandler)
 		*/
-		GenericDocumentRootIdentifier(const ContentHandler& contentHandler);
+		GenericDocumentRootIdentifier(const std::shared_ptr<ContentHandler>& contentHandler);
+		std::weak_ptr<GenericDocumentRootIdentifier> getPtr();
+		void initialize();
 
 		/**
 		* Add a generic fragment for a document root element if we 

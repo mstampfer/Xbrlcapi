@@ -9,7 +9,9 @@ namespace xbrlcapi
 	* Identifies reference part fragments.
 	*/
 
-	class ReferencePartIdentifier : public BaseIdentifier 
+	class ReferencePartIdentifier : 
+		public BaseIdentifier, 
+		public std::enable_shared_from_this<ReferencePartIdentifier>   
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;
@@ -26,8 +28,9 @@ namespace xbrlcapi
 		/**
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#BaseIdentifier(ContentHandler)
 		*/
-
-		ReferencePartIdentifier(const ContentHandler& contentHandler);
+		ReferencePartIdentifier(const std::shared_ptr<ContentHandler>& contentHandler);
+		std::weak_ptr<ReferencePartIdentifier> getPtr();
+		void initialize();
 
 		/**
         * Handle reference part fragments inside reference resources		

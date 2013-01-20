@@ -46,15 +46,15 @@ namespace xbrlcapi
 		* Handle the XML Base attribute discovery
 		* @param value the Value of the XML Base attribute
 		*/
-		void xmlBaseStart(const std::string& value);
+		void xmlBaseStart(const XMLCh* value);
 
 		/**
 		* Creates and stores an XLink title fragment.
 		*/
-		void startTitle(const std::string& namespaceURI, 
-						const std::string& lName, 
-						const std::string& qName,
-						const xercesc::Attributes& attrs);
+		void startTitle(const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
+			const xercesc::Attributes& attrs);
 
 		/**
 		* Handle the change of XML Base scope as you step back up the tree
@@ -90,75 +90,75 @@ namespace xbrlcapi
 		* </ul>
 		*/
 		void startExtendedLink(
-			const std::string& namespaceURI, 
-			const std::string& lName,
-			const std::string& qName, 
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName,
+			const XMLCh* qName, 
 			const xercesc::Attributes& attrs, 
-			const std::string& role, 
-			const std::string& title);
+			const XMLCh* role, 
+			const XMLCh* title);
 
 		/**
 		* Nothing needs to be done at the end of the extended link discovery.
 		*/
-		void endExtendedLink(const std::string& namespaceURI, const std::string& sName, const std::string& qName);
+		void endExtendedLink(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName);
 
 		/**
 		* @see XLinkHandler#startResource(std::string, std::string, std::string, Attributes, std::string, std::string, std::string)
 		*/
 		void startResource(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs, 
-			const std::string& role, 
-			const std::string& title, 
-			const std::string& label);
+			const XMLCh* role, 
+			const XMLCh* title, 
+			const XMLCh* label);
 
 		/**
 		* Handle the end of the resource.
 		*/
-		void endResource(const std::string& namespaceURI, const std::string& sName, const std::string& qName);
+		void endResource(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName);
 
 		/**
 		* Create the locator fragment and then add it to the map of arc anchors.
 		* Finally queue up the locator href value in the exploration queue.
 		*/
 		void startLocator(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs, 
-			const std::string& href, 
-			const std::string& role, 
-			const std::string& title,
-			const std::string& label);
+			const XMLCh* href, 
+			const XMLCh* role, 
+			const XMLCh* title,
+			const XMLCh* label);
 
 
 		/**
 		* Handle the end of the locator.
 		*/
-		void endLocator(const std::string& namespaceURI, const std::string& sName, const std::string& qName);
+		void endLocator(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName);
 
 		/**
 		* Create the arc fragment first. Then add the arc to the 
 		* stack of arcs to be processed.
 		*/
 		void startArc(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs, 
-			const std::string& from, 
-			const std::string& to, 
-			const std::string& arcrole,
-			const std::string& title, 
-			const std::string& show, 
-			const std::string& actuate);
+			const XMLCh* from, 
+			const XMLCh* to, 
+			const XMLCh* arcrole,
+			const XMLCh* title, 
+			const XMLCh* show, 
+			const XMLCh* actuate);
 
 		/**
 		* Handle the end of the arc.
 		*/
-		void endArc(const std::string& namespaceURI, const std::string& sName, const std::string& qName);
+		void endArc(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName);
 
 		/**
 		* Add the href to the set of XML documents to be explored and 
@@ -166,21 +166,21 @@ namespace xbrlcapi
 		* TODO Should simple links generate relationship metadata?
 		*/
 		void startSimpleLink(
-			const std::string& namespaceURI, 
-			const std::string& lName,
-			const std::string& qName, 
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName,
+			const XMLCh* qName, 
 			const xercesc::Attributes& attrs, 
-			const std::string& href, 
-			const std::string& role,
-			const std::string& arcrole, 
-			const std::string& title, 
-			const std::string& show, 
-			const std::string& actuate);
+			const XMLCh* href, 
+			const XMLCh* role,
+			const XMLCh* arcrole, 
+			const XMLCh* title, 
+			const XMLCh* show, 
+			const XMLCh* actuate);
 
 		/**
 		* Handle the end of the simple link
 		*/
-		void endSimpleLink(const std::string& namespaceURI, const std::string& sName, const std::string& qName);
+		void endSimpleLink(const XMLCh* namespaceURI, const XMLCh* sName, const XMLCh* qName);
 
 
 		/**
@@ -195,21 +195,21 @@ namespace xbrlcapi
 		* 
 		* @see org.xbrlapi.xlink.XLinkHandler#warning(java.lang.std::string,java.lang.std::string, java.lang.std::string, org.xml.sax.Attributes, java.lang.std::string)
 		*/
-		void error(const std::string& namespaceURI, const std::string& lName, const std::string& qName,
-			const xercesc::Attributes& attrs,const std::string& message);
+		void XLinkHandler::error(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName,
+			const xercesc::Attributes& attrs,const XMLCh* message);
 
 		/**
 		* Log a warning message
 		* @see org.xbrlapi.xlink.XLinkHandler#warning(java.lang.std::string,java.lang.std::string, java.lang.std::string, org.xml.sax.Attributes, java.lang.std::string)
 		*/
-		void warning(const std::string& namespaceURI, const std::string& lName, const std::string& qName,
-			const xercesc::Attributes& attrs,const std::string& message);
+		void warning(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName,
+			const xercesc::Attributes& attrs,const XMLCh* message);
 
 		void titleCharacters(char* buf, int offset, int len);
 
-		void endTitle( const std::string& namespaceURI, 
-			const std::string& sName, 
-			const std::string& qName);
+		void endTitle( const XMLCh* namespaceURI, 
+			const XMLCh* sName, 
+			const XMLCh* qName);
 
 	};
 }

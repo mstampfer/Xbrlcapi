@@ -647,11 +647,11 @@ namespace xbrlcapi
 			} 
 			catch (xercesc::DOMLSException e) 
 			{
-				throw XBRLException("Failed query: Parser busy" + query,toNative(e.getMessage()));
+				throw XBRLException("Failed query: Parser busy" + query,to_string(e.getMessage()));
 			}
 			catch (xercesc::DOMException e) 
 			{
-				throw XBRLException("Failed query: Parser was unable to load the XML document" + query,toNative(e.getMessage()));
+				throw XBRLException("Failed query: Parser was unable to load the XML document" + query,to_string(e.getMessage()));
 			}
 			//} finally {
 			//if (xmlResults != nullptr) delete xmlResults; //TODO

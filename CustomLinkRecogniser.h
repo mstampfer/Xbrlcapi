@@ -30,18 +30,73 @@ namespace xbrlcapi
 		/**
 		* @see org.xbrlapi.xlink.CustomLinkRecogniser#isLink(String, String, String, Attributes)
 		*/
-		bool isLink( const std::string& namespaceURI,  
-			const std::string& lName,  
-			const std::string& qName, 
+		bool isLink( const XMLCh* namespaceURI,  
+			const XMLCh* lName,  
+			const XMLCh* qName, 
 			const xercesc::Attributes& attrs); 
 
 		/**
 		* Get the href from the custom link
 		*/
-		std::string getHref( const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+		const XMLCh* getHref(const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs); 
+
+		/**
+		* Get the simple link role equivalent if it exists
+		* @param namespaceURI
+		* @param lName
+		* @param qName
+		* @param attrs
+		* @return the role or null if it does not exist
+		* @throws XLinkException
+		*/
+		const XMLCh* getRole(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName, const xercesc::Attributes& attrs); 
+
+		/**
+		* Get the simple link arcrole equivalent if it exists
+		* @param namespaceURI
+		* @param lName
+		* @param qName
+		* @param attrs
+		* @return the arcrole or null if it does not exist
+		* @throws XLinkException
+		*/
+		const XMLCh* getArcrole(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName, const xercesc::Attributes& attrs); 
+
+		/**
+		* Get the simple link title attribute equivalent if it exists
+		* @param namespaceURI
+		* @param lName
+		* @param qName
+		* @param attrs
+		* @return the title or null if it does not exist
+		* @throws XLinkException
+		*/
+		const XMLCh* getTitle(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName, const xercesc::Attributes& attrs); 
+
+		/**
+		* Get the simple link show equivalent if it exists
+		* @param namespaceURI
+		* @param lName
+		* @param qName
+		* @param attrs
+		* @return the show or null if it does not exist
+		* @throws XLinkException
+		*/
+		const XMLCh* getShow(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName, const xercesc::Attributes& attrs); 
+
+		/**
+		* Get the simple link actuate equivalent if it exists
+		* @param namespaceURI
+		* @param lName
+		* @param qName
+		* @param attrs
+		* @return the actuate or null if it does not exist
+		* @throws XLinkException
+		*/
+		const XMLCh* getActuate(const XMLCh* namespaceURI, const XMLCh* lName, const XMLCh* qName, const xercesc::Attributes& attrs); 
 	};
 }
 

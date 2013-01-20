@@ -3,56 +3,58 @@
 #include "Fragment.h"
 namespace xbrlcapi
 {
-	struct BaseIdentifier::Impl : public Identifier 
+	struct BaseIdentifier::Impl 
 	{
 		/**
 		* The content handler that is using this fragment identifier
 		*/
-		ContentHandler contentHandler;
+		std::shared_ptr<ContentHandler> contentHandler;
 
-		Impl() {}
+		Impl() 
+		{
+		}
 
-		Impl(const ContentHandler& contentHandler) 
+		Impl(const std::shared_ptr<ContentHandler>& contentHandler) 
 		{
 			setContentHandler(contentHandler);
 		}
 
-		ContentHandler getContentHandler()
+		std::shared_ptr<ContentHandler> getContentHandler()
 		{
 			return contentHandler;
 		}
 
-		void setContentHandler(const ContentHandler& contentHandler)
+		void setContentHandler(const std::shared_ptr<ContentHandler>& contentHandler)
 		{
 			//if (contentHandler == null) throw new XBRLException("The content handler must not be null.");
 			this->contentHandler = contentHandler;
 		}
 
-		Loader getLoader()
+		std::shared_ptr<Loader> getLoader()
 		{
-			return getContentHandler().getLoader();
+			return contentHandler->getLoader();
 		}
 
 		ElementState getElementState()
 		{
-			return getContentHandler().getElementState();
+			return contentHandler->getElementState();
 		}
 
 		void startElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes&  attrs)
 		{}		
 
 		void endElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes&  attrs)
 		{}		
 
-		void processFragment(const Fragment& fragment, const xercesc::Attributes& attrs)
+		void processFragment(const std::shared_ptr<Fragment>& fragment, const xercesc::Attributes& attrs)
 		{
 			//	Loader loader = getLoader();
 			//	fragment.setBuilder(new Builder(loader.getBuilderDOM()));
@@ -108,19 +110,19 @@ namespace xbrlcapi
 		return !this->operator==(rhs);
 	}
 
-	BaseIdentifier::BaseIdentifier(const ContentHandler& contentHandler)
+	BaseIdentifier::BaseIdentifier(const std::shared_ptr<ContentHandler>& contentHandler)
 	{
 		pImpl->contentHandler = contentHandler;
 	}
 
-	ContentHandler BaseIdentifier::getContentHandler()
+	std::shared_ptr<ContentHandler> BaseIdentifier::getContentHandler()
 	{
 		return pImpl->getContentHandler();
 	}
 	/**
 	* @see Identifier#setContentHandler(ContentHandler)
 	*/
-	void BaseIdentifier::setContentHandler(const ContentHandler& contentHandler)
+	void BaseIdentifier::setContentHandler(const std::shared_ptr<ContentHandler>& contentHandler)
 	{
 		pImpl->setContentHandler(contentHandler);
 	}
@@ -128,7 +130,7 @@ namespace xbrlcapi
 	/**
 	* @see Identifier#getLoader()
 	*/
-	Loader BaseIdentifier::getLoader()
+	std::shared_ptr<Loader> BaseIdentifier::getLoader()
 	{
 		return pImpl->getLoader();
 	}
@@ -146,9 +148,9 @@ namespace xbrlcapi
 	* @see Identifier#startElement(String, String, String, Attributes)
 	*/
 	void BaseIdentifier::startElement(
-		const std::string& namespaceURI, 
-		const std::string& lName, 
-		const std::string& qName,
+		const XMLCh* namespaceURI, 
+		const XMLCh* lName, 
+		const XMLCh* qName,
 		const xercesc::Attributes&  attrs)
 	{
 		pImpl->startElement(namespaceURI,
@@ -161,9 +163,9 @@ namespace xbrlcapi
 	* @see Identifier#endElement(String, String, String, Attributes)
 	*/
 	void BaseIdentifier::endElement(
-		const std::string& namespaceURI, 
-		const std::string& lName, 
-		const std::string& qName,
+		const XMLCh* namespaceURI, 
+		const XMLCh* lName, 
+		const XMLCh* qName,
 		const xercesc::Attributes& attrs)
 	{
 		pImpl->endElement(namespaceURI,
@@ -185,7 +187,9 @@ namespace xbrlcapi
 	* expressed by an attribute other than "id".
 	* @see Identifier#processFragment(Fragment, Attributes)
 	*/
-	void BaseIdentifier::processFragment(const Fragment& fragment, const xercesc::Attributes& attrs)
+	void BaseIdentifier::processFragment(
+		const std::shared_ptr<Fragment>& fragment, 
+		const xercesc::Attributes& attrs)
 	{
 		pImpl->processFragment(fragment, attrs);
 	}

@@ -1,0 +1,2 @@
+struct SchemaGroupCompositor : public SchemaCompositor
+{}

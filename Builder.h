@@ -102,9 +102,9 @@ namespace xbrlcapi
 			 * @throws XBRLException if the node cannot be appended.
 			 */
 			void appendElement(
-					const std::string& namespaceURI, 
-					const std::string& lName, 
-					const std::string& qName, 
+					const XMLCh* namespaceURI, 
+					const XMLCh* lName, 
+					const XMLCh* qName, 
 					const xercesc::Attributes& attrs);
 			
 		//
@@ -121,9 +121,9 @@ namespace xbrlcapi
 		//			const std::string& qName);
 		//
 			void endElement(
-					const std::string& namespaceURI,
-					const std::string& lName,
-					const std::string& qName
+					const XMLCh* namespaceURI,
+					const XMLCh* lName,
+					const XMLCh* qName
 					);
 		//
 		//	/**

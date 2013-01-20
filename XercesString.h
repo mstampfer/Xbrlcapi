@@ -33,7 +33,7 @@ namespace xbrlcapi
 		operator const XMLCh * () const { return _wstr; };
 	};
 
-	std::string toNative(const XMLCh* str);
-	std::string toNative(const std::basic_string<XMLCh>& str); 
+	std::string to_string(const XMLCh* str);
+	std::string to_string(const std::basic_string<XMLCh>& str); 
 	typedef XercesString XS;
 }

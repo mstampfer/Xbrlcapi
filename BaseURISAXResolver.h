@@ -28,7 +28,7 @@ namespace xbrlcapi
 		* this constructor is being used.
 		*/
 		BaseURISAXResolver(const Poco::URI& documentURI);
-		~BaseURISAXResolver();
+		virtual ~BaseURISAXResolver();
 		BaseURISAXResolver(const BaseURISAXResolver& rhs);
 		BaseURISAXResolver& operator=(const BaseURISAXResolver& rhs);
 		BaseURISAXResolver(BaseURISAXResolver&& rhs);

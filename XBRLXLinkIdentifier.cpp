@@ -10,28 +10,31 @@
 
 namespace xbrlcapi
 {
-	struct XBRLXLinkIdentifier::Impl : public BaseIdentifier
+	struct XBRLXLinkIdentifier::Impl 
 	{
+		std::weak_ptr<XBRLXLinkIdentifier> outer;
+		std::shared_ptr<ContentHandler> contentHandler;
 
 		Impl() {}
 
-		Impl(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler)
-		{}
+		Impl(const std::shared_ptr<ContentHandler>& contentHandler) : contentHandler(contentHandler)
+		{
+		}
 
 		XLinkProcessor getXLinkProcessor()
 		{
-			return getLoader().getXlinkProcessor();
+			return contentHandler->getLoader()->getXlinkProcessor();
 		}
 
 		XLinkHandler getXLinkHandler()
 		{
-			return getLoader().getXlinkProcessor().getXLinkHandler();
+			return contentHandler->getLoader()->getXlinkProcessor().getXLinkHandler();
 		}
 
 		void startElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs)
 		{
 
@@ -39,7 +42,7 @@ namespace xbrlcapi
 			//try
 			{
 				XLinkHandler xlinkHandler = getXLinkHandler();
-				xlinkHandler.setElementState(getElementState());
+				xlinkHandler.setElementState(contentHandler->getElementState());
 				/*			} catch (ClassCastException e)
 				{
 				throw XBRLException("The XBRLXLinkIdentifier MUST use an XLinkHandler when parsing " + getContentHandler().getURI(),e);
@@ -53,15 +56,19 @@ namespace xbrlcapi
 				catch (XLinkException e)
 				{
 					throw XBRLException("XLink processing of the start of an element failed when parsing " + 
-						getContentHandler().getURI().toString(),e.getMessage());
+						contentHandler->getURI().toString(),e.getMessage());
 				}
 
 			}
 		}
+		void setOuter(const std::weak_ptr<XBRLXLinkIdentifier>& xbrlXLinkIdentifier)
+		{
+			outer = std::weak_ptr<XBRLXLinkIdentifier>(xbrlXLinkIdentifier);
+		}
 	};
 
 	XBRLXLinkIdentifier::XBRLXLinkIdentifier() {}
-	XBRLXLinkIdentifier::XBRLXLinkIdentifier(const ContentHandler& contentHandler) : 
+	XBRLXLinkIdentifier::XBRLXLinkIdentifier(const std::shared_ptr<ContentHandler>& contentHandler) : 
 		BaseIdentifier(contentHandler), pImpl(contentHandler) {}
 
 	XBRLXLinkIdentifier::~XBRLXLinkIdentifier() {} 
@@ -104,9 +111,9 @@ namespace xbrlcapi
 	}
 
 	void XBRLXLinkIdentifier::startElement(
-		const std::string& namespaceURI, 
-		const std::string& lName, 
-		const std::string& qName,
+		const XMLCh* namespaceURI, 
+		const XMLCh* lName, 
+		const XMLCh* qName,
 		const xercesc::Attributes& attrs)
 	{
 		pImpl->startElement(namespaceURI, 
@@ -114,4 +121,15 @@ namespace xbrlcapi
 			qName,
 			attrs);
 	}
+
+	std::weak_ptr<XBRLXLinkIdentifier> XBRLXLinkIdentifier::getPtr()
+	{
+		return shared_from_this();
+	}
+
+	void XBRLXLinkIdentifier::initialize()
+	{
+		pImpl->setOuter(getPtr());
+	}
+
 }

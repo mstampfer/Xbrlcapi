@@ -49,7 +49,8 @@ namespace xbrlcapi
 		bool operator==(const Loader& rhs);
 		bool operator!=(const Loader& rhs);
 		boost::uuids::uuid tag();
-		std::shared_ptr<Loader> getPtr();
+		std::weak_ptr<Loader> getPtr();
+		void Loader::initialize();
 
 		/**
 		* Get the DTS storage implementation
@@ -296,5 +297,6 @@ namespace xbrlcapi
 		* document identifiers.
 		*/
 		bool hasHistory();
+
 	};
 }

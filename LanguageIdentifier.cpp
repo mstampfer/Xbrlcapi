@@ -4,10 +4,12 @@ namespace xbrlcapi
 {
 
 
-	struct LanguageIdentifier::Impl : public BaseIdentifier
+	struct LanguageIdentifier::Impl 
 	{
+		std::weak_ptr<LanguageIdentifier> outer;
+		std::shared_ptr<ContentHandler> contentHandler;
 		Impl() {}
-		Impl(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler)
+		Impl(const std::shared_ptr<ContentHandler>& contentHandler) : contentHandler(contentHandler)
 		{}
 
 		void startElement(
@@ -28,12 +30,17 @@ namespace xbrlcapi
 			//		}
 
 		}  
+
+		void setOuter(const std::weak_ptr<LanguageIdentifier>& languageIdentifier)
+		{
+			outer = std::weak_ptr<LanguageIdentifier>(languageIdentifier);
+		}
 	};
 
 	LanguageIdentifier::LanguageIdentifier() {}
 	LanguageIdentifier::~LanguageIdentifier() {} 
 
-	LanguageIdentifier::LanguageIdentifier(const ContentHandler& contentHandler) : 
+	LanguageIdentifier::LanguageIdentifier(const std::shared_ptr<ContentHandler>& contentHandler) : 
 		BaseIdentifier(contentHandler), pImpl(contentHandler) {}
 
 	LanguageIdentifier::LanguageIdentifier(const LanguageIdentifier& rhs) 
@@ -85,6 +92,15 @@ namespace xbrlcapi
 			qName,
 			attrs);
 	}        
+	std::weak_ptr<LanguageIdentifier> LanguageIdentifier::getPtr()
+	{
+		return shared_from_this();
+	}
+
+	void LanguageIdentifier::initialize()
+	{
+		pImpl->setOuter(getPtr());
+	}
 }    
 
 

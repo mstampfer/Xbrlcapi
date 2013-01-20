@@ -172,6 +172,7 @@ namespace xbrlcapi
 			Cache cache(CacheFile(filename), map);
 			EntityResolver entityResolver(cache);      
 			std::shared_ptr<Loader> loader(new Loader(store, xlinkProcessor, entityResolver));
+			loader->initialize();
 			//			loader->setEntityResolver(entityResolver);
 			//			xlinkHandler->setLoader(*loader);
 			store.setLoader(loader->tag());

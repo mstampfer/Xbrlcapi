@@ -26,11 +26,14 @@
 
 namespace xbrlcapi
 {
-	struct ContentHandler::Impl :  public BaseContentHandler 
+	struct ContentHandler::Impl
 	{
 
+		std::weak_ptr<ContentHandler> outer;
+		std::shared_ptr<Loader> loader;
 		std::shared_ptr<xercesc::Locator> locator;
 		std::string xml;
+
 		/**
 		* The list of fragment identifiers
 		*/
@@ -40,36 +43,54 @@ namespace xbrlcapi
 		{
 		}
 
-		Impl(const Loader& loader, const Poco::URI& uri) : BaseContentHandler(loader, uri)
+		Impl(std::shared_ptr<Loader>& loader) : 
+			outer(outer),
+			loader(loader)
 		{
-//			identifiers = getIdentifiers();
+			//			identifiers = getIdentifiers();
 		}
 
-		Impl(const Loader& loader, const Poco::URI& uri, const std::string& xml)  : BaseContentHandler(loader, uri)
+		Impl(std::shared_ptr<Loader>& loader, 
+			const std::string& xml) : 
+		outer(outer),
+			loader(loader)
 		{
-//			identifiers = getIdentifiers();
+			//			identifiers = getIdentifiers();
 			setXML(xml);
 		}
 
-		void startDocument(const xbrlcapi::ContentHandler& handler)
+		void startDocument()
 		{
 			// Set up the base URI resolver for the content handler and the XLink handler.
-			if (getURI().empty()) 
+			if (outer.lock()->getURI().empty()) 
 			{
 				throw xercesc::SAXException("The document URI must not be null when setting up the base URI resolver.");
 			}
-			setBaseURISAXResolver(BaseURISAXResolver(getURI()));
+			setBaseURISAXResolver(BaseURISAXResolver(outer.lock()->getURI()));
 			getXLinkHandler().setBaseURISAXResolver(baseURISAXResolver);
+
+			std::shared_ptr<XBRLXLinkIdentifier> xbrlLinkIdentifier(new XBRLXLinkIdentifier(outer.lock()));
+			std::shared_ptr<SchemaIdentifier> schemaIdentifier(new SchemaIdentifier(outer.lock()));
+			std::shared_ptr<XBRLIdentifier> xbrlIdentifier(new XBRLIdentifier(outer.lock()));
+			std::shared_ptr<LanguageIdentifier> languageIdentifier(new LanguageIdentifier(outer.lock()));
+			std::shared_ptr<ReferencePartIdentifier> referencePartIdentifier(new ReferencePartIdentifier(outer.lock()));
+			std::shared_ptr<GenericDocumentRootIdentifier> genericDocumentRootIdentifier(new GenericDocumentRootIdentifier(outer.lock()));
+			xbrlLinkIdentifier->initialize();
+			schemaIdentifier->initialize();
+			xbrlIdentifier->initialize();
+			languageIdentifier->initialize();
+			referencePartIdentifier->initialize();
+			genericDocumentRootIdentifier->initialize();
 
 			// Instantiate the fragment identifiers
 			try 
 			{
-				addIdentifier(std::shared_ptr<Identifier>(new XBRLXLinkIdentifier(handler)));
-				addIdentifier(std::shared_ptr<Identifier>(new SchemaIdentifier(handler)));
-				addIdentifier(std::shared_ptr<Identifier>(new XBRLIdentifier(handler)));
-				addIdentifier(std::shared_ptr<Identifier>(new LanguageIdentifier(handler)));
-				addIdentifier(std::shared_ptr<Identifier>(new ReferencePartIdentifier(handler)));
-				addIdentifier(std::shared_ptr<Identifier>(new GenericDocumentRootIdentifier(handler)));
+				addIdentifier(xbrlLinkIdentifier);
+				addIdentifier(schemaIdentifier);
+				addIdentifier(xbrlIdentifier);
+				addIdentifier(languageIdentifier);
+				addIdentifier(referencePartIdentifier);
+				addIdentifier(genericDocumentRootIdentifier);
 			}
 			catch (const XBRLException& e) 
 			{
@@ -80,21 +101,19 @@ namespace xbrlcapi
 		}
 
 		void startElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName, 
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName, 
 			const xercesc::Attributes& attrs)
 		{
 
-			Loader loader = getLoader();
-
 			// Update the information about the state of the current element (tracks ancestor attributes)
-			setElementState( ElementState(getElementState(), attrs ));
+			outer.lock()->setElementState( ElementState(outer.lock()->getElementState(), attrs ));
 
 			// Stash new URIs in xsi:schemaLocation attributes if desired
-			if (loader.useSchemaLocationAttributes()) 
+			if (loader->useSchemaLocationAttributes()) 
 			{
-				std::string schemaLocations = toNative(attrs.getValue(XS(XMLConstants::XMLSchemaInstanceNamespace),XS("schemaLocation")));
+				std::string schemaLocations = to_string(attrs.getValue(XS(XMLConstants::XMLSchemaInstanceNamespace),XS("schemaLocation")));
 				if (!schemaLocations.empty()) 
 				{
 					//logger.debug("Processing schema locations: " + schemaLocations);
@@ -129,9 +148,9 @@ namespace xbrlcapi
 				try 
 				{
 					identifier->startElement(namespaceURI, lName, qName, attrs);
-					if (loader.isBuildingAFragment()) 
+					if (loader->isBuildingAFragment()) 
 					{
-						if (loader.getFragment().isNewFragment()) 
+						if (loader->getFragment().isNewFragment()) 
 						{
 							break;
 						}
@@ -144,7 +163,7 @@ namespace xbrlcapi
 				}
 			}
 
-			if (! loader.isBuildingAFragment()) 
+			if (! loader->isBuildingAFragment()) 
 			{
 				throw xercesc::SAXException("Some element has not been placed in a fragment.");
 			}
@@ -152,7 +171,7 @@ namespace xbrlcapi
 			// Insert the current element into the fragment being built
 			try 
 			{
-				Fragment fragment = getLoader().getFragment();
+				Fragment fragment = loader->getFragment();
 				//if (fragment == NULL) throw xercesc::SAXException("A fragment should be being built.");
 				Builder builder = fragment.getBuilder();
 				//if (builder == null) throw xercesc::SAXException("A fragment that is being built needs a builder.");
@@ -167,7 +186,7 @@ namespace xbrlcapi
 					std::shared_ptr<DOMElement> element = fragment.getDataRootElement();
 					if (!element->hasAttributeNS(XS(XMLConstants::XMLNamespace),XS("lang"))) 
 					{
-						std::string code = getElementState().getLanguageCode();
+						std::string code = outer.lock()->getElementState().getLanguageCode();
 						//if (code != null) 
 						//{
 						element->setAttribute(XS("xml:lang"),XS(code));
@@ -202,7 +221,7 @@ namespace xbrlcapi
 		{
 
 			// Get the attributes of the element being ended.
-			std::shared_ptr<const xercesc::Attributes> attrs = getElementState().getAttributes();
+			std::shared_ptr<const xercesc::Attributes> attrs = outer.lock()->getElementState().getAttributes();
 
 			// Handle the ending of an element in the fragment builder
 			//try 
@@ -373,12 +392,12 @@ namespace xbrlcapi
 		}
 		std::string getPublicId()
 		{
-			return toNative(locator->getPublicId());
+			return to_string(locator->getPublicId());
 		}
 
 		std::string getSystemId()
 		{
-			return toNative(locator->getSystemId());
+			return to_string(locator->getSystemId());
 		}
 
 		long long getLineNumber()
@@ -405,7 +424,7 @@ namespace xbrlcapi
 
 		XLinkHandler getXLinkHandler()
 		{
-			return getLoader().getXlinkProcessor().getXLinkHandler();
+			return loader->getXlinkProcessor().getXLinkHandler();
 		}
 
 		BaseURISAXResolver baseURISAXResolver;
@@ -418,6 +437,16 @@ namespace xbrlcapi
 		void setXML(const std::string& xml)
 		{
 			//	this->xml = xml;
+		}
+
+		std::shared_ptr<Loader> getLoader()
+		{
+			return loader;
+		}
+
+		void setOuter(const std::weak_ptr<ContentHandler>& contentHandler)
+		{
+			outer = std::weak_ptr<ContentHandler>(contentHandler);
 		}
 
 	};
@@ -440,10 +469,11 @@ namespace xbrlcapi
 		return *this;
 	}
 
-	ContentHandler::ContentHandler(const Loader& loader, const Poco::URI& uri) : 
-		BaseContentHandler(loader,uri), 
-		pImpl(loader, uri)
-	{}
+	ContentHandler::ContentHandler(std::shared_ptr<Loader>& loader, const Poco::URI& uri) : 
+		BaseContentHandler(uri), 
+		pImpl(loader)
+	{
+	}
 
 	ContentHandler::ContentHandler(ContentHandler&& rhs) 
 	{ 
@@ -469,7 +499,7 @@ namespace xbrlcapi
 
 	void ContentHandler::startDocument()
 	{
-		pImpl->startDocument(*this);
+		pImpl->startDocument();
 	}
 
 	void ContentHandler::startElement(
@@ -479,9 +509,9 @@ namespace xbrlcapi
 		const	xercesc::Attributes&	attrs)
 	{
 		pImpl->startElement(
-			toNative(namespaceURI),
-			toNative(lName),
-			toNative(qName),
+			namespaceURI,
+			lName,
+			qName,
 			attrs);
 	}
 
@@ -536,4 +566,20 @@ namespace xbrlcapi
 	{
 		pImpl->removeIdentifier(index);
 	}
+
+	std::shared_ptr<Loader> ContentHandler::getLoader()
+	{
+		return pImpl->getLoader();
+	}
+
+	std::weak_ptr<ContentHandler> ContentHandler::getPtr()
+	{
+		return shared_from_this();
+	}
+
+	void ContentHandler::initialize()
+	{
+		pImpl->setOuter(getPtr());
+	}
+
 }

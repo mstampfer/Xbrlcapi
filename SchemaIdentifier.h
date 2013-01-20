@@ -10,7 +10,9 @@ namespace xbrlcapi
 	* Identifies XML Schema fragments.
 	* @author Geoffrey Shuetrim (geoff@galexy.net)
 	*/
-	class SchemaIdentifier : public BaseIdentifier
+	class SchemaIdentifier :  
+		public BaseIdentifier, 
+		public std::enable_shared_from_this<SchemaIdentifier>   
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;
@@ -27,16 +29,18 @@ namespace xbrlcapi
 		/**
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#BaseIdentifier(ContentHandler)
 		*/
-		SchemaIdentifier(const ContentHandler& contentHandler);
+		SchemaIdentifier(const std::shared_ptr<ContentHandler>& contentHandler);
+		std::weak_ptr<SchemaIdentifier> getPtr();
+		void initialize();
 
 		/**
 		* Find fragments with root elements in the XML Schema namespace.
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#startElement(const std::string&,const std::string&,const std::string&,Attributes)
 		*/
 		void startElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs);
 
 		/**
@@ -44,12 +48,12 @@ namespace xbrlcapi
 		* 
 		* Set the target namespace to null once the schema element is ended.
 		* 
-		* @see Identifier#endElement(const std::string&, const std::string&, const std::string&, Attributes)
+		* @see Identifier#endElement(const XMLCh*, const XMLCh*, const XMLCh*, Attributes)
 		*/
 		void endElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs);
 
 	protected:

@@ -54,9 +54,9 @@ namespace xbrlcapi
 		* @throws XLinkException
 		*/
 		void startElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs);
 
 		/**
@@ -78,9 +78,9 @@ namespace xbrlcapi
 		* @throws XLinkException
 		*/
 		void endElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs);
 
 		///**

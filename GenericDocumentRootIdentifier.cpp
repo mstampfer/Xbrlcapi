@@ -4,10 +4,12 @@ namespace xbrlcapi
 {
 
 
-	struct GenericDocumentRootIdentifier::Impl : public BaseIdentifier
+	struct GenericDocumentRootIdentifier::Impl 
 	{
+		std::weak_ptr<GenericDocumentRootIdentifier> outer;
+		std::shared_ptr<ContentHandler> contentHandler;
 		Impl() {}
-		Impl(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler)
+		Impl(const std::shared_ptr<ContentHandler>& contentHandler) : contentHandler(contentHandler)
 		{}
 
 		void startElement(
@@ -23,10 +25,14 @@ namespace xbrlcapi
 			//        processFragment(root,attrs);
 			//    }
 		}
+		void setOuter(const std::weak_ptr<GenericDocumentRootIdentifier>& genericDocumentRootIdentifier)
+		{
+			outer = std::weak_ptr<GenericDocumentRootIdentifier>(genericDocumentRootIdentifier);
+		}
 	};
 
 	GenericDocumentRootIdentifier::GenericDocumentRootIdentifier() {}
-	GenericDocumentRootIdentifier::GenericDocumentRootIdentifier(const ContentHandler& contentHandler) : 
+	GenericDocumentRootIdentifier::GenericDocumentRootIdentifier(const std::shared_ptr<ContentHandler>& contentHandler) : 
 		BaseIdentifier(contentHandler), pImpl(contentHandler) {}
 
 	GenericDocumentRootIdentifier::~GenericDocumentRootIdentifier() {} 
@@ -79,7 +85,17 @@ namespace xbrlcapi
 			lName, 
 			qName,
 			attrs);
-	}        
+	}
+
+	std::weak_ptr<GenericDocumentRootIdentifier> GenericDocumentRootIdentifier::getPtr()
+	{
+		return shared_from_this();
+	}
+
+	void GenericDocumentRootIdentifier::initialize()
+	{
+		pImpl->setOuter(getPtr());
+	}
 }    
 
 

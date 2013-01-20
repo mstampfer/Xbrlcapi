@@ -9,7 +9,7 @@ namespace xbrlcapi
 	* @author Geoffrey Shuetrim (geoff@galexy.net)
 	*/
 
-	class XBRLIdentifier : public BaseIdentifier 
+	class XBRLIdentifier : public BaseIdentifier, public std::enable_shared_from_this<XBRLIdentifier> 
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;
@@ -22,11 +22,13 @@ namespace xbrlcapi
 		XBRLIdentifier& operator=(XBRLIdentifier&& rhs);
 		bool operator==(const XBRLIdentifier& rhs);
 		bool operator!=(const XBRLIdentifier& rhs);
+		std::weak_ptr<XBRLIdentifier> getPtr();
+		void initialize();
 
 		/**
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#BaseIdentifier(ContentHandler)
 		*/
-		XBRLIdentifier(const ContentHandler& contentHandler);
+		XBRLIdentifier(const std::shared_ptr<ContentHandler>& contentHandler);
 
 		/**
 		* Finds fragments in the XBRL 2.1 namespace and keeps
@@ -37,9 +39,9 @@ namespace xbrlcapi
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#startElement(const std::string&,const std::string&,const std::string&,const xercesc::Attributes&)
 		*/
 		void startElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs);
 
 		/**
@@ -48,12 +50,12 @@ namespace xbrlcapi
 		* parser is within an XBRL instance and whether the parser is
 		* within a reference resource.
 		* 
-		* @see Identifier#endElement(const std::string&, const std::string&, const std::string&, const xercesc::Attributes&)
+		* @see Identifier#endElement(const XMLCh*, const XMLCh*, const XMLCh*, const xercesc::Attributes&)
 		*/
 		void endElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs);    
 	};
 }

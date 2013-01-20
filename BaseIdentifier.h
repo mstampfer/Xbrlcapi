@@ -22,7 +22,7 @@ namespace xbrlcapi
 		Pimpl<Impl> pImpl;
 	public:
 		BaseIdentifier();
-		~BaseIdentifier();
+		virtual ~BaseIdentifier();
 		BaseIdentifier(const BaseIdentifier& rhs);
 		BaseIdentifier& operator=(const BaseIdentifier& rhs);
 		BaseIdentifier(BaseIdentifier&& rhs);
@@ -30,42 +30,42 @@ namespace xbrlcapi
 		bool operator==(const BaseIdentifier& rhs);
 		bool operator!=(const BaseIdentifier& rhs);
 
-		BaseIdentifier(const ContentHandler& contentHandler);
+		BaseIdentifier(const std::shared_ptr<ContentHandler>& contentHandler);
 
-		ContentHandler getContentHandler();
+		std::shared_ptr<ContentHandler> getContentHandler() override;
 
 		/**
 		* @see Identifier#setContentHandler(ContentHandler)
 		*/
-		void setContentHandler(const ContentHandler& contentHandler);
+		void setContentHandler(const std::shared_ptr<ContentHandler>& contentHandler) override;
 
 		/**
 		* @see Identifier#getLoader()
 		*/
-		Loader getLoader();
+		std::shared_ptr<Loader> getLoader();
 
 		/**
 		* @see Identifier#getElementState()
 		*/
-		ElementState getElementState();
+		ElementState getElementState() override;
 
 		/**
 		* @see Identifier#startElement(String, String, String, Attributes)
 		*/
-		void startElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
-			const xercesc::Attributes&  attrs);
+		virtual void startElement(
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
+			const xercesc::Attributes&  attrs) override;
 
 		/**
 		* @see Identifier#endElement(String, String, String, Attributes)
 		*/
-		void endElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
-			const xercesc::Attributes& attrs);
+		virtual void endElement(
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
+			const xercesc::Attributes& attrs) override;
 
 		/**
 		* Performs the following operations on the fragment:
@@ -80,7 +80,9 @@ namespace xbrlcapi
 		* expressed by an attribute other than "id".
 		* @see Identifier#processFragment(Fragment, Attributes)
 		*/
-		void processFragment(const Fragment& fragment, const xercesc::Attributes& attrs);
+		void BaseIdentifier::processFragment(
+			const std::shared_ptr<Fragment>& fragment, 
+			const xercesc::Attributes& attrs);
 	};
 }
 

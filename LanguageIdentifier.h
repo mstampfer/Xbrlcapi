@@ -6,7 +6,9 @@
 namespace xbrlcapi
 {
 
-	class LanguageIdentifier : public BaseIdentifier 
+	class LanguageIdentifier : 
+		public BaseIdentifier, 
+		public std::enable_shared_from_this<LanguageIdentifier>  
 	{
 		struct Impl;
 		Pimpl<Impl> pImpl;
@@ -23,9 +25,9 @@ namespace xbrlcapi
 		/**
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#BaseIdentifier(ContentHandler)
 		*/
-
-		LanguageIdentifier(const ContentHandler& contentHandler);
-
+		LanguageIdentifier(const std::shared_ptr<ContentHandler>& contentHandler);
+		std::weak_ptr<LanguageIdentifier> getPtr();
+		void initialize();
 
 		/**
 		* Find fragments defining and labelling XML language codes.

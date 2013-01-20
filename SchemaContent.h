@@ -6,7 +6,8 @@ namespace xbrlcapi
 	class Element;
 	class Node;
 
-	struct SchemaContent : public Fragment {
+	struct SchemaContent : public Fragment 
+	{
 
 		/**
 		* @return the schema fragment that is the schema containing this element declaration.

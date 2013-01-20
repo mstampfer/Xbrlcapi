@@ -93,6 +93,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Analyser.cpp" />
+    <ClCompile Include="AttributeDeclaration.cpp" />
+    <ClCompile Include="AttributeGroupDeclaration.cpp" />
     <ClCompile Include="Cache.cpp" />
     <ClCompile Include="CacheFile.cpp" />
     <ClCompile Include="ContentHandler.cpp" />
@@ -109,6 +111,8 @@
     <ClCompile Include="NonFragmentXML.cpp" />
     <ClCompile Include="ReferencePartIdentifier.cpp" />
     <ClCompile Include="ReferenceResource.cpp" />
+    <ClCompile Include="Schema.cpp" />
+    <ClCompile Include="SchemaCompositor.cpp" />
     <ClCompile Include="Signer.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Builder.cpp" />
@@ -117,6 +121,7 @@
     <ClCompile Include="BaseURISAXResolver.cpp" />
     <ClCompile Include="LabelResource.cpp" />
     <ClCompile Include="CustomLinkRecogniser.cpp" />
+    <ClCompile Include="TypeDeclaration.cpp" />
     <ClCompile Include="XercesString.cpp" />
     <ClCompile Include="XMLDOMSerializer.cpp" />
     <ClCompile Include="XBRLIdentifier.cpp" />
@@ -127,10 +132,13 @@
     <ClCompile Include="XBRLXLinkHandler.cpp" />
     <ClInclude Include="Analyser.h" />
     <ClInclude Include="ArcEnd.h" />
+    <ClInclude Include="AttributeDeclaration.h" />
+    <ClInclude Include="AttributeGroupDeclaration.h" />
     <ClInclude Include="BaseURIResolver.h" />
     <ClInclude Include="Cache.h" />
     <ClInclude Include="CacheFile.h" />
     <ClInclude Include="Comparable.h" />
+    <ClInclude Include="ComplexTypeDeclaration.h" />
     <ClInclude Include="Concept.h" />
     <ClInclude Include="ConceptImpl.h" />
     <ClCompile Include="Constants.cpp" />
@@ -168,8 +176,16 @@
     <ClInclude Include="ReferencePart.h" />
     <ClInclude Include="ReferencePartIdentifier.h" />
     <ClInclude Include="ReferenceResource.h" />
+    <ClInclude Include="Schema.h" />
+    <ClInclude Include="SchemaAllCompositor.h" />
+    <ClInclude Include="SchemaChoiceCompositor.h" />
+    <ClInclude Include="SchemaCompositor.h" />
+    <ClInclude Include="SchemaGroupCompositor.h" />
     <ClInclude Include="SchemaIdentifier.h" />
+    <ClInclude Include="SchemaSequenceCompositor.h" />
     <ClInclude Include="SimpleLink.h" />
+    <ClInclude Include="SimpleTypeDeclaration.h" />
+    <ClInclude Include="TypeDeclaration.h" />
     <ClInclude Include="XBRLIdentifier.h" />
     <ClInclude Include="XBRLXLinkIdentifier.h" />
     <ClInclude Include="XercesString.h" />
@@ -204,6 +220,7 @@
     </ClInclude>
     <ClCompile Include="Storer.cpp">
       <FileType>CppHeader</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClInclude Include="Storer.h" />
     <ClInclude Include="Unit.h" />

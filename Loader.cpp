@@ -51,7 +51,7 @@ namespace xbrlcapi
 
 	struct Loader::Impl 
 	{
-		std::shared_ptr<const Loader> outer;
+		std::weak_ptr<Loader> outer;
 		Store store;
 		XLinkProcessor xlinkProcessor;
 		EntityResolver entityResolver;
@@ -272,9 +272,9 @@ namespace xbrlcapi
 			return xlinkProcessor;
 		}
 
-		void setOuter(const std::shared_ptr<Loader>& loader)
+		void setOuter(const std::weak_ptr<Loader>& loader)
 		{
-			outer = std::shared_ptr<Loader>(loader);
+			outer = loader;
 		}
 		void updateState(const ElementState& state) 
 		{
@@ -351,14 +351,14 @@ namespace xbrlcapi
 			return Fragment();
 		}
 
-		void discover(const std::vector<Poco::URI>& startingURIs, Loader& loader)
+		void discover(const std::vector<Poco::URI>& startingURIs, std::weak_ptr<Loader>& loader)
 		{
 			for (auto uri : startingURIs) 
 				stashURI(uri);
 			discover(loader);
 		}
 
-		void discover(const Poco::URI& uri, Loader& loader)
+		void discover(const Poco::URI& uri, std::weak_ptr<Loader>& loader)
 		{
 			stashURI(uri);
 			discover(loader);
@@ -382,7 +382,7 @@ namespace xbrlcapi
 		//        return documents;
 		//    }
 
-		void discover(Loader& loader)
+		void discover(std::weak_ptr<Loader>& loader)
 		{
 			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
 			store.startLoading();
@@ -442,7 +442,7 @@ namespace xbrlcapi
 					} 
 					catch (const xercesc::SAXException& e) 
 					{	
-						logger.error(toNative(e.getMessage()));
+						logger.error(to_string(e.getMessage()));
 						//					this.cleanupFailedLoad(uri,"The document could not be parsed.",e);
 					} 
 					catch (...) 
@@ -602,10 +602,10 @@ namespace xbrlcapi
 			store.recindLoadingRightsFor(uri); 
 		}
 
-		void parse(const Poco::URI& uri, Loader& loader) 
+		void parse(const Poco::URI& uri, std::weak_ptr<Loader>& loader) 
 		{
 			xercesc::InputSource* inputSource =  entityResolver.resolveEntity(L"", getWC(uri.toString()).c_str());
-			ContentHandler contentHandler(loader, uri);
+			ContentHandler contentHandler(loader.lock(), uri);
 			parse(uri, *inputSource, contentHandler);
 		}
 
@@ -915,12 +915,12 @@ namespace xbrlcapi
 				for (const Poco::URI& schema : schemas) 
 				{
 					// This loads the schemas into the grammar pool
-					ContentHandler contentHandler(*outer, schema);
-					preparser->setContentHandler(&contentHandler);
-					preparser->setErrorHandler(&contentHandler);
+					std::shared_ptr<ContentHandler> contentHandler(new ContentHandler(outer.lock(), schema));
+					contentHandler->initialize();
+					preparser->setContentHandler(contentHandler.get());
+					preparser->setErrorHandler(contentHandler.get());
 					auto inputSource = entityResolver.resolveSchemaURI(schema);
 					preparser->loadGrammar(*inputSource, xercesc::Grammar::SchemaGrammarType, true);
-					//preparser->loadGrammar("http://www.xbrlapi.org/xml/schemas/s4s.xsd", xercesc::Grammar::SchemaGrammarType, true);
 					entityResolver.setGrammarPool(grammarPool);
 					if (entityResolver.hasCache())
 						entityResolver.copyToCache(schema);
@@ -963,7 +963,6 @@ namespace xbrlcapi
 			parser->setEntityResolver(&entityResolver);
 			parser->setErrorHandler(&contentHandler);        
 			parser->setContentHandler(dynamic_cast<xercesc::ContentHandler*>(&contentHandler));     
-			//			inputSource.setSystemId(L"file:/C:\\Users\\marcel\\cache2\\http\\null\\www.xbrl.org\\-1\\null\\null\\2003\\xbrl-instance-2003-12-31.xsd");
 			parser->parse(inputSource);
 
 		}
@@ -991,10 +990,7 @@ namespace xbrlcapi
 	{} 
 
 	Loader::Loader(const Store& store) : pImpl(store)
-	{
-		pImpl->setOuter(getPtr());
-		pImpl->initialize();
-	}
+	{}
 
 	Loader::Loader(
 		const Store& store, 
@@ -1005,10 +1001,7 @@ namespace xbrlcapi
 		store, 
 		xlinkProcessor, 
 		entityResolver) 
-	{
-		pImpl->setOuter(getPtr());	
-		pImpl->initialize();
-	}
+	{}
 	Loader::Loader(
 		const Store& store, 
 		const XLinkProcessor& xlinkProcessor, 
@@ -1020,10 +1013,7 @@ namespace xbrlcapi
 		xlinkProcessor, 
 		entityResolver, 
 		uris)
-	{
-		pImpl->setOuter(getPtr());
-		pImpl->initialize();
-	}
+	{}
 
 	Loader& Loader::operator=(Loader&& rhs)
 	{
@@ -1064,7 +1054,7 @@ namespace xbrlcapi
 
 	void Loader::discover()
 	{
-		pImpl->discover(*this);
+		pImpl->discover(getPtr());
 	}
 
 	//void Loader::discoverNext()
@@ -1079,12 +1069,12 @@ namespace xbrlcapi
 
 	void Loader::discover(const std::vector<Poco::URI>& startingURIs)
 	{
-		pImpl->discover(startingURIs, *this);
+		pImpl->discover(startingURIs, getPtr());
 	}
 
 	void Loader::discover(const Poco::URI& uri)
 	{
-		pImpl->discover(uri, *this);
+		pImpl->discover(uri, getPtr());
 	}
 
 	void Loader::discover(const std::string& uri)
@@ -1203,10 +1193,15 @@ namespace xbrlcapi
 		return pImpl->tag();
 	}
 
-	std::shared_ptr<Loader> Loader::getPtr()
+	std::weak_ptr<Loader> Loader::getPtr()
 	{
-		std::shared_ptr<Loader> p(this);
 		return shared_from_this();
+	}
+
+	void Loader::initialize()
+	{
+		pImpl->setOuter(getPtr());
+		pImpl->initialize();
 	}
 
 }

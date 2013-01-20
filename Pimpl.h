@@ -13,7 +13,9 @@ public:
 	template<typename ...Args> Pimpl( Args&& ... );
 	~Pimpl();
 	T* operator->();
+	T* operator->() const;
 	T& operator*();
+	T& operator*() const;
 	Pimpl(const Pimpl<T>&);
 	Pimpl<T>& operator=(const Pimpl<T>&);
 	Pimpl(Pimpl<T>&&);

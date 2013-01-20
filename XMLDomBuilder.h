@@ -73,7 +73,7 @@ namespace xbrlcapi
 			}*/ 
 			catch (const xercesc::SAXException& e) 
 			{
-				throw XBRLException("SAX exception building an XML DOM.",toNative(e.getMessage()));
+				throw XBRLException("SAX exception building an XML DOM.",to_string(e.getMessage()));
 			}
 		}
 

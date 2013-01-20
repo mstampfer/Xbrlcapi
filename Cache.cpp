@@ -406,7 +406,7 @@ namespace xbrlcapi
 			//absolutePath /= boost::filesystem::path(query);
 			//absolutePath /= boost::filesystem::path(fragment);
 
-			logger.debug("Got cache path " + toNative(absolutePath.c_str()));
+			logger.debug("Got cache path " + to_string(absolutePath.c_str()));
 			cacheFile.setPath(absolutePath.generic_string());
 			return absolutePath;
 
@@ -416,7 +416,7 @@ namespace xbrlcapi
 		{
 
 			boost::filesystem::path p = cacheFile.getPath();
-			std::string fullPath = toNative(p.make_preferred().native());
+			std::string fullPath = to_string(p.make_preferred().native());
 
 			if (!exists(p)) 
 			{

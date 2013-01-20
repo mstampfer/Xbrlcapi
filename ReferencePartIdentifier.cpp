@@ -4,10 +4,12 @@ namespace xbrlcapi
 {
 
 
-	struct ReferencePartIdentifier::Impl : public BaseIdentifier
+	struct ReferencePartIdentifier::Impl 
 	{
+		std::weak_ptr<ReferencePartIdentifier> outer;
+		std::shared_ptr<ContentHandler> contentHandler;
 		Impl() {}
-		Impl(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler)
+		Impl(const std::shared_ptr<ContentHandler>& contentHandler) : contentHandler(contentHandler)
 		{}
 
 		void startElement(
@@ -27,11 +29,15 @@ namespace xbrlcapi
 			//    Fragment referencePartFragment = new ReferencePartImpl();
 			//    processFragment(referencePartFragment,attrs);
 		}
+		void setOuter(const std::weak_ptr<ReferencePartIdentifier>& referencePartIdentifier)
+		{
+			outer = std::weak_ptr<ReferencePartIdentifier>(referencePartIdentifier);
+		}
 	};
 
 	ReferencePartIdentifier::ReferencePartIdentifier() {}
 	ReferencePartIdentifier::~ReferencePartIdentifier() {} 
-	ReferencePartIdentifier::ReferencePartIdentifier(const ContentHandler& contentHandler) : 
+	ReferencePartIdentifier::ReferencePartIdentifier(const std::shared_ptr<ContentHandler>& contentHandler) : 
 		BaseIdentifier(contentHandler), pImpl(contentHandler) {}
 
 	ReferencePartIdentifier::ReferencePartIdentifier(const ReferencePartIdentifier& rhs) 
@@ -83,6 +89,15 @@ namespace xbrlcapi
 			qName,
 			attrs);
 	}        
+	std::weak_ptr<ReferencePartIdentifier> ReferencePartIdentifier::getPtr()
+	{
+		return shared_from_this();
+	}
+
+	void ReferencePartIdentifier::initialize()
+	{
+		pImpl->setOuter(getPtr());
+	}
 }    
 
 

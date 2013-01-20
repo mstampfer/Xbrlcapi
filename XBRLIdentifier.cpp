@@ -4,16 +4,18 @@ namespace xbrlcapi
 {
 
 
-	struct XBRLIdentifier::Impl : public BaseIdentifier
+	struct XBRLIdentifier::Impl 
 	{
+		std::weak_ptr<XBRLIdentifier> outer;
+		std::shared_ptr<ContentHandler> contentHandler;
 		Impl() {}
-		Impl(const ContentHandler& contentHandler) : BaseIdentifier(contentHandler)
+		Impl(const std::shared_ptr<ContentHandler>& contentHandler) : contentHandler(contentHandler)
 		{}
 
 		void startElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs)
 		{      
 
@@ -104,43 +106,46 @@ namespace xbrlcapi
 
 		}
 
-		//void endElement(
-		//	const std::string& namespaceURI, 
-		//	const std::string& lName, 
-		//	const std::string& qName,
-		//	const xercesc::Attributes& attrs)
-		//{
+		void endElement(
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
+			const xercesc::Attributes& attrs)
+		{
 
-		//	if (namespaceURI.equals(Constants.XBRL21Namespace.toString())) {
-		//		if (lName.equals("xbrl")) {
-		//			this.parsingAnXBRLInstance = false;
-		//			this.canBeATuple = false;
-		//		} else if (lName.equals("context")) {
-		//			this.canBeATuple = true;
-		//		} else if (lName.equals("unit")) {
-		//			this.canBeATuple = true;
-		//		}
+			//	if (namespaceURI.equals(Constants.XBRL21Namespace.toString())) {
+			//		if (lName.equals("xbrl")) {
+			//			this.parsingAnXBRLInstance = false;
+			//			this.canBeATuple = false;
+			//		} else if (lName.equals("context")) {
+			//			this.canBeATuple = true;
+			//		} else if (lName.equals("unit")) {
+			//			this.canBeATuple = true;
+			//		}
 
-		//	} else if (namespaceURI.equals(Constants.XBRL21LinkNamespace.toString())) {
-		//		if (lName.equals("footnoteLink")) {
-		//			this.canBeATuple = true;
-		//		} else if (lName.equals("schemaRef")) {
-		//			this.canBeATuple = true;
-		//		} else if (lName.equals("linkbaseRef")) {
-		//			this.canBeATuple = true;
-		//		} else if (lName.equals("arcroleRef")) {
-		//			this.canBeATuple = true;
-		//		} else if (lName.equals("roleRef")) {
-		//			this.canBeATuple = true;
-		//		}
-		//	}
-
-		//}    
+			//	} else if (namespaceURI.equals(Constants.XBRL21LinkNamespace.toString())) {
+			//		if (lName.equals("footnoteLink")) {
+			//			this.canBeATuple = true;
+			//		} else if (lName.equals("schemaRef")) {
+			//			this.canBeATuple = true;
+			//		} else if (lName.equals("linkbaseRef")) {
+			//			this.canBeATuple = true;
+			//		} else if (lName.equals("arcroleRef")) {
+			//			this.canBeATuple = true;
+			//		} else if (lName.equals("roleRef")) {
+			//			this.canBeATuple = true;
+			//		}
+			//	}
+		}    
+		void setOuter(const std::weak_ptr<XBRLIdentifier>& xbrlIdentifier)
+		{
+			outer = std::weak_ptr<XBRLIdentifier>(xbrlIdentifier);
+		}
 	};
 
 	XBRLIdentifier::XBRLIdentifier() {}
 	XBRLIdentifier::~XBRLIdentifier() {} 
-	XBRLIdentifier::XBRLIdentifier(const ContentHandler& contentHandler) : 
+	XBRLIdentifier::XBRLIdentifier(const std::shared_ptr<ContentHandler>& contentHandler) : 
 		BaseIdentifier(contentHandler), pImpl(contentHandler) {}
 
 	XBRLIdentifier::XBRLIdentifier(const XBRLIdentifier& rhs) 
@@ -181,9 +186,9 @@ namespace xbrlcapi
 	}
 
 	void XBRLIdentifier::startElement(
-		const std::string& namespaceURI, 
-		const std::string& lName, 
-		const std::string& qName,
+		const XMLCh* namespaceURI, 
+		const XMLCh* lName, 
+		const XMLCh* qName,
 		const xercesc::Attributes& attrs)
 	{      
 		pImpl->startElement(
@@ -194,9 +199,9 @@ namespace xbrlcapi
 	}        
 
 	void XBRLIdentifier::endElement(
-		const std::string& namespaceURI, 
-		const std::string& lName, 
-		const std::string& qName,
+		const XMLCh* namespaceURI, 
+		const XMLCh* lName, 
+		const XMLCh* qName,
 		const xercesc::Attributes& attrs)
 	{
 		pImpl->endElement(
@@ -204,6 +209,16 @@ namespace xbrlcapi
 			lName, 
 			qName,
 			attrs);
+	}
+
+	std::weak_ptr<XBRLIdentifier> XBRLIdentifier::getPtr()
+	{
+		return shared_from_this();
+	}
+
+	void XBRLIdentifier::initialize()
+	{
+		pImpl->setOuter(getPtr());
 	}
 
 }    

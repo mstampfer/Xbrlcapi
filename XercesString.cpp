@@ -104,15 +104,15 @@ XERCES_CPP_NAMESPACE_USE
 		return _wstr[i];
 	}
 
-	std::string toNative(const XMLCh* str)
+	std::string to_string(const XMLCh* str)
 	{ 
 		boost::scoped_array<char> ptr(xercesc::XMLString::transcode(str));
 		return std::string(ptr.get( )); 
 	}
 
-	std::string toNative(const std::basic_string<XMLCh>& str)
+	std::string to_string(const std::basic_string<XMLCh>& str)
 	{
-		return toNative(str.c_str( )); 
+		return to_string(str.c_str( )); 
 	}
 
 }

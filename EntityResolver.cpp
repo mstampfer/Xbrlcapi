@@ -58,8 +58,8 @@ namespace xbrlcapi
 			return new xercesc::URLInputSource(systemId);
 
 			log4cpp::Category&  logger = log4cpp::Category::getInstance( std::string("log_sub1") );
-			logger.debug("SAX: Resolving the entity for " + toNative(systemId));
-			Poco::URI uri(toNative(systemId));
+			logger.debug("SAX: Resolving the entity for " + to_string(systemId));
+			Poco::URI uri(to_string(systemId));
 			try {
 				if (hasCache()) 
 				{ 
@@ -68,12 +68,12 @@ namespace xbrlcapi
 			} 
 			catch (const XBRLException& e) 
 			{
-				logger.warn("Cache handling for " + toNative(systemId) + "failed.");
+				logger.warn("Cache handling for " + to_string(systemId) + "failed.");
 				//	return new InputSource(systemId);
 			} 
 			catch (Poco::SyntaxException e) 
 			{
-				logger.warn(toNative(systemId) + " is a malformed URI.");
+				logger.warn(to_string(systemId) + " is a malformed URI.");
 				//	return new InputSource(systemId);
 			}
 			auto wc_uri = XercesString(uri);
@@ -90,7 +90,7 @@ namespace xbrlcapi
 			//try {
 			//	logger.debug("SCHEMA: Resolving the entity for " + resource.getExpandedSystemId());
 			//xercesc::XMLPlatformUtils::Initialize();
-			std::string id = toNative(resource.getSystemId());
+			std::string id = to_string(resource.getSystemId());
 			Poco::URI uri(id);
 			if (hasCache()) 
 			{

@@ -5,7 +5,7 @@
 namespace xbrlcapi
 {
 	class ContentHandler;
-	class XBRLXLinkIdentifier : public BaseIdentifier
+	class XBRLXLinkIdentifier : public BaseIdentifier, public std::enable_shared_from_this<XBRLXLinkIdentifier>
 	{
 	private:
 		struct Impl;
@@ -14,7 +14,7 @@ namespace xbrlcapi
 		/**
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#BaseIdentifier(ContentHandler)
 		*/
-		XBRLXLinkIdentifier(const ContentHandler& contentHandler);
+		XBRLXLinkIdentifier(const std::shared_ptr<ContentHandler>& contentHandler);
 		XBRLXLinkIdentifier();
 		~XBRLXLinkIdentifier();
 		XBRLXLinkIdentifier(const XBRLXLinkIdentifier& rhs);
@@ -23,6 +23,9 @@ namespace xbrlcapi
 		XBRLXLinkIdentifier& operator=(XBRLXLinkIdentifier&& rhs);
 		bool operator==(const XBRLXLinkIdentifier& rhs);
 		bool operator!=(const XBRLXLinkIdentifier& rhs);
+		std::weak_ptr<XBRLXLinkIdentifier> getPtr();
+		void initialize();
+
 
 		/**
 		* Passes responsibility along to the XLink handler via the XLink Processor.
@@ -30,9 +33,10 @@ namespace xbrlcapi
 		* @see org.xbrlapi.sax.identifiers.BaseIdentifier#startElement(String,String,String,Attributes)
 		*/
 		void startElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
-			const xercesc::Attributes& attrs);
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
+			const xercesc::Attributes&  attrs) override;
+
 	};
 }

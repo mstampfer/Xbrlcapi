@@ -52,9 +52,9 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual void startElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs) = 0;
 
 		/**
@@ -67,9 +67,9 @@ namespace xbrlcapi
 		* @throws XBRLException
 		*/
 		virtual void endElement(
-			const std::string& namespaceURI, 
-			const std::string& lName, 
-			const std::string& qName,
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName,
 			const xercesc::Attributes& attrs) = 0;
 
 		/**
@@ -85,19 +85,19 @@ namespace xbrlcapi
 		* @return the SAX content handler using 
 		* the fragment identifier.
 		*/
-		ContentHandler getContentHandler();    
+		virtual std::shared_ptr<ContentHandler> getContentHandler() = 0;    
 
 		/**
 		* @param contentHandler The content handler using the fragment identifier.
 		* @throws XBRLException if the content handler is null.
 		*/
-		virtual void setContentHandler(const ContentHandler& contentHandler) = 0;
+		virtual void setContentHandler(const std::shared_ptr<ContentHandler>& contentHandler) = 0;
 
 		/**
 		* @return the loader that is using the content handler
 		* that uses this fragment identifier.
 		*/
-		virtual Loader getLoader() = 0;
+		virtual std::shared_ptr<Loader> getLoader() = 0;
 
 		/**
 		* @return the element state for the element currently being parsed.
