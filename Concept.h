@@ -1,16 +1,24 @@
 #pragma once
-#include <string>
-#include <vector>
-#include <unordered_set>
+#include "PimplImpl.h"
 #include "ElementDeclaration.h"
-
+#include <string>
 
 namespace xbrlcapi
 {
 	struct Fact;
 	class Concept : public ElementDeclaration 
 	{
+		struct Impl;
+		Pimpl<Impl> pImpl;
 	public:
+		Concept();
+		~Concept();
+		Concept(const Concept& rhs);
+		Concept& operator=(const Concept& rhs);
+		Concept(Concept&& rhs);
+		Concept& operator=(Concept&& rhs);
+		bool operator==(const Concept& rhs);
+		bool operator!=(const Concept& rhs);
 
 		/**
 		* @return the period attribute value (one of instant or duration) for concepts 
@@ -38,7 +46,7 @@ namespace xbrlcapi
 		* @return the list of facts in the data store giving values for this concept
 		* @throws XBRLException
 		*/
-		virtual std::vector<Fact&> getFacts();
+		virtual std::vector<Fact> getFacts();
 
 		/**
 		* @return the list of root-level facts in the data store giving values for
@@ -46,7 +54,7 @@ namespace xbrlcapi
 		*         XBRL-instance elements.
 		* @throws XBRLException
 		*/
-		virtual std::vector<Fact&> getRootFacts();    
+		virtual std::vector<Fact> getRootFacts();    
 
 		/**
 		* @return the number of facts for this concept

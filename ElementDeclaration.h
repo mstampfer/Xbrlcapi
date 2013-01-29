@@ -1,4 +1,5 @@
 #pragma once
+#include "PimplImpl.h"
 #include <string>
 #include "SchemaContentDeclaration.h"
 
@@ -14,7 +15,17 @@ namespace xbrlcapi
 
 	struct ElementDeclaration : public SchemaContentDeclaration 
 	{
-
+		struct Impl;
+		Pimpl<Impl> pImpl;
+	public:
+		ElementDeclaration();
+		~ElementDeclaration();
+		ElementDeclaration(const ElementDeclaration& rhs);
+		ElementDeclaration& operator=(const ElementDeclaration& rhs);
+		ElementDeclaration(ElementDeclaration&& rhs);
+		ElementDeclaration& operator=(ElementDeclaration&& rhs);
+		bool operator==(const ElementDeclaration& rhs);
+		bool operator!=(const ElementDeclaration& rhs);
 		/**
 		* @return true if the element is abstract and false otherwise.
 		* @throws XBRLException
@@ -149,6 +160,6 @@ namespace xbrlcapi
 		* and false otherwise.
 		* @throws XBRLException
 		*/
-		virtual bool substitutesFor(ElementDeclaration candidate);     
+		virtual bool substitutesFor(const ElementDeclaration& candidate);     
 	};
 }

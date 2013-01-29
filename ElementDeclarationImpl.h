@@ -47,7 +47,7 @@ namespace xbrlcapi
 		/**
 		* @see ElementDeclaration#substitutesFor(ElementDeclaration)
 		*/
-		bool substitutesFor(ElementDeclaration candidate);
+		bool substitutesFor(const ElementDeclaration& candidate);
 
 		/**
 		* @see org.xbrlapi.ElementDeclaration#hasSubstitutionGroup()
