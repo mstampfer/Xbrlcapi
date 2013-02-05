@@ -34,7 +34,7 @@ namespace xbrlcapi
 		/**
 		* @see org.xbrlapi.SchemaContent#getAnnotations()
 		*/
-		std::vector<Element> getAnnotations();
+		std::vector<std::shared_ptr<xercesc::DOMElement>> getAnnotations();
 
 		/**
 		* @see SchemaContent#hasOtherAttribute(String,String)
@@ -45,7 +45,7 @@ namespace xbrlcapi
 		/**
 		* @see org.xbrlapi.SchemaContent#getOtherAttributes()
 		*/
-		std::vector<Node> getOtherAttributes();
+		std::vector<std::shared_ptr<xercesc::DOMNode>> getOtherAttributes();
 
 		/**
 		* @see org.w3c.dom.Element#getAttributeNS(String, String)

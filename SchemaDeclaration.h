@@ -1,7 +1,5 @@
-
-
 #pragma once
-
+#include "PimplImpl.h"
 #include "SchemaContent.h"
 #include <string>
 #include <memory>
@@ -12,11 +10,19 @@
 
 namespace xbrlcapi
 {
-	class SchemaDeclarationImpl;
 	class SchemaDeclaration : public  SchemaContent 
 	{
-		//std::unique_ptr<SchemaDeclarationImpl> pimpl;
+		struct Impl;
+		Pimpl<Impl> pImpl;
 	public:
+		SchemaDeclaration();
+		~SchemaDeclaration();
+		SchemaDeclaration(const SchemaDeclaration& rhs);
+		SchemaDeclaration& operator=(const SchemaDeclaration& rhs);
+		SchemaDeclaration(SchemaDeclaration&& rhs);
+		SchemaDeclaration& operator=(SchemaDeclaration&& rhs);
+		bool operator==(const SchemaDeclaration& rhs);
+		bool operator!=(const SchemaDeclaration& rhs);
 		/**
 		* @return the name of the structure being declared or null of the 
 		* structure has no name.
@@ -63,6 +69,6 @@ namespace xbrlcapi
 		* schema content declaration.
 		* @throws XBRLException if the fragment cannot be found in the data store.
 		*/
-		// virtual <F extends SchemaDeclaration> F getReferencedSchemaDeclaration();
+		template <typename T> T getReferencedSchemaDeclaration();
 	};
 }

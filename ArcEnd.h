@@ -11,7 +11,8 @@ namespace xbrlcapi
 {
 	class Arc;
 
-	struct ArcEnd : public ExtendedLinkContent {
+	class ArcEnd : public ExtendedLinkContent 
+	{
 
 		///**
 		//* Get the xlink:label attribute value.

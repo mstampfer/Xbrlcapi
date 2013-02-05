@@ -1,11 +1,8 @@
-
-
 #pragma once
 
 #include <string>
 #include <vector>
 #include <unordered_map>
-
 #include "Link.h"
 
 /**
@@ -18,7 +15,19 @@ namespace xbrlcapi
 	class XlinkDocumentation;
 	struct Resource;
 
-	struct ExtendedLink : public Link {
+	struct ExtendedLink : public Link 
+	{
+		struct Impl;
+		Pimpl<Impl> pImpl;
+	public:
+		ExtendedLink();
+		~ExtendedLink();
+		ExtendedLink(const ExtendedLink& rhs);
+		ExtendedLink& operator=(const ExtendedLink& rhs);
+		ExtendedLink(ExtendedLink&& rhs);
+		ExtendedLink& operator=(ExtendedLink&& rhs);
+		bool operator==(const ExtendedLink& rhs);
+		bool operator!=(const ExtendedLink& rhs);
 
 		/**
 		* Get the list of locators contained by the extended link.

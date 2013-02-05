@@ -93,26 +93,37 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Analyser.cpp" />
+    <ClCompile Include="ArcroleType.cpp" />
     <ClCompile Include="AttributeDeclaration.cpp" />
     <ClCompile Include="AttributeGroupDeclaration.cpp" />
     <ClCompile Include="Cache.cpp" />
     <ClCompile Include="CacheFile.cpp" />
     <ClCompile Include="ContentHandler.cpp" />
+    <ClCompile Include="CustomType.cpp" />
     <ClCompile Include="ElementState.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityResolver.cpp" />
+    <ClCompile Include="FractionItem.cpp" />
     <ClCompile Include="GenericDocumentRootIdentifier.cpp" />
     <ClCompile Include="History.cpp" />
     <ClCompile Include="BaseMatcherImpl.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="LanguageIdentifier.cpp" />
+    <ClCompile Include="LinkBase.cpp" />
     <ClCompile Include="MD5Signer.cpp" />
     <ClCompile Include="DefaultMatcher.cpp" />
     <ClCompile Include="BaseContentHandler.cpp" />
     <ClCompile Include="Networks.cpp" />
     <ClCompile Include="NonFragmentXML.cpp" />
+    <ClCompile Include="NonNumericItem.cpp" />
+    <ClCompile Include="NumericItem.cpp" />
+    <ClCompile Include="Period.cpp" />
     <ClCompile Include="ReferencePartIdentifier.cpp" />
     <ClCompile Include="ReferenceResource.cpp" />
+    <ClCompile Include="RoleType.cpp" />
     <ClCompile Include="Schema.cpp" />
     <ClCompile Include="SchemaCompositor.cpp" />
+    <ClCompile Include="Segment.cpp" />
     <ClCompile Include="Signer.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Builder.cpp" />
@@ -121,8 +132,12 @@
     <ClCompile Include="BaseURISAXResolver.cpp" />
     <ClCompile Include="LabelResource.cpp" />
     <ClCompile Include="CustomLinkRecogniser.cpp" />
+    <ClCompile Include="SimpleNumericItem.cpp" />
+    <ClCompile Include="Tuple.cpp" />
     <ClCompile Include="TypeDeclaration.cpp" />
+    <ClCompile Include="UseOn.cpp" />
     <ClCompile Include="XercesString.cpp" />
+    <ClCompile Include="XlinkDocumentation.cpp" />
     <ClCompile Include="XMLDOMSerializer.cpp" />
     <ClCompile Include="XBRLIdentifier.cpp" />
     <ClCompile Include="XBRLXLinkIdentifier.cpp" />
@@ -132,6 +147,7 @@
     <ClCompile Include="XBRLXLinkHandler.cpp" />
     <ClInclude Include="Analyser.h" />
     <ClInclude Include="ArcEnd.h" />
+    <ClInclude Include="ArcroleType.h" />
     <ClInclude Include="AttributeDeclaration.h" />
     <ClInclude Include="AttributeGroupDeclaration.h" />
     <ClInclude Include="BaseURIResolver.h" />
@@ -140,20 +156,22 @@
     <ClInclude Include="Comparable.h" />
     <ClInclude Include="ComplexTypeDeclaration.h" />
     <ClInclude Include="Concept.h" />
-    <ClInclude Include="ConceptImpl.h" />
     <ClCompile Include="Constants.cpp" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Context.h" />
+    <ClInclude Include="ContextComponent.h" />
+    <ClInclude Include="CustomType.h" />
     <ClInclude Include="doxygen_dummy.h" />
     <ClInclude Include="ElementDeclaration.h" />
-    <ClInclude Include="ElementDeclarationImpl.h" />
     <ClInclude Include="ElementState.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityResolver.h" />
     <ClInclude Include="ExtendedLink.h" />
     <ClInclude Include="ExtendedLinkContent.h" />
     <ClInclude Include="Fact.h" />
     <ClInclude Include="FactDimensionContainer.h" />
     <ClInclude Include="FootnoteResource.h" />
+    <ClInclude Include="FractionItem.h" />
     <ClInclude Include="Fragment.h" />
     <ClInclude Include="GenericDocumentRootIdentifier.h" />
     <ClInclude Include="HashFunctions.h" />
@@ -168,14 +186,21 @@
     <ClInclude Include="LabelResource.h" />
     <ClInclude Include="LanguageIdentifier.h" />
     <ClInclude Include="Identifier.h" />
+    <ClInclude Include="LinkBase.h" />
     <ClInclude Include="Networks.h" />
     <ClInclude Include="NonFragmentXML.h" />
     <ClInclude Include="Builder.h" />
+    <ClInclude Include="NonNumericItem.h" />
+    <ClInclude Include="NumericItem.h" />
+    <ClInclude Include="OpenContextComponent.h" />
+    <ClInclude Include="Period.h" />
     <ClInclude Include="Pimpl.h" />
     <ClInclude Include="PimplImpl.h" />
     <ClInclude Include="ReferencePart.h" />
     <ClInclude Include="ReferencePartIdentifier.h" />
     <ClInclude Include="ReferenceResource.h" />
+    <ClInclude Include="RoleType.h" />
+    <ClInclude Include="Scenario.h" />
     <ClInclude Include="Schema.h" />
     <ClInclude Include="SchemaAllCompositor.h" />
     <ClInclude Include="SchemaChoiceCompositor.h" />
@@ -183,12 +208,17 @@
     <ClInclude Include="SchemaGroupCompositor.h" />
     <ClInclude Include="SchemaIdentifier.h" />
     <ClInclude Include="SchemaSequenceCompositor.h" />
+    <ClInclude Include="Segment.h" />
     <ClInclude Include="SimpleLink.h" />
+    <ClInclude Include="SimpleNumericItem.h" />
     <ClInclude Include="SimpleTypeDeclaration.h" />
+    <ClInclude Include="Tuple.h" />
     <ClInclude Include="TypeDeclaration.h" />
+    <ClInclude Include="UsedOn.h" />
     <ClInclude Include="XBRLIdentifier.h" />
     <ClInclude Include="XBRLXLinkIdentifier.h" />
     <ClInclude Include="XercesString.h" />
+    <ClInclude Include="XlinkDocumentation.h" />
     <ClInclude Include="XLinkException.h" />
     <ClInclude Include="XMLDOMSerializer.h" />
     <ClInclude Include="XmlInputStreamWrapper.hpp" />
@@ -211,10 +241,7 @@
     <ClInclude Include="ScchemaDeclaration.h" />
     <ClInclude Include="SchemaContent.h" />
     <ClInclude Include="SchemaContentDeclaration.h" />
-    <ClInclude Include="SchemaContentDeclarationImpl.h" />
-    <ClInclude Include="SchemaContentImpl.h" />
     <ClInclude Include="SchemaDeclaration.h" />
-    <ClInclude Include="SchemaDeclarationImpl.h" />
     <ClInclude Include="Store.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
@@ -233,14 +260,14 @@
     <ClInclude Include="XmlInputStreamWrap.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ConceptImpl.cpp" />
-    <ClCompile Include="ElementDeclarationImpl.cpp" />
+    <ClCompile Include="Concept.cpp" />
+    <ClCompile Include="ElementDeclaration.cpp" />
     <ClCompile Include="Fragment.cpp" />
     <ClCompile Include="HashFunctions.cpp" />
     <ClCompile Include="Load.cpp" />
-    <ClCompile Include="SchemaContentDeclarationImpl.cpp" />
-    <ClCompile Include="SchemaContentImpl.cpp" />
-    <ClCompile Include="SchemaDeclarationImpl.cpp" />
+    <ClCompile Include="SchemaContentDeclaration.cpp" />
+    <ClCompile Include="SchemaContent.cpp" />
+    <ClCompile Include="SchemaDeclaration.cpp" />
     <ClCompile Include="Loader.cpp" />
     <ClCompile Include="Store.cpp" />
   </ItemGroup>

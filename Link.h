@@ -13,8 +13,9 @@ namespace xbrlcapi
 
 	*/
 
-	struct Link : public Xlink {
-
+	struct Link : public Xlink 
+	{
+		Link(){}
 		/**
 		* @return the link role (The xlink:role attribute value).
 		* @throws XBRLException

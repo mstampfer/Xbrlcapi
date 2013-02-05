@@ -1,4 +1,24 @@
 #include "XBRLIdentifier.h"
+#include "Constants.h"
+#include "XercesString.h"
+#include "Instance.h"
+#include "Segment.h"
+#include "Period.h"
+#include "Entity.h"
+#include "Fragment.h"
+#include "Scenario.h"
+#include "Context.h"
+#include "Unit.h"
+#include "RoleType.h"
+#include "ArcroleType.h"
+#include "UsedOn.h"
+#include "LinkBase.h"
+#include "XLinkDocumentation.h"
+#include "SimpleNumericItem.h"
+#include "NonNumericItem.h"
+#include "Tuple.h"
+#include "FractionItem.h"
+#include "Builder.h"
 
 namespace xbrlcapi 
 {
@@ -8,8 +28,10 @@ namespace xbrlcapi
 	{
 		std::weak_ptr<XBRLIdentifier> outer;
 		std::shared_ptr<ContentHandler> contentHandler;
+		bool parsingAnXBRLInstance;	
+		bool canBeATuple;
 		Impl() {}
-		Impl(const std::shared_ptr<ContentHandler>& contentHandler) : contentHandler(contentHandler)
+		Impl(const std::shared_ptr<ContentHandler>& contentHandler) : contentHandler(contentHandler), parsingAnXBRLInstance(false), canBeATuple(false)
 		{}
 
 		void startElement(
@@ -19,90 +41,127 @@ namespace xbrlcapi
 			const xercesc::Attributes& attrs)
 		{      
 
-			//		Fragment xbrlFragment = null;
-			//		if (namespaceURI.equals(Constants.XBRL21Namespace.toString())) {
-			//			if (lName.equals("xbrl")) {
-			//				xbrlFragment = new InstanceImpl();
-			//				this.parsingAnXBRLInstance = true;
-			//				this.canBeATuple = true;
-			//			} else if (lName.equals("period")) {
-			//				xbrlFragment = new PeriodImpl();
-			//			} else if (lName.equals("entity")) {
-			//				xbrlFragment = new EntityImpl();
-			//			} else if (lName.equals("segment")) {
-			//				xbrlFragment = new SegmentImpl();
-			//			} else if (lName.equals("scenario")) {
-			//				xbrlFragment = new ScenarioImpl();
-			//			} else if (lName.equals("context")) {
-			//				xbrlFragment = new ContextImpl();
-			//				this.canBeATuple = false;
-			//			} else if (lName.equals("unit")) {
-			//				xbrlFragment = new UnitImpl();
-			//				this.canBeATuple = false;
-			//			}
-			//		}
+			std::shared_ptr<Fragment> xbrlFragment;
+			if (namespaceURI == XS(XMLConstants::XBRL21Namespace)) 
+			{
+				if (lName == L"xbrl") 
+				{
+					Instance xbrlFragment;
+					parsingAnXBRLInstance = true;
+					canBeATuple = true;
+				} 
+				else if (lName == L"period")
+				{
+					xbrlFragment = std::make_shared<Period>();
+				} 
+				else if (lName == L"entity") 
+				{
+					xbrlFragment = std::make_shared<Entity>();
+				} 
+				else if (lName == L"segment")
+				{
+					xbrlFragment = std::make_shared<Segment>();
+				} 
+				else if (lName == L"scenario") 
+				{
+					xbrlFragment = std::make_shared<Scenario>();
+				} 
+				else if (lName == L"context") 
+				{
+					xbrlFragment = std::make_shared<Context>();
+					canBeATuple = false;
+				} 
+				else if (lName == L"unit") 
+				{
+					xbrlFragment = std::make_shared<Unit>();
+					canBeATuple = false;
+				}
+			}
 
-			//		if (xbrlFragment != null) {
-			//			this.processFragment(xbrlFragment,attrs);
-			//			return;
-			//		}
+			if (xbrlFragment) 
+			{
+				outer.lock()->processFragment(xbrlFragment,attrs);
+				return;
+			}
 
-			//		Fragment xbrlLinkFragment = null;
-			//		if (namespaceURI.equals(Constants.XBRL21LinkNamespace.toString())) {
-			//			if (lName.equals("roleType")) {
-			//				xbrlLinkFragment = new RoleTypeImpl();
-			//			} else if (lName.equals("arcroleType")) {
-			//				xbrlLinkFragment = new ArcroleTypeImpl();
-			//			} else if (lName.equals("usedOn")) {
-			//				xbrlLinkFragment = new UsedOnImpl();
-			//			} else if (lName.equals("linkbase")) {
-			//				xbrlLinkFragment = new LinkbaseImpl();
-			//			} else if (lName.equals("documentation")) {
-			//				xbrlLinkFragment = new XlinkDocumentationImpl();
-			//			}
+			std::shared_ptr<Fragment> xbrlLinkFragment;
+			if (namespaceURI == XS(XMLConstants::XBRL21LinkNamespace)) 
+			{
+				if (lName == L"roleType")
+				{
+					xbrlLinkFragment = std::make_shared<RoleType>();
+				} 
+				else if (lName == L"arcroleType") 
+				{
+					xbrlLinkFragment = std::make_shared<ArcroleType>();
+				} 
+				else if (lName == L"usedOn") 
+				{
+					xbrlLinkFragment = std::make_shared<UsedOn>();
+				} 
+				else if (lName == L"linkbase") 
+				{
+					xbrlLinkFragment = std::make_shared<Linkbase>();
+				} 
+				else if (lName == L"documentation") 
+				{
+					xbrlLinkFragment = std::make_shared<XlinkDocumentation>();
+				}
 
-			//			if (xbrlLinkFragment != null) {
-			//				this.processFragment(xbrlLinkFragment,attrs);
-			//				return;
-			//			}
-			//		}
+				if (xbrlLinkFragment) 
+				{
+					outer.lock()->processFragment(xbrlLinkFragment,attrs);
+					return;
+				}
+			}
 
-			//		if (parsingAnXBRLInstance) {
+			if (parsingAnXBRLInstance) 
+			{
 
-			//			Fragment factFragment = null;
+				std::shared_ptr<Fragment> factFragment;
 
-			//			// First handle items
-			//			std::string contextRef = attrs.getValue("contextRef");
-			//			if (contextRef != null) {
-			//				std::string unitRef = attrs.getValue("unitRef");
-			//				if (unitRef != null) {
-			//					factFragment = new SimpleNumericItemImpl();
-			//				} else {
-			//					factFragment = new NonNumericItemImpl();
-			//				}
-			//			}
+				// First handle items
+				std::string contextRef(to_string(attrs.getValue(L"contextRef")));
+				if (!contextRef.empty()) 
+				{
+					std::string unitRef(to_string(attrs.getValue(L"unitRef")));
+					if (!unitRef.empty()) 
+					{
+						factFragment = std::make_shared<SimpleNumericItem>();
+					} 
+					else 
+					{
+						factFragment = std::make_shared<NonNumericItem>();
+					}
+				}
 
-			//			// then handle tuples and fraction items
-			//			if ((factFragment == null) && this.canBeATuple) {
-			//				Fragment currentFragment = this.getLoader().getFragment();
+				// then handle tuples and fraction items
+				if (factFragment && canBeATuple) 
+				{
+					auto currentFragment = outer.lock()->getLoader()->getFragment();
 
-			//				if (currentFragment.hasMetaAttribute("fact") && ! currentFragment.getType().equals(TupleImpl.class.getName())) {
-			//					Fragment fractionItem = new FractionItemImpl();
-			//					fractionItem.setBuilder(currentFragment.getBuilder());
-			//					fractionItem.setMetaAttribute("type","org.xbrlapi.impl.FractionItemImpl");
-			//					getLoader().replaceCurrentFragment(fractionItem);
-			//				} else {
-			//					factFragment = new TupleImpl();
-			//				}
-			//			}
+					if (currentFragment.hasMetaAttribute("fact") && 
+						 currentFragment.getType() != "Tuple") 
+					{
+						FractionItem fractionItem;
+						fractionItem.setBuilder(currentFragment.getBuilder());
+						fractionItem.setMetaAttribute("type","org.xbrlapi.impl.FractionItemImpl");
+						outer.lock()->getLoader()->replaceCurrentFragment(fractionItem);
+					} 
+					else 
+					{
+						 factFragment = std::make_shared<Tuple>();
+					}
+				}
 
-			//			if (factFragment != null) {
-			//				processFragment(factFragment,attrs);
-			//				factFragment.setMetaAttribute("fact","true");
-			//				return;
-			//			}
+				if (factFragment) 
+				{
+					outer.lock()->processFragment(factFragment,attrs);
+					factFragment->setMetaAttribute("fact","true");
+					return;
+				}
 
-			//		}
+			}
 
 		}
 

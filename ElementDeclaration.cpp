@@ -1,4 +1,5 @@
 #include "ElementDeclaration.h"
+#include "TypeDeclaration.h"
 
 namespace xbrlcapi 
 {
@@ -131,13 +132,14 @@ namespace xbrlcapi
 			return false;
 		}    
 
-		//ComplexTypeDeclaration getLocalComplexType()
-		//{
-		//	//		List<ComplexTypeDeclaration> ctds = this.getChildren("ComplexTypeDeclaration");
-		//	//		if (ctds.size() > 1) throw XBRLException("The element has too many local complex types.");
-		//	//		if (ctds.size() == 0) throw XBRLException("The element does not have a local complex type.");
-		//	//		return ctds.get(0);
-		//}
+		TypeDeclaration getLocalComplexType()
+		{
+			//	//		List<ComplexTypeDeclaration> ctds = this.getChildren("ComplexTypeDeclaration");
+			//	//		if (ctds.size() > 1) throw XBRLException("The element has too many local complex types.");
+			//	//		if (ctds.size() == 0) throw XBRLException("The element does not have a local complex type.");
+			//	//		return ctds.get(0);
+			return TypeDeclaration();
+		}
 
 		bool isFinalForRestriction()
 		{
@@ -298,10 +300,10 @@ namespace xbrlcapi
 		return pImpl->hasLocalComplexType();
 	}    
 
-	//ComplexTypeDeclaration getLocalComplexType()
-	//{
-	//	return pImpl->getLocalComplexType();
-	//}
+	TypeDeclaration ElementDeclaration::getLocalComplexType()
+	{
+		return pImpl->getLocalComplexType();
+	}
 
 	bool ElementDeclaration::isFinalForRestriction()
 	{

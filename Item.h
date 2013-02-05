@@ -1,14 +1,7 @@
-
-
 #pragma once
-
-
+#include "PimplImpl.h"
 #include <string>
 #include "Fact.h"
-//#include "Context.h"
-/**
-
-*/
 
 namespace xbrlcapi
 {
@@ -16,6 +9,17 @@ namespace xbrlcapi
 	struct Item : public Fact 
 	{
 
+		struct Impl;
+		Pimpl<Impl> pImpl;
+	public:
+		Item();
+		~Item();
+		Item(const Item& rhs);
+		Item& operator=(const Item& rhs);
+		Item(Item&& rhs);
+		Item& operator=(Item&& rhs);
+		bool operator==(const Item& rhs);
+		bool operator!=(const Item& rhs);
 		/** 
 		* Get the context for this item.
 		* Presumes that there is at most one XBRL instance in each document in the data store.
@@ -31,4 +35,3 @@ namespace xbrlcapi
 		std::string getContextId();	
 	};
 }
-

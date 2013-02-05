@@ -3,5 +3,6 @@
 namespace xbrlcapi
 {
 	struct ComplexTypeDeclaration : public TypeDeclaration
-	{};
+	{
+	};
 }

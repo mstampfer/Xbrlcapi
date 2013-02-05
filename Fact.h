@@ -1,21 +1,14 @@
 #pragma once
 #include "Fragment.h"
 
-//#include "Instance.h"
-//#include "Concept.h"
-
-/**
-
-*/
 namespace xbrlcapi
 {
 	struct Instance;
 	class Concept;
 	class Tuple;
 
-	struct Fact : public Fragment {
-
-		Fact(){}
+	struct Fact : public Fragment 
+	{
 		/**
 		* Return true if the fact is a tuple and false otherwise
 		*/

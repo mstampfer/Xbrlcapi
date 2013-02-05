@@ -1,19 +1,32 @@
 #pragma once
+#include "PimplImpl.h"
 #include "Fragment.h"
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMNode.hpp>
+
 namespace xbrlcapi
 {
 	class Schema;
-	class Element;
-	class Node;
 
-	struct SchemaContent : public Fragment 
+	class SchemaContent : public Fragment  
 	{
+		struct Impl;
+		Pimpl<Impl> pImpl;
+	public:
+		SchemaContent();
+		~SchemaContent();
+		SchemaContent(const SchemaContent& rhs);
+		SchemaContent& operator=(const SchemaContent& rhs);
+		SchemaContent(SchemaContent&& rhs);
+		SchemaContent& operator=(SchemaContent&& rhs);
+		bool operator==(const SchemaContent& rhs);
+		bool operator!=(const SchemaContent& rhs);
 
 		/**
 		* @return the schema fragment that is the schema containing this element declaration.
 		* @throws XBRLException if the schema content is not inside a schema.
 		*/
-		virtual Schema getSchema();
+		virtual SchemaContent getSchema();
 
 		/**
 		* @return the target Namespace of the schema that contains this fragment
@@ -29,7 +42,7 @@ namespace xbrlcapi
 		* empty if there are no other attributes.
 		* @throws XBRLException
 		*/
-		virtual std::vector<Node> getOtherAttributes();
+		virtual std::vector<std::shared_ptr<xercesc::DOMNode>> getOtherAttributes();
 
 		/**
 		* Mirrors the hasAttributeNS method of the org.w3c.dom.Element class.
@@ -55,7 +68,7 @@ namespace xbrlcapi
 		* or the empty list if there are no child annotations.
 		* @throws XBRLException
 		*/
-		virtual std::vector<Element> getAnnotations();    
+		virtual std::vector<std::shared_ptr<xercesc::DOMElement>> getAnnotations();    
 
 		/**
 		* @return the the XML Schema ID attribute value or null if the 

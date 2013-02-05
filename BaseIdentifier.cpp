@@ -1,6 +1,7 @@
 #include "BaseIdentifier.h"
 #include "ContentHandler.h"
 #include "Fragment.h"
+#include "XercesString.h"
 namespace xbrlcapi
 {
 	struct BaseIdentifier::Impl 
@@ -56,19 +57,19 @@ namespace xbrlcapi
 
 		void processFragment(const std::shared_ptr<Fragment>& fragment, const xercesc::Attributes& attrs)
 		{
-			//	Loader loader = getLoader();
-			//	fragment.setBuilder(new Builder(loader.getBuilderDOM()));
-			//	fragment.setIndex(loader.getNextFragmentId());
-			//	if (attrs.getValue("id") != null)
-			//	{
-			//		fragment.appendID(attrs.getValue("id"));
-			//		getElementState().setId(attrs.getValue("id"));
-			//	}
-			//	loader.add(fragment,getElementState());
-			//}
+				std::shared_ptr<Loader> loader = getLoader();
+				std::shared_ptr<xercesc::DOMDocument> doc(loader->getBuilderDOM());
+				Builder b(*doc);
+				fragment->setBuilder(Builder(*doc));
+				fragment->setIndex(loader->getNextFragmentId());
+				if (attrs.getValue(L"id") != nullptr)
+				{
+					fragment->appendID(to_string(attrs.getValue(L"id")));
+					getElementState().setId(to_string(attrs.getValue(L"id")));
+				}
+				loader->add(*fragment,getElementState());
+			}
 		};
-
-	};
 
 	BaseIdentifier::BaseIdentifier() {}
 	BaseIdentifier::~BaseIdentifier() {} 

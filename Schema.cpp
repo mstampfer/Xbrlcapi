@@ -6,7 +6,6 @@
 //#include "ArcroleType.h"
 #include "SimpleTypeDeclaration.h"
 #include "SimpleLink.h"
-#include "ComplexTypeDeclaration.h"
 #include "SimpleTypeDeclaration.h"
 
 namespace xbrlcapi
@@ -145,10 +144,10 @@ namespace xbrlcapi
 		//	//return this.<ArcroleType>getChildren("ArcroleType");
 		//	return std::list<ArcroleType>();
 		//}
-		std::list<ComplexTypeDeclaration> getGlobalComplexTypes()
+		std::list<TypeDeclaration> getGlobalComplexTypes()
 		{
 			//return getStore().<ComplexTypeDeclaration>getChildFragments(ComplexTypeDeclarationImpl.class,getIndex());
-			return std::list<ComplexTypeDeclaration>();
+			return std::list<TypeDeclaration>();
 		}
 		std::list<SimpleTypeDeclaration> getGlobalSimpleTypes()
 		{
@@ -278,7 +277,7 @@ namespace xbrlcapi
 	//	return pImpl->getArcroleTypes();
 	//}
 
-	std::list<ComplexTypeDeclaration>  Schema::getGlobalComplexTypes()
+	std::list<TypeDeclaration>  Schema::getGlobalComplexTypes()
 	{
 		return pImpl->getGlobalComplexTypes();
 	}

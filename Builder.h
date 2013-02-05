@@ -31,40 +31,39 @@ namespace xbrlcapi
 		bool operator==(const Builder& rhs);
 		bool operator!=(const Builder& rhs);
 
-		//	/**
-		//	 * Create the builder controlling which XML DOM is being used.
-		//	 * @param dom The DOM to use in the builder.
-		//	 * @throws XBRLException if the DOM is null.
-		//	 */
-		//	BuilderImpl(Document dom);
-		//
-		//	/**
-		//	 * Create the builder making sure that the static DOM 
-		//	 * is instantiated and creating the metadata root element.
-		//	 * @throws XBRLException if the DOM Builder cannot be instantiated.
-		//	 */
-		//	BuilderImpl();
-		//
-		//	/**
-		//	 * Restores the builder to its pre-use state.
-		//	 */
-		//	void close() ;
-		//	
-		//	/**
-		//	 * @see Builder#getData()
-		//	 */
-		//	Element getData();
-		//	
+		/**
+		* Create the builder controlling which XML DOM is being used.
+		* @param dom The DOM to use in the builder.
+		* @throws XBRLException if the DOM is null.
+		*/
+		Builder(const xercesc::DOMDocument& dom);
+
+		/**
+		* Create the builder making sure that the static DOM 
+		* is instantiated and creating the metadata root element.
+		* @throws XBRLException if the DOM Builder cannot be instantiated.
+		*/
+
+		/**
+		* Restores the builder to its pre-use state.
+		*/
+		void close() ;
+
+		/**
+		* @see Builder#getData()
+		*/
+		std::shared_ptr<xercesc::DOMElement> getData();
+
 		/**
 		* Get the metadata DOM document.
 		* @return the metadata XML structure.
 		*/
 		std::shared_ptr<xercesc::DOMElement>  Builder::getMetadata();
-		
-			/**
-			 * @return true iff the builder has not yet added an element to the fragment.
-			 */
-			bool isNewFragment();
+
+		/**
+		* @return true iff the builder has not yet added an element to the fragment.
+		*/
+		bool isNewFragment();
 		//
 		//    /**
 		//     * Get the insertion point for new data content.
@@ -72,41 +71,41 @@ namespace xbrlcapi
 		//     */
 		//    Element getInsertionPoint() ;
 		//    
-			/**
-			 * Append a text node.
-			 * @param text The node to be appended.
-			 * @throws XBRLException if the node cannot be appended.
-			 */
-			void appendText(const std::string& text);
-			
-			/**
-			 * Append a processing instruction node
-			 * @param target The processing target application identifier.
-			 * @param data The data defining what is to be done.
-			 * @throws XBRLException if the node cannot be appended.
-			 */
-			void appendProcessingInstruction(const std::string& target, const std::string& data);		//	
+		/**
+		* Append a text node.
+		* @param text The node to be appended.
+		* @throws XBRLException if the node cannot be appended.
+		*/
+		void appendText(const std::string& text);
+
+		/**
+		* Append a processing instruction node
+		* @param target The processing target application identifier.
+		* @param data The data defining what is to be done.
+		* @throws XBRLException if the node cannot be appended.
+		*/
+		void appendProcessingInstruction(const std::string& target, const std::string& data);		//	
 		//	/**
 		//	 * Append a comment node.
 		//	 * @param text The data constituting the content of the comment.
 		//	 * @throws XBRLException if the node cannot be appended.
 		//	 */
 		//	void appendComment(const std::string& text)		//;
-		
-			/**
-			 * Append an element node.
-			 * @param namespaceURI The namespace of the element found by the SAX parser.
-			 * @param lName The local name of the element found by the SAX parser.
-			 * @param qName The QName of the element found by the SAX parser.
-			 * @param attrs The set of attributes found by the SAX parser.
-			 * @throws XBRLException if the node cannot be appended.
-			 */
-			void appendElement(
-					const XMLCh* namespaceURI, 
-					const XMLCh* lName, 
-					const XMLCh* qName, 
-					const xercesc::Attributes& attrs);
-			
+
+		/**
+		* Append an element node.
+		* @param namespaceURI The namespace of the element found by the SAX parser.
+		* @param lName The local name of the element found by the SAX parser.
+		* @param qName The QName of the element found by the SAX parser.
+		* @param attrs The set of attributes found by the SAX parser.
+		* @throws XBRLException if the node cannot be appended.
+		*/
+		void appendElement(
+			const XMLCh* namespaceURI, 
+			const XMLCh* lName, 
+			const XMLCh* qName, 
+			const xercesc::Attributes& attrs);
+
 		//
 		//	/**
 		//	 * Insert a new element without attributes.
@@ -120,11 +119,11 @@ namespace xbrlcapi
 		//			const std::string& lName, 
 		//			const std::string& qName);
 		//
-			void endElement(
-					const XMLCh* namespaceURI,
-					const XMLCh* lName,
-					const XMLCh* qName
-					);
+		void endElement(
+			const XMLCh* namespaceURI,
+			const XMLCh* lName,
+			const XMLCh* qName
+			);
 		//
 		//	/**
 		//	 * Append a notation declaration.

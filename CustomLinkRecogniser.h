@@ -17,7 +17,6 @@ namespace xbrlcapi
 		struct Impl;
 		Pimpl<Impl> pImpl;
 	public:
-		int get_it(); 
 		CustomLinkRecogniser();
 		~CustomLinkRecogniser();
 		CustomLinkRecogniser(const CustomLinkRecogniser& rhs);

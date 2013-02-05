@@ -1,13 +1,12 @@
-
-
 #pragma once
-
-
 #include <string>
+#include "PimplImpl.h"
 #include "SchemaDeclaration.h"
 
 namespace xbrlcapi
 {
+
+
 	class TypeDeclaration;
 	/**
 	* Base interface for XML Schema element and attribute declarations
@@ -16,7 +15,17 @@ namespace xbrlcapi
 
 	struct SchemaContentDeclaration : public SchemaDeclaration 
 	{
-
+		struct Impl;
+		Pimpl<Impl> pImpl;
+	public:
+		SchemaContentDeclaration();
+		~SchemaContentDeclaration();
+		SchemaContentDeclaration(const SchemaContentDeclaration& rhs);
+		SchemaContentDeclaration& operator=(const SchemaContentDeclaration& rhs);
+		SchemaContentDeclaration(SchemaContentDeclaration&& rhs);
+		SchemaContentDeclaration& operator=(SchemaContentDeclaration&& rhs);
+		bool operator==(const SchemaContentDeclaration& rhs);
+		bool operator!=(const SchemaContentDeclaration& rhs);
 		/**
 		* @return true iff the element declaration is global rather than
 		* part of a complex type declaration.

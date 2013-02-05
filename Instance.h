@@ -1,4 +1,3 @@
-
 #pragma once
 
 
@@ -19,10 +18,6 @@
 namespace xbrlcapi
 {
 	struct Item;
-	/**
-
-	*/
-
 	class Tuple;
 	class EntityResource;
 	struct Fact;

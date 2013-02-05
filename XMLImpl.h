@@ -31,7 +31,7 @@ namespace xbrlcapi
 	protected:
 		void finalize();
 
-
+	public:
 		/**
 		* @see org.xbrlapi.XML#setResource(Element)
 		*/

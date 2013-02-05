@@ -5,7 +5,6 @@
 
 namespace xbrlcapi
 {
-	class ComplexTypeDeclaration;
 
 	/**
 	* Used for top level element declarations (where the elements are
@@ -140,7 +139,7 @@ namespace xbrlcapi
 		* @throws XBRLException if there is no local complex type declaration or
 		* if there is more than one local complex type declaration (an XML Schema error).
 		*/
-		virtual ComplexTypeDeclaration getLocalComplexType();     
+		virtual TypeDeclaration getLocalComplexType();     
 
 		/**
 		* @return the maximum number of times that the element can occur within a complex type definition.

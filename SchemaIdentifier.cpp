@@ -3,7 +3,6 @@
 #include "SchemaAllCompositor.h"
 #include "SchemaChoiceCompositor.h"
 #include "SchemaSequenceCompositor.h"
-#include "ComplexTypeDeclaration.h"
 #include "SimpleTypeDeclaration.h"
 #include "AttributeDeclaration.h"
 #include "AttributeGroupDeclaration.h"
@@ -67,7 +66,7 @@ namespace xbrlcapi
 				} 
 				else if (lName == L"complexType")
 				{
-					fragment = std::make_shared<ComplexTypeDeclaration>();
+					fragment = std::make_shared<TypeDeclaration>();
 				} 
 				else if (lName == L"simpleType")
 				{

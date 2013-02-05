@@ -1,7 +1,7 @@
 #pragma once
 #include "PimplImpl.h"
 #include "SchemaContent.h"
-
+#include "TypeDeclaration.h"
 
 #include <list>
 
@@ -12,7 +12,6 @@ namespace xbrlcapi
 	struct ReferencePartDeclaration;
 	struct RoleType;
 	struct ArcroleType;
-	struct ComplexTypeDeclaration;
 	struct SimpleTypeDeclaration;
 	struct Schema : public SchemaContent 
 	{
@@ -155,7 +154,7 @@ namespace xbrlcapi
 		* @return the std::list of global complex type declarations in this schema.
 		* @throws XBRLException
 		*/
-		std::list<ComplexTypeDeclaration> getGlobalComplexTypes();
+		std::list<TypeDeclaration> getGlobalComplexTypes();
 
 		/**
 		* @return the std::list of global simple type declarations in this schema.
